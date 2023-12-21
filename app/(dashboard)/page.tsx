@@ -1,18 +1,9 @@
-import Image from 'next/image';
+import React from 'react';
 
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+type Props = {};
 
-export default async function Home() {
-  const session = await auth();
+const Home = (props: Props) => {
+  return <div>Home</div>;
+};
 
-  // if (!session) {
-  //   redirect('/login');
-  // }
-
-  return (
-    <main className="flex min-h-screen flex-col  flex-auto p-24">
-      <h1>Welcome Home, {session?.user?.name}</h1>
-    </main>
-  );
-}
+export default Home;

@@ -10,12 +10,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  username      String
-  password      String
+model Arrangement{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  receiptNo           String
+  deceased            Deceased
+  familyReps          FamilyRep[]
+  deliveryAddress     String
+  DeliveryTime        String
+  church              Church
+  cemetry             Cemetry
+  minister            Minister  
+  digger              Boolean @default(true)
+  crossSize           String
+  doves               Boolean
+  liveStreaming       Boolean
+  programs            Int
+  familyCar           Boolean
+  bus                 Boolean
+  storageDays         Int
+  decor               Decor
+  totalPayable        Int
+  amountPaid          Int   @default(0)
+  createdBy           String
+  
+  tombstoneId         String @db.ObjectId
+  tombstone           Tombstone @relation(fields: [tombstoneId], references: [id])
+  coffinId            String  @db.ObjectId
+  coffin              Coffin    @relation(fields: [coffinId], references: [id])
+
+}
 
 
+
+
+model Tombstone{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  type                String
+  tombstoneName                String @default("")
+  arrangements        Arrangement[]
+}
+
+model Coffin{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  coffinName                String
+  price               Int
+  arrangements        Arrangement[]
+
+}
+
+type Decor{
+  candle              Boolean @default(false)
+  photo               Boolean @default(false)
+  glass               Boolean @default(false)
+  banner              Boolean @default(false)
+
+
+}
+
+type Church{
+  churchName        String
+  Address     Address
+}
+
+type Cemetry{
+  cemetryName        String
+  time        String
+}
+
+type Minister{
+  firstName       String
+  lastName        String
+  phoneNo         String
+}
+
+type FamilyRep{
+  firstName       String
+  lastName        String
+  relationship    String
+  phoneNo         String
+}
+
+
+
+type Deceased{
+  ffhMemberNo                 String
+  lastName                    String
+  firstNames                  String
+  idNumber                    String
+  dateOfDeath                 DateTime
+  removalDate                 DateTime
+  removalFrom                 Address
+  deathCertificateRecipient   String
+  dateOfFuneralService        DateTime
+
+
+}
+
+type Address{
+  street          String
+  city            String
+  province        String
+  zip             String
 }
 
 

@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter as FontSans } from 'next/font/google';
+import { Inter as FontSans, Montserrat as LibreSans } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import Sidebar from '@/components/sidebar';
+import AuthProvider from '@/providers/authProvider';
+import { ToasterProvider } from '@/providers/toastProvider';
 
-export const fontSans = FontSans({
+export const libreSans = LibreSans({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--libre-sans',
 });
 
 export const metadata: Metadata = {
@@ -21,12 +22,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={cn('min-h-screen bg-background font-sans antialiased flex')}
-      >
-        <Sidebar />
-        {children}
-      </body>
+      <AuthProvider>
+        <body
+          className={cn(
+            'h-screen bg-background libre-sans antialiased flex overflow-hidden'
+          )}
+        >
+          <ToasterProvider />
+
+          {children}
+        </body>
+      </AuthProvider>
     </html>
   );
 }

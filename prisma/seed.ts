@@ -1,24 +1,36 @@
-// import
+import { PrismaClient } from '@prisma/client';
 
-// async function main() {
-//   await prisma.user.create({
-//     data: {
-//       name: 'Rich',
-//       email: 'hello@prisma.com',
-//       posts: {
-//         create: {
-//           title: 'My first post',
-//           body: 'Lots of really interesting stuff',
-//           slug: 'my-first-post',
-//         },
-//       },
-//     },
-//   });
+const prismadb = new PrismaClient();
 
-//   const allUsers = await prisma.user.findMany({
-//     include: {
-//       posts: true,
-//     },
-//   });
-//   console.dir(allUsers, { depth: null });
-// }
+async function main() {
+  await prismadb.coffin.createMany({
+    data: [
+      {
+        name: 'Flat Lid',
+        price: 1200,
+      },
+      {
+        name: '3 tier coffin',
+        price: 2500,
+      },
+
+      {
+        name: 'Pongee Casket',
+        price: 5000,
+      },
+    ],
+  });
+
+  const coffins = await prismadb.coffin.findMany({});
+  console.dir(coffins, { depth: null });
+}
+
+main()
+  .then(async () => {
+    await prismadb.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prismadb.$disconnect();
+    process.exit(1);
+  });

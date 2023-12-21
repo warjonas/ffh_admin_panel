@@ -15,14 +15,12 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased justify-center items-center flex'
-        )}
-      >
-        {children}
-      </body>
-    </html>
+    <div
+      className={cn(
+        'min-h-screen bg-background font-sans antialiased justify-center items-center flex w-full'
+      )}
+    >
+      {children}
+    </div>
   );
 }
