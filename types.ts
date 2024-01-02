@@ -1,5 +1,6 @@
 export interface Arrangement {
   id: string;
+  receiptNo: string;
   deceased: Deceased;
   familyReps: FamilyRep[];
   deliveryAddress: string;
@@ -17,13 +18,19 @@ export interface Arrangement {
   bus: boolean;
   storageDays: number;
   decor: Decor;
-
+  notes: string;
+  afterHour: boolean;
+  doctor: boolean;
+  cremationDoctor: boolean;
+  wreaths: boolean;
   totalPayable: number;
   amountPaid: number;
 
   tombstoneId: string;
+  tombstone: Tombstone;
 
   coffinId: string;
+  coffin: Coffin;
 }
 
 export interface Tombstone {

@@ -38,13 +38,17 @@ const MainNavActions = (props: Props) => {
       name: 'Removals',
       icon: <Car />,
       link: '/removals',
-      active: pathname === `/removals`,
+      active:
+        pathname === `/removals` ||
+        pathname === `/removals/${params.removalId}`,
     },
     {
       name: 'Programs',
       icon: <LayoutList />,
       link: '/programs',
-      active: pathname === `/programs`,
+      active:
+        pathname === `/programs` ||
+        pathname === `/programs/${params.programId}`,
     },
     {
       name: 'Receipts',

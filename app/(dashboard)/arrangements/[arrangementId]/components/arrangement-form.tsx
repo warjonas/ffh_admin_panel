@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Arrangement, Coffin, Tombstone } from '@/types';
+import { Coffin, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, Trash } from 'lucide-react';
 import React, { useState } from 'react';
@@ -39,6 +39,9 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
+
+import { revalidatePath } from 'next/cache';
+import { Arrangement } from '@prisma/client';
 
 interface ArrangementFormProps {
   initialData: Arrangement | null;
@@ -116,7 +119,7 @@ const formSchema = z.object({
   cremationDoctor: z.boolean().default(false),
   afterHour: z.boolean().default(false),
   amountPaid: z.number().default(0),
-  notes: z.string().max(190),
+  notes: z.string().max(190).default(''),
   createdBy: z.string(),
 });
 
@@ -138,73 +141,80 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
     : 'Create a new funeral arrangement';
   const toastMessage = initialData
     ? 'Changes successfully applied.'
-    : 'Arrangement created successfully';
-  const action = initialData ? 'Save changes' : 'Add Arrangement';
+    : 'Funeral Arrangement created successfully';
+  const action = initialData ? 'Save changes' : 'Add Funeral Arrangement';
 
   const form = useForm<ArrangementFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      familyReps: [
-        { firstName: '', lastName: '', relationship: '', phoneNo: '' },
-      ],
-      deceased: {
-        dateOfDeath: new Date(),
-        ffhMemberNo: '',
-        lastName: '',
-        firstNames: '',
-        idNumber: '',
-        removalDate: new Date(),
-        removalFrom: {
-          street: '',
-          city: '',
-          province: '',
-          zip: '',
+    defaultValues: initialData
+      ? {
+          ...initialData,
+          coffinid: initialData.coffinId,
+          tombstoneId: initialData.tombstoneId,
+          deliveryTime: initialData.DeliveryTime,
+        }
+      : {
+          familyReps: [
+            { firstName: '', lastName: '', relationship: '', phoneNo: '' },
+          ],
+          deceased: {
+            dateOfDeath: new Date(),
+            ffhMemberNo: '',
+            lastName: '',
+            firstNames: '',
+            idNumber: '',
+            removalDate: new Date(),
+            removalFrom: {
+              street: '',
+              city: '',
+              province: '',
+              zip: '',
+            },
+            deathCertificateRecipient: '',
+            dateOfFuneralService: new Date(),
+          },
+          deliveryAddress: '',
+          deliveryTime: '',
+          church: {
+            churchName: '',
+            Address: {
+              street: '',
+              city: '',
+              province: '',
+              zip: '',
+            },
+          },
+          minister: {
+            firstName: '',
+            lastName: '',
+            phoneNo: '',
+          },
+          crossSize: '',
+          cemetry: {
+            cemetryName: '',
+            time: '',
+          },
+          doves: false,
+          programs: 50,
+          bus: false,
+          car: false,
+          wreaths: false,
+          storageDays: 1,
+          decor: {
+            candle: false,
+            photo: false,
+            glass: false,
+            banner: false,
+          },
+          tombstoneId: '',
+          totalPayable: 0,
+          amountPaid: 0,
+          notes: '',
+          doctor: false,
+          cremationDoctor: false,
+          coffinid: '',
+          createdBy: 'email',
         },
-        deathCertificateRecipient: '',
-        dateOfFuneralService: new Date(),
-      },
-      deliveryAddress: '',
-      deliveryTime: '',
-      church: {
-        churchName: '',
-        Address: {
-          street: '',
-          city: '',
-          province: '',
-          zip: '',
-        },
-      },
-      minister: {
-        firstName: '',
-        lastName: '',
-        phoneNo: '',
-      },
-      crossSize: '',
-      cemetry: {
-        cemetryName: '',
-        time: '',
-      },
-      doves: false,
-      programs: 50,
-      bus: false,
-      car: false,
-      wreaths: false,
-      storageDays: 1,
-      decor: {
-        candle: false,
-        photo: false,
-        glass: false,
-        banner: false,
-      },
-      tombstoneId: '',
-      totalPayable: 0,
-      amountPaid: 0,
-      notes: '',
-      doctor: false,
-      cremationDoctor: false,
-      coffinid: '',
-      createdBy: 'email',
-    },
   });
 
   const {
@@ -237,7 +247,12 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
       data.totalPayable = 20000;
       data.amountPaid = 1000;
 
-      await axios.post('/api/arrangement', data);
+      if (initialData) {
+        await axios.patch(`/api/arrangement/${initialData.id}`, data);
+      } else {
+        await axios.post('/api/arrangement', data);
+      }
+
       router.refresh();
       router.push('/arrangements');
       toast.success('Successfully uploaded funeral arrangement');
@@ -253,7 +268,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
     <>
       <Heading title={title} subtitle={description} />
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full mb-20">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-1/2 mb-20">
           {/* Deceased details */}
           <section className="w-full xl:w-1/2">
             <h1 className="text-xl font-semibold">Details of Deceased</h1>
@@ -465,7 +480,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) => date > new Date()}
+                          disabled={(date) => date < new Date()}
                           initialFocus
                         />
                       </PopoverContent>
@@ -1299,9 +1314,12 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
             <hr className="w-full my-4" />
           </section>
 
-          <section className="flex xl:w-1/2 justify-end">
+          <section className="flex xl:w-1/2 gap-x-2 justify-end">
+            <Button variant={'outline'} onClick={() => router.back()}>
+              Cancel
+            </Button>
             <Button type="submit" className="w-48 font-semibold">
-              Submit
+              {action}
             </Button>
           </section>
         </form>

@@ -32,6 +32,13 @@ model Arrangement{
   totalPayable        Int
   amountPaid          Int   @default(0)
   createdBy           String
+  notes               String @default("")
+  afterHour                 Boolean
+
+  doctor                 Boolean
+
+  cremationDoctor                 Boolean
+
   
   tombstoneId         String @db.ObjectId
   tombstone           Tombstone @relation(fields: [tombstoneId], references: [id])
@@ -40,6 +47,74 @@ model Arrangement{
 
 }
 
+model FuneralProgram {
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  languageOfProgram   String
+  firstNameOfDeceased String
+  nickName            String @default("")
+  lastNameOfDeceased  String
+  dateOfBirth         DateTime
+  dateOfDeath         DateTime
+  survivedBy          String
+  atHome              AtHome
+  atChurch            AtChurch
+  hymn               Hymn
+  otherInformation               String
+  needPallbearers     Boolean @default(true)
+  pallbearersInHouse    Pallbearer[] 
+  pallbearersOutHouse Pallbearer[] 
+  pallbearersInChurch    Pallbearer[] 
+  pallbearersOutChurch Pallbearer[] 
+  pallbearersGrave    Pallbearer[] 
+
+  orbituaryText       String @default("")
+
+  createdBy           String
+
+
+}
+
+model Removal{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  lastname             String
+  firstName           String
+  idNumber            String
+  address             String
+
+  dateRemoved         DateTime
+  byUndertaker        String
+  doctorsFees         Int
+  storageFee          Int
+  storageDays         Int
+  copyFee             Int
+  copies              Int
+  graveFee            Int
+  casket              Int
+  gravediggerCost     Int
+  adminFees           Int
+  totalDue            Int
+  receipts            RemovalReceipt[]
+  scheduledBy         String
+
+
+
+}
+
+model RemovalReceipt{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  receiptNo           String
+  date                DateTime
+  issuedBy            String
+  methodOfPayment     String @default("EFT")
+  receivedAmount      Int @default(0)
+  outstandingBalance  Int
+  receivedFrom        String
+
+  removalId           String @db.ObjectId
+  removal             Removal @relation(fields: [removalId],references: [id])
+
+
+}
 
 
 
@@ -56,6 +131,34 @@ model Coffin{
   price               Int
   arrangements        Arrangement[]
 
+}
+
+type Pallbearer{
+  firstName         String
+  lastName          String
+
+}
+
+
+type Hymn{
+  nameOfHymnBook      String
+  hymns               HymnField[]
+}
+
+type HymnField{
+  hymnNumber          Int
+  detailsOfHymn       String
+}
+
+type AtHome{
+  officiatingMinister   String
+}
+
+type AtChurch{
+  officiatingMinister   String
+  orbituary             String
+  voteOfThanks          String
+  otherItems            String
 }
 
 type Decor{

@@ -4,8 +4,12 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import AuthProvider from '@/providers/authProvider';
 import { ToasterProvider } from '@/providers/toastProvider';
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
+import { extractRouterConfig } from 'uploadthing/server';
+import { ourFileRouter } from './api/uploadthing/core';
 
 export const libreSans = LibreSans({
+  weight: ['300', '400', '500', '600'],
   subsets: ['latin'],
   variable: '--libre-sans',
 });

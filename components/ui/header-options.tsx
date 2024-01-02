@@ -5,21 +5,24 @@ import { PlusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-type Props = {};
+type Props = {
+  title: string;
+  path: string;
+};
 
-const HeaderOptions = (props: Props) => {
+const HeaderOptions = ({ title, path }: Props) => {
   const router = useRouter();
 
   return (
     <section className="flex justify-end w-full ">
       <Button
         className="w-fit p-5 text-xl flex justify-center gap-x-2 text-center"
-        onClick={() => router.push('/arrangements/new')}
+        onClick={() => router.push(path)}
       >
         <span>
           <PlusCircle className="h-5 w-5" />
         </span>{' '}
-        New Arrangement
+        {title}
       </Button>
     </section>
   );

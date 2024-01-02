@@ -5,14 +5,42 @@ import { FamilyRep } from '@prisma/client';
 import { ObjectId } from 'bson';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { arrangementId: string } }
+) {
+  const session = getSession();
+  if (!session) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
   try {
-    const session = await getSession();
+    const arrangement = await prismadb.arrangement.findFirst({
+      where: {
+        id: params.arrangementId,
+      },
+      include: {
+        coffin: true,
+        tombstone: true,
+      },
+    });
 
-    if (!session) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
+    return NextResponse.json(arrangement);
+  } catch (error) {
+    console.log('ARRANGEMENT_SINGLE_GET', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
 
+export async function PATCH(
+  req: Request,
+  { params }: { params: { arrangementId: string } }
+) {
+  const session = await getSession();
+  if (!session) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+  try {
     const body = await req.json();
 
     const {
@@ -133,11 +161,11 @@ export async function POST(req: Request) {
       });
     }
 
-    const receipt = await generateId();
-
-    const arrangement = await prismadb.arrangement.create({
+    const arrangement = await prismadb.arrangement.update({
+      where: {
+        id: params.arrangementId,
+      },
       data: {
-        receiptNo: receipt,
         createdBy,
         deceased: {
           ...deceased,
@@ -162,43 +190,42 @@ export async function POST(req: Request) {
         totalPayable,
         storageDays,
         notes,
-        tombstoneId,
         afterHour,
         cremationDoctor,
         doctor,
         amountPaid,
-
+        tombstoneId,
         coffinId: coffinid,
       },
     });
 
     return NextResponse.json(arrangement);
   } catch (error) {
-    console.log('[ARRANGEMENT_POST]', error);
+    console.log('ARRANGEMENT_PATCH', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
 
-// // data:{
-//         id,
-//         deceased: {...deceased, dateOfDeath: new Date(deceased.dateOfDeath)  },
-//         familyReps,
-//         deliveryAddress,
-//         DeliveryTime:deliveryTime,
-//         church,
-//         cemetry,
-//         minister,
-//         digger: true,
-//         crossSize,
-//         doves,
-//         liveStreaming,
-//         programs,
-//         bus,
-//         familyCar: car,
-//         decor,
-//         totalPayable,
+export async function DELETE(
+  req: Request,
+  { params }: { params: { arrangementId: string } }
+) {
+  try {
+    const session = getSession();
 
-//         tombstoneId,
-//         coffinId:coffinid
+    if (!session) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
 
-// //     }
+    const arrangement = await prismadb.arrangement.deleteMany({
+      where: {
+        id: params.arrangementId,
+      },
+    });
+
+    return NextResponse.json(arrangement);
+  } catch (error) {
+    console.log('ARRANGEMENT_DELETE', error);
+    return new NextResponse('Internal Error', { status: 500 });
+  }
+}
