@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Montserrat as LibreSans } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import AuthProvider from '@/providers/authProvider';
@@ -8,7 +8,7 @@ import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import { extractRouterConfig } from 'uploadthing/server';
 import { ourFileRouter } from './api/uploadthing/core';
 
-export const libreSans = LibreSans({
+const libreSans = Montserrat({
   weight: ['300', '400', '500', '600'],
   subsets: ['latin'],
   variable: '--libre-sans',
@@ -29,7 +29,8 @@ export default function RootLayout({
       <AuthProvider>
         <body
           className={cn(
-            'h-screen bg-background libre-sans antialiased flex overflow-hidden'
+            'h-screen bg-background libre-sans antialiased flex overflow-hidden',
+            libreSans.className
           )}
         >
           <ToasterProvider />
