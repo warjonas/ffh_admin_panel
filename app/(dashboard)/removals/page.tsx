@@ -6,11 +6,16 @@ import { BodyRemovalColumn } from './components/columns';
 import { format } from 'date-fns';
 import { formatter } from '@/lib/utils';
 import { BodyRemovalClient } from './components/client';
+import { Receipt } from 'lucide-react';
 
 type Props = {};
 
 const Removals = async (props: Props) => {
-  const bodyRemovals = await prismadb.removal.findMany({});
+  const bodyRemovals = await prismadb.removal.findMany({
+    include:{
+      receipts:true
+    }
+  });
 
   const formattedRemovals: BodyRemovalColumn[] = bodyRemovals.map(
     (removal) => ({
@@ -20,7 +25,7 @@ const Removals = async (props: Props) => {
       scheduledBy: removal.scheduledBy,
       removalDate: format(removal.dateRemoved, 'MM/dd/yyyy'),
       undertaker: removal.byUndertaker,
-      total: formatter.format(removal.totalDue),
+      total: formatter.format(removal.totalDue) 
     })
   );
   return (

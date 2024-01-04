@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { PenBoxIcon, PrinterIcon } from 'lucide-react';
+import { PenBoxIcon, PrinterIcon, ReceiptIcon } from 'lucide-react';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Arrangement } from '@/types';
 import { format } from 'date-fns';
@@ -11,6 +11,8 @@ import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 
 import { formatter } from '@/lib/utils';
 import { Removal } from '@prisma/client';
+import { useReactToPrint } from 'react-to-print';
+import RemovalReceiptModal from './removalReceiptModal';
 // import { Arrangement } from '@/types';
 
 interface InfoModalProps {
@@ -31,9 +33,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   id,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const componentRef = useRef(null);
+  const getPageMargins = () => {
+    return `@page { margin: 0rem 2rem 0rem 2rem !important; }`;
+  };
+
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
   };
+
   const {
     data,
     error,
@@ -44,11 +52,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     config
   );
 
-  const { toPDF, targetRef } = usePDF({
-    filename: `Body removal for the late  ${data?.firstName} ${data?.lastname}.pdf`,
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: `Body Removal report - ${data?.firstName} ${data?.lastname}`,
   });
-
-  // const arrangement = await getArrangement(data)
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,7 +65,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     return null;
   }
 
-  if (error)
+  if (error) {
     return (
       <Modal
         title={`Error Occurred`}
@@ -69,8 +76,9 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         An error occurred whilte fetching the data.
       </Modal>
     );
+  }
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <Modal title={`Loading`} description="" isOpen={isOpen} onClose={onClose}>
         <div
@@ -83,42 +91,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         </div>
       </Modal>
     );
-
-  const onPrint = () => {
-    const element = document.getElementById('print-ref');
-
-    element && element.classList.add('w-screen');
-
-    element &&
-      generatePDF(targetRef, {
-        method: 'open',
-
-        resolution: Resolution.HIGH,
-        page: {
-          margin: Margin.MEDIUM,
-
-          format: 'A4',
-
-          orientation: 'portrait',
-        },
-        canvas: {
-          mimeType: 'image/png',
-          qualityRatio: 1,
-        },
-
-        overrides: {
-          pdf: {
-            compress: true,
-          },
-
-          canvas: {
-            useCORS: true,
-          },
-        },
-      });
-
-    element && element.classList.remove('w-screen');
-  };
+  }
 
   return (
     <Modal
@@ -130,24 +103,136 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       {isLoading && <p>Loading</p>}
       {data && (
         <>
-          <Button onClick={() => onPrint()}>
+          <Button onClick={handlePrint}>
             {' '}
-            <PrinterIcon className="h-4 w-4" /> Print PDF
+            <PrinterIcon className="h-4 w-4 mr-2" /> Print/Save
           </Button>
 
+          <RemovalReceiptModal id={data.id} receipts={[]} onClose={() => {}} onConfirm={() => {}} isOpen={true} loading={false}  />
+
           <section
-            className="pt-2 space-x-2 flex items-center justify-end w-full flex-col h-fit"
+            className="pt-2 space-x-2 flex items-center justify-end w-full flex-col h-fit pr-2"
             id="print-ref"
-            ref={targetRef}
+            ref={componentRef}
           >
+            <style>{getPageMargins()}</style>
             <section className="w-full h-fit">
               <div className="mb-2 p-2">
                 <h1 className="text-xl   text-center  uppercase">
                   Fortuin Funeral Home (PTY) LTD
                 </h1>
                 <h2 className="font-semibold text-lg text-center">
-                  Body Removal Preview Sheet
+                  Body Removal Report
                 </h2>
+              </div>
+            </section>
+
+            <hr className="w-full border-secondary-foreground mb-5" />
+
+            <section className="w-full h-fit border-2 border-secondary-foreground flex flex-col gap-y-2 p-2 mb-5">
+              <div className="flex gap-x-10">
+                <p className="font-semibold">
+                  Surname:{' '}
+                  <span className="font-normal"> {data?.firstName}</span>
+                </p>{' '}
+                <p className="font-semibold">
+                  First Name(s):{' '}
+                  <span className="font-normal"> {data?.lastname}</span>
+                </p>
+              </div>
+              <p className="font-semibold">
+                ID Number: <span className="font-normal">{data?.idNumber}</span>
+              </p>
+              <p className="font-semibold">
+                Address: <span className="font-normal">{data?.address}</span>
+              </p>
+            </section>
+
+            <section className="w-full h-fit">
+              <div className="flex gap-x-20 mb-2">
+                <p className="font-semibold">
+                  Date Removed:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {format(new Date(data?.dateRemoved), 'dd/MM/yyyy')}
+                  </span>
+                </p>
+                <p className="font-semibold">
+                  By Undertaker:{' '}
+                  <span className="font-normal">{data?.byUndertaker}</span>
+                </p>
+              </div>
+
+              <div className="">
+                <div className="flex flex-col gap-y-2">
+                  <h1 className="font-semibold text-lg">Removal</h1>
+                  <div className="flex gap-x-10">
+                    <p className="font-semibold">
+                      Doctors Fees:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {formatter.format(data?.doctorsFees)}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Registration of Death:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {formatter.format(data?.doctorsFees)}
+                      </span>
+                    </p>
+                  </div>
+
+                  <p className="font-semibold">
+                    Storage @ {formatter.format(data?.storageFee)}/day x{' '}
+                    {data?.storageDays} days -{' '}
+                    <span className="font-normal">
+                      {' '}
+                      {formatter.format(
+                        Number(data?.storageDays * data?.storageFee)
+                      )}
+                    </span>
+                  </p>
+                  <p className="font-semibold">
+                    Copies @ {formatter.format(data?.copyFee)}/day x{' '}
+                    {data?.copies} days -{' '}
+                    <span className="font-normal">
+                      {' '}
+                      {formatter.format(Number(data?.copyFee * data?.copies))}
+                    </span>
+                  </p>
+                  <p className="font-semibold">
+                    Booking of Grave:{' '}
+                    <span className="font-normal">
+                      {' '}
+                      {formatter.format(data?.graveFee)}
+                    </span>
+                  </p>
+                  <p className="font-semibold">
+                    Gravedigger Cost:{' '}
+                    <span className="font-normal">
+                      {' '}
+                      {formatter.format(data?.gravediggerCost)}
+                    </span>
+                  </p>
+                  <p className="font-semibold">
+                    Admin Fees:{' '}
+                    <span className="font-normal">
+                      {' '}
+                      {formatter.format(data?.adminFees)}
+                    </span>
+                  </p>
+
+                  <h1 className="font-semibold text-xl">
+                    Total Due before removal of the body:{' '}
+                    {formatter.format(data.totalDue)}
+                  </h1>
+
+                  <p className=" border-4 border-secondary-foreground text-red-800 uppercase p-1 font-semibold mt-2">
+                    WE DO NOT ACCEPT CASH AND FULL PAYMENT MUST BE MADE BEFORE
+                    REMOVAL IS ALLOWED{' '}
+                  </p>
+                </div>
               </div>
             </section>
           </section>
@@ -158,6 +243,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             <Button disabled={loading} variant={'default'} onClick={onConfirm}>
               <PenBoxIcon /> Edit
             </Button>
+          </div>
+          <hr className="my-5 w-full" />
+          <div className="flex flex-col w-full">
+            <button
+              className="self-end text-lg  flex items-center underline"
+              onClick={() => {}}
+            >
+              <ReceiptIcon className="h-5 w-5 mr-2" /> Generate Receipt
+            </button>
           </div>
         </>
       )}

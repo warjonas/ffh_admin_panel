@@ -80,9 +80,11 @@ model Removal{
   firstName           String
   idNumber            String
   address             String
+  
 
   dateRemoved         DateTime
   byUndertaker        String
+  deathRegistration   Int
   doctorsFees         Int
   storageFee          Int
   storageDays         Int

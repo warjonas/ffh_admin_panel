@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       adminFees,
       totalDue,
       scheduledBy,
+      deathRegistration,
     } = body;
 
     if (!lastname) {
@@ -51,6 +52,12 @@ export async function POST(req: Request) {
     }
     if (!doctorsFees) {
       return new NextResponse('Doctor fee is required', { status: 401 });
+    }
+
+    if (!deathRegistration) {
+      return new NextResponse('Death Registration fee is required', {
+        status: 401,
+      });
     }
     if (!storageFee) {
       return new NextResponse('Storage fee is required', { status: 401 });
@@ -102,6 +109,7 @@ export async function POST(req: Request) {
         adminFees,
         totalDue,
         scheduledBy,
+        deathRegistration,
       },
     });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { PenBoxIcon, PrinterIcon } from 'lucide-react';
@@ -10,6 +10,8 @@ import useSWR, { SWRConfiguration } from 'swr';
 import { Arrangement } from '@/types';
 import { format } from 'date-fns';
 import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
+
+import { useReactToPrint } from 'react-to-print';
 
 import { formatter } from '@/lib/utils';
 // import { Arrangement } from '@/types';
@@ -32,9 +34,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   id,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
   };
+
   const {
     data,
     error,
@@ -45,8 +49,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     config
   );
 
-  const { toPDF, targetRef } = usePDF({
-    filename: `Arrangement for ${data?.deceased?.ffhMemberNo}.pdf`,
+  const getPageMargins = () => {
+    return `@page { margin: 3rem 2rem 3rem 2rem !important; }`;
+  };
+
+  const componentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: `Funeral Arrangement Sheet - ${data?.deceased?.firstNames} ${data?.deceased?.lastName}`,
   });
 
   // const arrangement = await getArrangement(data)
@@ -85,42 +96,6 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       </Modal>
     );
 
-  const onPrint = () => {
-    const element = document.getElementById('print-ref');
-
-    element && element.classList.add('w-screen');
-
-    element &&
-      generatePDF(targetRef, {
-        method: 'open',
-
-        resolution: Resolution.HIGH,
-        page: {
-          margin: Margin.MEDIUM,
-
-          format: 'A4',
-
-          orientation: 'portrait',
-        },
-        canvas: {
-          mimeType: 'image/png',
-          qualityRatio: 1,
-        },
-
-        overrides: {
-          pdf: {
-            compress: true,
-          },
-
-          canvas: {
-            useCORS: true,
-          },
-        },
-      });
-
-    element && element.classList.remove('w-screen');
-  };
-
   return (
     <Modal
       title={`Viewing Funeral Arrangement for: ${data?.deceased?.firstNames} ${data?.deceased?.lastName}`}
@@ -131,16 +106,17 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       {isLoading && <p>Loading</p>}
       {data && (
         <>
-          <Button onClick={() => onPrint()}>
+          <Button onClick={handlePrint}>
             {' '}
-            <PrinterIcon className="h-4 w-4" /> Download PDF
+            <PrinterIcon className="h-4 w-4 mr-2" /> Print/Save
           </Button>
 
           <section
             className="pt-2 space-x-2 flex items-center justify-end w-full flex-col h-fit"
             id="print-ref"
-            ref={targetRef}
+            ref={componentRef}
           >
+            <style> {getPageMargins()}</style>
             <section className="w-full h-fit">
               <div className="mb-2 p-2">
                 <h1 className="text-xl   text-center  uppercase">
@@ -379,10 +355,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </div>
                 </div>
               </div>
-              <h1 className="text-xl font-semibold mt-10 text-right">
+              <h1 className="text-xl font-semibold mt-10 pr-5 text-right">
                 Total Payable: {formatter.format(data.totalPayable)}
               </h1>
-              <h1 className="text-xl font-semibold text-right">
+              <h1 className="text-xl font-semibold text-right pr-5">
                 Amount Paid: {formatter.format(data.amountPaid)}
               </h1>
             </section>

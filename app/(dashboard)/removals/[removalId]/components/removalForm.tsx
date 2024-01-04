@@ -55,6 +55,7 @@ const formSchema = z.object({
   gravediggerCost: z.coerce.number().default(1),
   adminFees: z.coerce.number().default(1),
   totalDue: z.coerce.number().default(1),
+  deathRegistration: z.coerce.number().default(1),
 });
 
 type RemovalFromValues = z.infer<typeof formSchema>;
@@ -130,7 +131,8 @@ const RemovalForm = ({ initialData }: RemovalFormProps) => {
       Number(form.getValues().adminFees) +
       Number(form.getValues().storageDays * 300) +
       Number(form.getValues().copies * 5) +
-      Number(form.getValues().graveFee);
+      Number(form.getValues().graveFee) +
+      Number(form.getValues().deathRegistration);
 
     setAmountDue(total);
   }, [
@@ -141,6 +143,7 @@ const RemovalForm = ({ initialData }: RemovalFormProps) => {
       'storageFee',
       'copies',
       'graveFee',
+      'deathRegistration',
     ]),
   ]);
 
@@ -291,6 +294,25 @@ const RemovalForm = ({ initialData }: RemovalFormProps) => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="deathRegistration"
+            render={({ field }) => (
+              <FormItem className=" w-2/3">
+                <FormLabel className="font-semibold">
+                  Death Registration
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder="300"
+                    {...field}
+                    min={1}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
           <div className="flex flex-row gap-x-5 items-center">
             <FormField
@@ -392,11 +414,11 @@ const RemovalForm = ({ initialData }: RemovalFormProps) => {
             name="casket"
             render={({ field }) => (
               <FormItem className=" w-2/3">
-                <FormLabel className="font-semibold">Admin Fees (R)</FormLabel>
+                <FormLabel className="font-semibold">Casket</FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="300"
+                    placeholder="4000"
                     {...field}
                     min={1}
                   />

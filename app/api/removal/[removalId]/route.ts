@@ -90,6 +90,7 @@ export async function PATCH(
       adminFees,
       totalDue,
       scheduledBy,
+      deathRegistration,
     } = body;
 
     if (!lastname) {
@@ -149,6 +150,11 @@ export async function PATCH(
     if (!totalDue) {
       return new NextResponse('Total Due is required', { status: 401 });
     }
+    if (!deathRegistration) {
+      return new NextResponse('Death Registration fee is required', {
+        status: 401,
+      });
+    }
 
     const bodyRemoval = await prismadb.removal.update({
       where: {
@@ -172,6 +178,7 @@ export async function PATCH(
         adminFees,
         totalDue,
         scheduledBy,
+        deathRegistration,
       },
     });
 
