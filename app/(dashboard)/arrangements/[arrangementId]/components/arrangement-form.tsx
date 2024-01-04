@@ -253,9 +253,9 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
         await axios.post('/api/arrangement', data);
       }
 
-      router.refresh();
       router.push('/arrangements');
-      toast.success('Successfully uploaded funeral arrangement');
+      router.refresh();
+      toast.success(toastMessage);
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong');
@@ -270,7 +270,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="w-1/2 mb-20">
           {/* Deceased details */}
-          <section className="w-full xl:w-1/2">
+          <section className="w-full ">
             <h1 className="text-xl font-semibold">Details of Deceased</h1>
             <hr className="w-full my-2" />
 
@@ -570,7 +570,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
 
           {/* Family Reps */}
 
-          <section className="mt-10 w-full xl:w-1/2">
+          <section className="mt-10 w-full ">
             <div className="flex justify-between">
               <h1 className="text-xl font-semibold">
                 Details of Family Representatives
@@ -646,7 +646,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
 
           {/* Arrangements */}
 
-          <section className="mt-10 w-full xl:w-1/2">
+          <section className="mt-10 w-full ">
             <h1 className="text-xl font-semibold">Arrangements Details</h1>
             <hr className="w-full my-4" />
             <div className="w-full flex gap-x-4">
@@ -1224,7 +1224,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
           </section>
 
           {/**Add ons */}
-          <section className=" w-full xl:w-1/2 my-5">
+          <section className=" w-full my-5">
             <h1 className="text-xl font-semibold">Add Ons</h1>
             <hr className="w-full my-4" />
 
@@ -1303,7 +1303,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
             </div>
           </section>
 
-          <section className="flex flex-col mt-10 w-full xl:w-1/2 text-right">
+          <section className="flex flex-col mt-10 w-full  text-right">
             <h1 className="text-xl font-semibold">Summary</h1>
             <hr className="w-full my-4" />
 
@@ -1314,7 +1314,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
             <hr className="w-full my-4" />
           </section>
 
-          <section className="flex xl:w-1/2 gap-x-2 justify-end">
+          <section className="flex w-full gap-x-2 justify-end">
             <Button variant={'outline'} onClick={() => router.back()}>
               Cancel
             </Button>
