@@ -108,7 +108,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             <PrinterIcon className="h-4 w-4 mr-2" /> Print/Save
           </Button>
 
-          <RemovalReceiptModal id={data.id} receipts={[]} onClose={() => {}} onConfirm={() => {}} isOpen={true} loading={false}  />
+          {/* <RemovalReceiptModal id={data.id} receipts={[]} onClose={() => {}} onConfirm={() => {}} isOpen={true} loading={false}  /> */}
 
           <section
             className="pt-2 space-x-2 flex items-center justify-end w-full flex-col h-fit pr-2"
