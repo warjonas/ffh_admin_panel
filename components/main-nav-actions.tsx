@@ -65,12 +65,12 @@ const MainNavActions = (props: Props) => {
   ];
 
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col gap-y-5">
       {actions.map((action) => (
         <Link href={action.link} key={action.name}>
           <li
             className={cn(
-              'flex p-5 gap-5 lg:text-xl rounded-md',
+              'flex p-2 gap-5 lg:text-xl rounded-md',
               action.active
                 ? 'bg-primary-foreground text-secondary-foreground'
                 : 'hover:bg-primary'
