@@ -5,7 +5,7 @@ import underContruction from '@/assets/220880-P1KV8M-746.jpg';
 
 type Props = {};
 
-const Home = (props: Props) => {
+const Statistics = (props: Props) => {
   return (
     <section className="p-5 w-full h-full flex items-center justify-center">
       <Image
@@ -19,4 +19,4 @@ const Home = (props: Props) => {
   );
 };
 
-export default Home;
+export default Statistics;

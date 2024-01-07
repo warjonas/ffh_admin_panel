@@ -39,7 +39,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.error('Internal Error');
     } finally {
       setLoading(false);
-      setOpen(false);
+      setAlertOpen(false);
     }
   };
 
@@ -61,7 +61,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       />
       <AlertModal
         isOpen={alertOpen}
-        onClose={() => setOpen(false)}
+        onClose={() => setAlertOpen(false)}
         onConfirm={onDelete}
         loading={loading}
       />

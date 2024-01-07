@@ -38,7 +38,7 @@ model Arrangement{
   doctor                 Boolean
 
   cremationDoctor                 Boolean
-
+ 
   
   tombstoneId         String @db.ObjectId
   tombstone           Tombstone @relation(fields: [tombstoneId], references: [id])

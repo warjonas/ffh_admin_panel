@@ -118,7 +118,7 @@ const formSchema = z.object({
   doctor: z.boolean().default(false),
   cremationDoctor: z.boolean().default(false),
   afterHour: z.boolean().default(false),
-  amountPaid: z.number().default(0),
+  amountPaid: z.coerce.number().default(0),
   notes: z.string().max(190).default(''),
   createdBy: z.string(),
 });
@@ -1306,10 +1306,46 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
           <section className="flex flex-col mt-10 w-full  text-right">
             <h1 className="text-xl font-semibold">Summary</h1>
             <hr className="w-full my-4" />
-
-            <h2 className="text-xl">
-              Total Payable: <span className="font-semibold"> R10 500.00</span>
-            </h2>
+            <div className="w-full flex flex-row justify-end items-center">
+              <h2 className="text-xl mr-2">Amount Paid: </h2>
+              <FormField
+                control={form.control}
+                name="amountPaid"
+                render={({ field }) => (
+                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="50 or 100"
+                        {...field}
+                        className="w-full"
+                        type="number"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="w-full flex flex-row justify-end items-center">
+              <h2 className="text-xl mr-2">Total Payable: </h2>
+              <FormField
+                control={form.control}
+                name="totalPayable"
+                render={({ field }) => (
+                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="50 or 100"
+                        {...field}
+                        className="w-full"
+                        type="number"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <hr className="w-full my-4" />
           </section>

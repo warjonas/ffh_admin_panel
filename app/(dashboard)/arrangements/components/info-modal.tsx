@@ -130,6 +130,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 Receipt No.:{' '}
                 <span className="font-semibold"> {data.receiptNo}</span>
               </h1>
+              <h2 className="my-2"> Created by: {data?.createdBy}</h2>
 
               <div className="w-full flex flex-col gap-y-1">
                 <h2 className="bg-blue-200 p-1 mb-1 text-center font font-semibold border-b uppercase border-black">

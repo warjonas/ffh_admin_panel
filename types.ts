@@ -8,7 +8,7 @@ export interface Arrangement {
   church: Church;
   cemetry: Cemetry;
   minister: Minister;
-
+  createdBy: string;
   digger?: boolean;
   crossSize: string;
   doves: boolean;

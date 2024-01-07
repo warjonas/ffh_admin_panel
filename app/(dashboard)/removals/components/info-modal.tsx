@@ -124,6 +124,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 <h2 className="font-semibold text-lg text-center">
                   Body Removal Report
                 </h2>
+                <h2 className="mt-2"> Created by: {data?.scheduledBy}</h2>
               </div>
             </section>
 
