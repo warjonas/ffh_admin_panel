@@ -71,13 +71,13 @@
 }
 
 .scrollbar::-webkit-scrollbar-track {
-  background: orange; /* color of the tracking area */
+  background: var(--background); /* color of the tracking area */
 }
 
 .scrollbar::-webkit-scrollbar-thumb {
-  background-color: blue; /* color of the scroll thumb */
+  background-color: rgb(2, 8, 23);
   border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid orange; /* creates padding around scroll thumb */
+  border: 3px solid whitesmoke; /* creates padding around scroll thumb */
 }
 
 @layer base {

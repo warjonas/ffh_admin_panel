@@ -19,7 +19,7 @@ const SidebarFooter = (props: Props) => {
   return (
     user && (
       <>
-        <div className="mb-5">
+        <div className="mb-5 hidden lg:block">
           <h1 className="font-semibold text-lg mb-2">Signed In as:</h1>
           <h2>{user.name}</h2>
           <p>{user.email}</p>
@@ -27,7 +27,7 @@ const SidebarFooter = (props: Props) => {
         <div className="w-full">
           <a href="/api/auth/logout">
             <Button className="w-full justify-between p-2 text-xl">
-              Logout
+              <span className="lg:block hidden">Logout</span>
               <span>
                 <LogOutIcon className="h-5 w-5" />
               </span>

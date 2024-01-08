@@ -177,7 +177,7 @@ export async function PATCH(
         gravediggerCost,
         adminFees,
         totalDue,
-        scheduledBy,
+        updatedBy: scheduledBy,
         deathRegistration,
       },
     });

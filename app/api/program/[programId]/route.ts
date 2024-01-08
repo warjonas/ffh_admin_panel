@@ -129,6 +129,7 @@ export async function PATCH(
         id: params.programId,
       },
       data: {
+        updatedBy: createdBy,
         languageOfProgram,
         lastNameOfDeceased,
         firstNameOfDeceased,

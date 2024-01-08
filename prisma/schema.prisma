@@ -32,6 +32,9 @@ model Arrangement{
   totalPayable        Int
   amountPaid          Int   @default(0)
   createdBy           String
+  created             DateTime @default(now())
+  updatedBy           String @default("")
+  updated             DateTime @updatedAt()
   notes               String @default("")
   afterHour                 Boolean
 
@@ -70,7 +73,9 @@ model FuneralProgram {
   orbituaryText       String @default("")
 
   createdBy           String
-
+  created             DateTime @default(now())
+  updatedBy           String @default("")
+  updated             DateTime @updatedAt()
 
 }
 
@@ -97,6 +102,9 @@ model Removal{
   totalDue            Int
   receipts            RemovalReceipt[]
   scheduledBy         String
+  created             DateTime @default(now())
+  updatedBy           String @default("")
+  updated             DateTime @updatedAt()
 
 
 

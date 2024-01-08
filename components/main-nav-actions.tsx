@@ -76,7 +76,7 @@ const MainNavActions = (props: Props) => {
                 : 'hover:bg-primary'
             )}
           >
-            {action.icon} <span className="hidden md:block">{action.name}</span>
+            {action.icon} <span className="hidden lg:block">{action.name}</span>
           </li>
         </Link>
       ))}

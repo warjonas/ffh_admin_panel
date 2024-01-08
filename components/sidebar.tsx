@@ -8,8 +8,8 @@ type Props = {};
 
 const Sidebar = (props: Props) => {
   return (
-    <div className="w-64 bg-foreground h-screen text-primary-foreground shadow-lg rounded-r-lg bg-opacity-80  flex flex-col justify-between">
-      <section className="flex flex-col items-center justify-center h-56 bg-background rounded-b-[50%] text-secondary-foreground">
+    <div className="w-fit lg:w-64 bg-foreground h-screen text-primary-foreground shadow-lg rounded-r-lg bg-opacity-80  flex flex-col justify-between">
+      <section className=" hidden lg:flex flex-col items-center justify-center h-56 bg-background rounded-b-[50%] text-secondary-foreground">
         <SidebarHeader />
         <h1 className="mt-5 text-2xl font-semibold text-center">
           Fortuin Funeral <br /> Home

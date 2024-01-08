@@ -8,6 +8,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
@@ -119,7 +120,13 @@ const formSchema = z.object({
   cremationDoctor: z.boolean().default(false),
   afterHour: z.boolean().default(false),
   amountPaid: z.coerce.number().default(0),
-  notes: z.string().max(190).default(''),
+  notes: z
+    .string({
+      required_error: 'Notes is required. If no notes given, type "None"',
+    })
+    .max(190)
+    .min(1, { message: 'Notes are required' })
+    .default(''),
   createdBy: z.string(),
 });
 
@@ -171,7 +178,6 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
               zip: '',
             },
             deathCertificateRecipient: '',
-            dateOfFuneralService: new Date(),
           },
           deliveryAddress: '',
           deliveryTime: '',
@@ -268,7 +274,10 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
     <>
       <Heading title={title} subtitle={description} />
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-1/2 mb-20">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className=" w-full lg:w-1/2 mb-20"
+        >
           {/* Deceased details */}
           <section className="w-full ">
             <h1 className="text-xl font-semibold">Details of Deceased</h1>
@@ -573,7 +582,8 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
           <section className="mt-10 w-full ">
             <div className="flex justify-between">
               <h1 className="text-xl font-semibold">
-                Details of Family Representatives
+                Details of Family Representatives{' '}
+                <span className="text-sm">(min 1)</span>
               </h1>
 
               <Plus
@@ -888,7 +898,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Bio</FormLabel>
+                        <FormLabel>Notes</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Notes provided by family"
@@ -901,6 +911,7 @@ const ArrangementForm: React.FC<ArrangementFormProps> = ({
                           Additional Information provided by family rep or
                           minister. Max 190 characters
                         </FormDescription>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />

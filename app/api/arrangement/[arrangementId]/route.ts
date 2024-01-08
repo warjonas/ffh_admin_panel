@@ -67,7 +67,7 @@ export async function PATCH(
       liveStreaming,
       coffinid,
       church,
-      createdBy,
+
       afterHour,
     } = body;
 
@@ -166,7 +166,6 @@ export async function PATCH(
         id: params.arrangementId,
       },
       data: {
-        createdBy,
         deceased: {
           ...deceased,
           dateOfDeath: new Date(deceased.dateOfDeath),
