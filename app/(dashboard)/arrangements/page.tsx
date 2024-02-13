@@ -10,6 +10,9 @@ type Props = {};
 
 const Arrangements = async (props: Props) => {
   const arrangements = await prismadb.arrangement.findMany({
+    include: {
+      deceased: true,
+    },
     orderBy: {
       deceased: {
         dateOfDeath: 'desc',

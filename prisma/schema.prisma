@@ -10,25 +10,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Deceased{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  ffhMemberNo                 String
+  lastName                    String
+  nickName            String @default("")
+  firstNames                  String
+  idNumber                    String
+  dateOfBirth         DateTime
+  dateOfDeath                 DateTime
+  removalDate                 DateTime
+  removalFrom                 Address
+  deathCertificateRecipient   String
+ 
+
+  arrangement                 Arrangement?
+  funeralProgram              FuneralProgram?
+
+
+
+
+}
+
 model Arrangement{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   receiptNo           String
-  deceased            Deceased
+   dateOfFuneralService        DateTime
+  
   familyReps          FamilyRep[]
-  deliveryAddress     String
-  DeliveryTime        String
-  church              Church
-  cemetry             Cemetry
-  minister            Minister  
+  deliveryAddress     String?
+  deliveryTime        String?
+  church              Church?
+  cemetry             Cemetry?
+  minister            Minister?  
   digger              Boolean @default(true)
-  crossSize           String
+  crossSize           String?
   doves               Boolean
   liveStreaming       Boolean
-  programs            Int
+  programs            Int?
   familyCar           Boolean
   bus                 Boolean
-  storageDays         Int
-  decor               Decor
+  storageDays         Int?
+  decor               Decor?
   totalPayable        Int
   amountPaid          Int   @default(0)
   createdBy           String
@@ -42,7 +65,8 @@ model Arrangement{
 
   cremationDoctor                 Boolean
  
-  
+  deceasedId          String @db.ObjectId @unique
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
   tombstoneId         String @db.ObjectId
   tombstone           Tombstone @relation(fields: [tombstoneId], references: [id])
   coffinId            String  @db.ObjectId
@@ -52,12 +76,6 @@ model Arrangement{
 
 model FuneralProgram {
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  languageOfProgram   String
-  firstNameOfDeceased String
-  nickName            String @default("")
-  lastNameOfDeceased  String
-  dateOfBirth         DateTime
-  dateOfDeath         DateTime
   survivedBy          String
   atHome              AtHome
   atChurch            AtChurch
@@ -76,6 +94,9 @@ model FuneralProgram {
   created             DateTime @default(now())
   updatedBy           String @default("")
   updated             DateTime @updatedAt()
+
+  deceasedId          String @db.ObjectId @unique
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
 
 }
 
@@ -201,22 +222,6 @@ type FamilyRep{
   lastName        String
   relationship    String
   phoneNo         String
-}
-
-
-
-type Deceased{
-  ffhMemberNo                 String
-  lastName                    String
-  firstNames                  String
-  idNumber                    String
-  dateOfDeath                 DateTime
-  removalDate                 DateTime
-  removalFrom                 Address
-  deathCertificateRecipient   String
-  dateOfFuneralService        DateTime
-
-
 }
 
 type Address{

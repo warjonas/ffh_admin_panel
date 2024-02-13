@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const session = await getSession();
+    const headers = await req.headers.get('type')
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 });

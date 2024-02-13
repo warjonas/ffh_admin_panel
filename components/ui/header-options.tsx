@@ -7,17 +7,18 @@ import React from 'react';
 
 type Props = {
   title: string;
-  path: string;
+  onClick?: () => void;
+  link?: string;
 };
 
-const HeaderOptions = ({ title, path }: Props) => {
+const HeaderOptions = ({ title, onClick, link }: Props) => {
   const router = useRouter();
 
   return (
     <section className="flex justify-end w-full ">
       <Button
         className="w-fit p-5 text-xl flex justify-center gap-x-2 text-center"
-        onClick={() => router.push(path)}
+        onClick={link ? () => router.push(link) : () => {}}
       >
         <span>
           <PlusCircle className="h-5 w-5" />

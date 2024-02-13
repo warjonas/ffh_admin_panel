@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BarChart,
   Car,
@@ -12,12 +12,30 @@ import {
 } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
+import AddDeceasedModal from './modals/add-deceased-modal';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 type Props = {};
 
 const MainNavActions = (props: Props) => {
   const pathname = usePathname();
   const params = useParams();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const actions = [
     {
@@ -25,62 +43,206 @@ const MainNavActions = (props: Props) => {
       icon: <LayoutDashboard />,
       link: '/',
       active: pathname === `/`,
+      items: [
+        {
+          title: 'Home',
+          link: '/',
+          break: true,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+      ],
     },
     {
-      name: 'Arrangements',
+      name: 'Funeral Services',
       icon: <ScrollText />,
-      link: '/arrangements',
-      active:
-        pathname === `/arrangements` ||
-        pathname === `/arrangements/${params.arrangementId}`,
+
+      items: [
+        {
+          title: 'Add Deceased Details',
+          link: '/arrangements',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Deceased Details',
+          link: '/deceased',
+          break: true,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'View Funeral Arrangements',
+          link: '/arrangements',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+
+        {
+          title: 'Create new Arrangement',
+          link: '/arrangements/new',
+          break: true,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Funeral Programs',
+          link: '/arrangements/new',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+      ],
     },
     {
       name: 'Removals',
       icon: <Car />,
-      link: '/removals',
-      active:
-        pathname === `/removals` ||
-        pathname === `/removals/${params.removalId}`,
+
+      items: [
+        {
+          title: 'All Removals',
+          link: '/removals',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Schedule body removal',
+          link: '/removals/new',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Upcoming Body Removals',
+          link: '/removals',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+      ],
     },
     {
-      name: 'Programs',
-      icon: <LayoutList />,
-      link: '/programs',
-      active:
-        pathname === `/programs` ||
-        pathname === `/programs/${params.programId}`,
-    },
-    {
-      name: 'Receipts',
+      name: 'Financial Services',
       icon: <Receipt />,
       link: '/invoices',
-      active: pathname === `/invoices`,
+      items: [
+        {
+          title: 'Invoices',
+          link: '/invoices',
+          break: true,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'All Payments',
+          link: '/invoices',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Outstanding Payments',
+          link: '/invoices',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'New Payment Receipt',
+          link: '/invoices',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+      ],
     },
     {
-      name: 'Statistics',
+      name: 'Admin Utilities',
       icon: <BarChart />,
       link: '/stats',
-      active: pathname === `/stats`,
+      items: [
+        {
+          title: 'Add Deceased Details',
+          link: '/arrangements',
+          break: false,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Deceased Details',
+          link: '/arrangements',
+          break: true,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'View Funeral Arrangements',
+          link: '/arrangements',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+
+        {
+          title: 'Create new Arrangement',
+          link: '/arrangements/new',
+          break: true,
+          type: 'Function',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Funeral Programs',
+          link: '/arrangements/new',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+      ],
     },
   ];
 
   return (
-    <ul className="flex flex-col gap-y-5">
-      {actions.map((action) => (
-        <Link href={action.link} key={action.name}>
-          <li
-            className={cn(
-              'flex p-2 gap-5 lg:text-xl rounded-md',
-              action.active
-                ? 'bg-primary-foreground text-secondary-foreground'
-                : 'hover:bg-primary'
-            )}
-          >
-            {action.icon} <span className="hidden lg:block">{action.name}</span>
-          </li>
-        </Link>
-      ))}
-    </ul>
+    <>
+      <AddDeceasedModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        loading={loading}
+      />
+      <ul className="flex gap-x-2">
+        {actions.map((action) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="gap-1">
+                {action.icon} {action.name}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>{action.name}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {action.items?.map((item) => (
+                  <>
+                    <DropdownMenuItem
+                      onClick={
+                        item.type === 'Function'
+                          ? item.func
+                          : () => router.push(item.link)
+                      }
+                    >
+                      {item.title}
+                    </DropdownMenuItem>
+                    {item.break && <DropdownMenuSeparator />}
+                  </>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ))}
+      </ul>
+    </>
   );
 };
 

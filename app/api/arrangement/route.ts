@@ -17,9 +17,10 @@ export async function POST(req: Request) {
 
     const {
       familyReps,
-      deceased,
+      deceasedId,
       deliveryAddress,
       deliveryTime,
+      dateOfFuneralService,
       minister,
       crossSize,
       cemetry,
@@ -49,8 +50,8 @@ export async function POST(req: Request) {
       });
     }
 
-    if (!deceased) {
-      return new NextResponse('Deceased details incomplete', {
+    if (!deceasedId) {
+      return new NextResponse('Deceased ID is required', {
         status: 400,
       });
     }
@@ -137,17 +138,13 @@ export async function POST(req: Request) {
 
     const arrangement = await prismadb.arrangement.create({
       data: {
+        dateOfFuneralService,
         receiptNo: receipt,
         createdBy,
-        deceased: {
-          ...deceased,
-          dateOfDeath: new Date(deceased.dateOfDeath),
-          removalDate: new Date(deceased.removalDate),
-          dateOfFuneralService: new Date(deceased.dateOfFuneralService),
-        },
+        deceasedId,
         familyReps,
         deliveryAddress,
-        DeliveryTime: deliveryTime,
+        deliveryTime: deliveryTime,
         church,
         cemetry,
         minister,
@@ -178,27 +175,3 @@ export async function POST(req: Request) {
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
-
-// // data:{
-//         id,
-//         deceased: {...deceased, dateOfDeath: new Date(deceased.dateOfDeath)  },
-//         familyReps,
-//         deliveryAddress,
-//         DeliveryTime:deliveryTime,
-//         church,
-//         cemetry,
-//         minister,
-//         digger: true,
-//         crossSize,
-//         doves,
-//         liveStreaming,
-//         programs,
-//         bus,
-//         familyCar: car,
-//         decor,
-//         totalPayable,
-
-//         tombstoneId,
-//         coffinId:coffinid
-
-// //     }
