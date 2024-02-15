@@ -17,6 +17,7 @@ const Deceased = async (props: Props) => {
 
   const formattedDeceased: DeceasedColumn[] = deceased.map((item) => ({
     id: item.id,
+    idNumber: item.idNumber,
 
     firstName: item.firstNames,
     lastName: item.lastName,

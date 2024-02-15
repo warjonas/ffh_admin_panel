@@ -17,11 +17,11 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
   return (
     <section className="flex justify-end w-full ">
       <Button
-        className="w-fit p-5 text-xl flex justify-center gap-x-2 text-center"
+        className="w-fit p-3 text-lg flex justify-center gap-x-2 text-center"
         onClick={link ? () => router.push(link) : () => {}}
       >
         <span>
-          <PlusCircle className="h-5 w-5" />
+          <PlusCircle className="h-4 w-4" />
         </span>{' '}
         {title}
       </Button>

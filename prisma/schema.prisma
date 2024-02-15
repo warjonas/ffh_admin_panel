@@ -22,6 +22,7 @@ model Deceased{
   removalDate                 DateTime
   removalFrom                 Address
   deathCertificateRecipient   String
+  createdBy                   String
  
 
   arrangement                 Arrangement?

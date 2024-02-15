@@ -9,20 +9,24 @@ export type DeceasedColumn = {
 
   firstName: string;
   lastName: string;
+  idNumber: string;
   dateOfBirth: string;
   dateOfDeath: string;
-  createdAt: string;
 };
 
 export const columns: ColumnDef<DeceasedColumn>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'lastName',
     header: 'Full Name',
     cell: ({ row }) => (
       <div>
         {row.original.firstName} {row.original.lastName}
       </div>
     ),
+  },
+  {
+    accessorKey: 'idNumber',
+    header: 'ID Number',
   },
   {
     accessorKey: 'dateOfBirth',

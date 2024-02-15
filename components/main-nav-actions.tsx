@@ -27,6 +27,8 @@ import { useRouter } from 'next/navigation';
 import AddDeceasedModal from './modals/add-deceased-modal';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { Deceased } from '@prisma/client';
+import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 
 type Props = {};
 
@@ -36,6 +38,7 @@ const MainNavActions = (props: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const deceasedModal = useDeceasedModal();
 
   const actions = [
     {
@@ -60,10 +63,10 @@ const MainNavActions = (props: Props) => {
       items: [
         {
           title: 'Add Deceased Details',
-          link: '/arrangements',
+          link: '',
           break: false,
           type: 'Function',
-          func: () => setOpen(true),
+          func: deceasedModal.onOpen,
         },
         {
           title: 'Deceased Details',
@@ -206,14 +209,9 @@ const MainNavActions = (props: Props) => {
 
   return (
     <>
-      <AddDeceasedModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        loading={loading}
-      />
       <ul className="flex gap-x-2">
         {actions.map((action) => (
-          <DropdownMenu>
+          <DropdownMenu key={action.name}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-1">
                 {action.icon} {action.name}
@@ -224,7 +222,7 @@ const MainNavActions = (props: Props) => {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 {action.items?.map((item) => (
-                  <>
+                  <div key={item.title}>
                     <DropdownMenuItem
                       onClick={
                         item.type === 'Function'
@@ -235,7 +233,7 @@ const MainNavActions = (props: Props) => {
                       {item.title}
                     </DropdownMenuItem>
                     {item.break && <DropdownMenuSeparator />}
-                  </>
+                  </div>
                 ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>

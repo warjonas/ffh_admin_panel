@@ -15,23 +15,25 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Input } from '../ui/input';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import useSWR, { SWRConfiguration } from 'swr';
+import { Deceased } from '@prisma/client';
+import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 
-interface AlertModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  id?: string;
-  loading: boolean;
+interface DeceasedModalProps {
+  data?: Deceased;
 }
 
 const formSchema = z.object({
   ffhMemberNo: z.string(),
-  lastName: z.string(),
-  firstNames: z.string(),
-  idNumber: z.string(),
+  lastName: z.string().min(1),
+  firstNames: z.string().min(1),
+  idNumber: z.string().min(1),
   dateOfDeath: z.date({ required_error: 'Date of Death is required' }),
+  dateOfBirth: z.date({ required_error: 'Date of Birth is required' }),
+
   removalDate: z.date({ required_error: 'Date of removal is required' }),
   removalFrom: z.object({
     street: z.string().min(1),
@@ -40,48 +42,83 @@ const formSchema = z.object({
     zip: z.string().min(1),
   }),
   deathCertificateRecipient: z.string().min(1),
-  dateOfFuneralService: z.date({
-    required_error: 'Date of removal is required',
-  }),
 
   createdBy: z.string(),
 });
 
 type DeceasedFormValues = z.infer<typeof formSchema>;
 
-const AddDeceasedModal: React.FC<AlertModalProps> = ({
-  isOpen,
-  loading,
-  onClose,
-  id,
-}) => {
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const AddDeceasedModal = () => {
+  const deceasedModal = useDeceasedModal();
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+
   const [isMounted, setIsMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { user, isLoading: userLoading, error } = useUser();
   const router = useRouter();
 
+  const id = searchParams.get('deceasedId');
+
+  const config: SWRConfiguration = {
+    revalidateOnFocus: true,
+    revalidateIfStale: true,
+  };
+
+  const {
+    data: deceased,
+    error: dataError,
+    isLoading,
+  }: { data: Deceased; error: any; isLoading: any } = useSWR(
+    `/api/deceased/${id}`,
+    fetcher,
+    config
+  );
+
   const form = useForm<DeceasedFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      dateOfDeath: new Date(),
-      ffhMemberNo: '',
-      lastName: '',
-      firstNames: '',
-      idNumber: '',
-      removalDate: new Date(),
-      removalFrom: {
-        street: '',
-        city: '',
-        province: '',
-        zip: '',
-      },
-      deathCertificateRecipient: '',
-      createdBy: '',
-    },
+    defaultValues: deceased
+      ? {
+          dateOfDeath: deceased?.dateOfDeath,
+          dateOfBirth: deceased?.dateOfBirth,
+
+          ffhMemberNo: deceased?.ffhMemberNo,
+          lastName: deceased?.lastName,
+          firstNames: deceased?.firstNames,
+          idNumber: deceased?.idNumber,
+          removalDate: deceased?.removalDate,
+          removalFrom: {
+            street: deceased?.removalFrom?.street,
+            city: deceased?.removalFrom?.city,
+            province: deceased?.removalFrom?.province,
+            zip: deceased?.removalFrom?.zip,
+          },
+          deathCertificateRecipient: deceased?.deathCertificateRecipient,
+          createdBy: deceased?.createdBy,
+        }
+      : {
+          dateOfDeath: new Date(),
+          dateOfBirth: new Date(),
+
+          ffhMemberNo: '',
+          lastName: '',
+          firstNames: '',
+          idNumber: '',
+          removalDate: new Date(),
+          removalFrom: {
+            street: '',
+            city: '',
+            province: '',
+            zip: '',
+          },
+          deathCertificateRecipient: '',
+          createdBy: 'email',
+        },
   });
 
   const onSubmit = async (data: DeceasedFormValues) => {
-    setIsLoading(true);
+    setLoading(true);
 
     try {
       if (!error || !userLoading) {
@@ -90,17 +127,35 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
         }
       }
 
-      await axios.post('/api/deceased', data);
+      if (deceased) {
+        await axios.patch(`/api/deceased/${deceased.id}`, data);
+      } else {
+        await axios.post('/api/deceased', data);
+      }
+
+      deceasedModal.onClose();
+      router.push(`/deceased`);
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong!');
+    } finally {
+      setLoading(false);
     }
-
-    router.push(`/deceased`);
-
-    setIsLoading(false);
-    onClose();
   };
+
+  const onClose = () => {
+    deceasedModal.onClose();
+    router.push('/deceased');
+  };
+
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+    watch,
+    setValue,
+  } = form;
 
   useEffect(() => {
     setIsMounted(true);
@@ -110,23 +165,92 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
     return null;
   }
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = form;
+  if (isLoading) {
+    return (
+      <Modal
+        title={`Loading`}
+        description=""
+        isOpen={deceasedModal.isOpen}
+        onClose={deceasedModal.onClose}
+      >
+        <div
+          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        >
+          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+            Loading...
+          </span>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (deceased) {
+    setValue('firstNames', deceased.firstNames);
+    setValue('lastName', deceased.lastName);
+    setValue('dateOfBirth', deceased.dateOfBirth);
+    setValue('dateOfDeath', deceased.dateOfDeath);
+    setValue('deathCertificateRecipient', deceased.deathCertificateRecipient);
+    setValue('ffhMemberNo', deceased.ffhMemberNo);
+    setValue('idNumber', deceased.idNumber);
+    setValue('removalFrom.city', deceased.removalFrom.city);
+    setValue('removalFrom.zip', deceased.removalFrom.zip);
+    setValue('removalFrom.street', deceased.removalFrom.street);
+    setValue('removalFrom.province', deceased.removalFrom.province);
+    setValue('removalDate', deceased.removalDate);
+  }
 
   return (
     <Modal
       title="Add Deceased Details"
       description="Upload deceased details"
-      isOpen={isOpen}
+      isOpen={deceasedModal.isOpen}
       onClose={onClose}
     >
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-y-5">
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date of Birth:*</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-full pl-3 text-left font-normal ',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value ? (
+                            format(new Date(field.value), 'PPP')
+                          ) : (
+                            <span className="text-gray-400">Select date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto bg-primary-foreground p-0"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date > new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="dateOfDeath"
@@ -144,7 +268,7 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
                           )}
                         >
                           {field.value ? (
-                            format(field.value, 'PPP')
+                            format(new Date(field.value), 'PPP')
                           ) : (
                             <span className="text-gray-400">Select date</span>
                           )}
@@ -178,11 +302,7 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
                       FFH Member No.
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="Member No."
-                        {...field}
-                      />
+                      <Input placeholder="Member No." {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -198,6 +318,8 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
                         disabled={loading}
                         placeholder="ID Number"
                         {...field}
+                        minLength={13}
+                        maxLength={13}
                       />
                     </FormControl>
                   </FormItem>
@@ -247,11 +369,7 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
                     Death Certificate Recipient
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Street name"
-                      {...field}
-                    />
+                    <Input disabled={loading} placeholder="John" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -273,7 +391,7 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
                           )}
                         >
                           {field.value ? (
-                            format(field.value, 'PPP')
+                            format(new Date(field.value), 'PPP')
                           ) : (
                             <span className="text-gray-400">Select date</span>
                           )}
@@ -362,16 +480,13 @@ const AddDeceasedModal: React.FC<AlertModalProps> = ({
               )}
             />
           </div>
+          <div className="pt-6 space-x-2 flex items-center justify-end w-full">
+            <Button variant={'default'} type="submit">
+              Confirm
+            </Button>
+          </div>
         </form>
       </Form>
-      <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-        <Button disabled={loading} variant={'outline'} onClick={onClose}>
-          Cancel
-        </Button>
-        <Button disabled={loading} variant={'default'} type="submit">
-          Confirm
-        </Button>
-      </div>
     </Modal>
   );
 };

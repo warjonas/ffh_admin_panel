@@ -1,9 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useParams, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import axios from 'axios';
 
 import { DeceasedColumn } from './columns';
@@ -17,39 +22,81 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
+import AddDeceasedModal from '@/components/modals/add-deceased-modal';
+import useSWR, { SWRConfiguration } from 'swr';
+import { Deceased } from '@prisma/client';
+import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 
 interface CellActionProps {
   data: DeceasedColumn;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const deceasedModal = useDeceasedModal();
+
   const [loading, setLoading] = useState(false);
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const config: SWRConfiguration = {
+    revalidateOnFocus: false,
+    revalidateIfStale: true,
+  };
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const {
+    data: deceased,
+    error: dataError,
+    isLoading,
+  }: { data: Deceased; error: any; isLoading: any } = useSWR(
+    `/api/deceased/${data.id}`,
+    fetcher,
+    config
+  );
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/arrangement/${data.id}`);
+      await axios.delete(`/api/deceased/${data.id}`);
       router.refresh();
-      toast.success('Funeral arrangement has been deleted');
+      toast.success('Deceased details have been deleted');
     } catch (error) {
-      toast.error('Internal Error');
+      console.log(error);
+      toast.error('Internal Error. Try again.');
     } finally {
       setLoading(false);
       setAlertOpen(false);
     }
   };
 
+  const onUpdate = async () => {
+    router.push(pathname + '?' + createQueryString('deceasedId', data.id));
+    deceasedModal.onOpen();
+  };
+
   const onConfirm = async () => {
     setLoading(true);
-    router.push(`/arrangements/${data.id}`);
+    router.push(`/deceased/${data.id}`);
 
     setLoading(false);
     setOpen(false);
   };
+
   return (
     <>
       <InfoModal
@@ -79,9 +126,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/arrangements/${data.id}`)}
-          >
+
+          <DropdownMenuItem onClick={() => onUpdate()}>
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>

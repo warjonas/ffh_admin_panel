@@ -1,4 +1,3 @@
-import Sidebar from '@/components/sidebar';
 import { getSession } from '@auth0/nextjs-auth0';
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import { redirect } from 'next/navigation';
@@ -8,6 +7,7 @@ import { extractRouterConfig } from 'uploadthing/server';
 import { ourFileRouter } from '../api/uploadthing/core';
 import Navbar from '@/components/navbar';
 import Image from 'next/image';
+import { ModalProvider } from '@/providers/modal-provider';
 
 interface Props {
   children: React.ReactNode;
@@ -16,9 +16,9 @@ interface Props {
 export default async function DashboardLayout({ children }: Props) {
   const session = await getSession();
 
-  // if (!session) {
-  //   redirect('/api/auth/login');
-  // }
+  if (!session) {
+    redirect('/api/auth/login');
+  }
 
   return (
     <main className="flex flex-col w-full">
@@ -33,6 +33,8 @@ export default async function DashboardLayout({ children }: Props) {
          */
         routerConfig={extractRouterConfig(ourFileRouter)}
       />
+      <ModalProvider />
+
       {children}
       <footer className="w-full flex justify-end p-2">
         <Image
