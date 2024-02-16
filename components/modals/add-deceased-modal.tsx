@@ -22,10 +22,6 @@ import useSWR, { SWRConfiguration } from 'swr';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 
-interface DeceasedModalProps {
-  data?: Deceased;
-}
-
 const formSchema = z.object({
   ffhMemberNo: z.string(),
   lastName: z.string().min(1),
@@ -62,8 +58,7 @@ const AddDeceasedModal = () => {
   const id = searchParams.get('deceasedId');
 
   const config: SWRConfiguration = {
-    revalidateOnFocus: true,
-    revalidateIfStale: true,
+    revalidateOnMount: true,
   };
 
   const {
@@ -71,50 +66,31 @@ const AddDeceasedModal = () => {
     error: dataError,
     isLoading,
   }: { data: Deceased; error: any; isLoading: any } = useSWR(
-    `/api/deceased/${id}`,
+    id !== null ? `/api/deceased/${id}` : null,
     fetcher,
     config
   );
 
   const form = useForm<DeceasedFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: deceased
-      ? {
-          dateOfDeath: deceased?.dateOfDeath,
-          dateOfBirth: deceased?.dateOfBirth,
+    defaultValues: {
+      dateOfDeath: new Date(),
+      dateOfBirth: new Date(),
 
-          ffhMemberNo: deceased?.ffhMemberNo,
-          lastName: deceased?.lastName,
-          firstNames: deceased?.firstNames,
-          idNumber: deceased?.idNumber,
-          removalDate: deceased?.removalDate,
-          removalFrom: {
-            street: deceased?.removalFrom?.street,
-            city: deceased?.removalFrom?.city,
-            province: deceased?.removalFrom?.province,
-            zip: deceased?.removalFrom?.zip,
-          },
-          deathCertificateRecipient: deceased?.deathCertificateRecipient,
-          createdBy: deceased?.createdBy,
-        }
-      : {
-          dateOfDeath: new Date(),
-          dateOfBirth: new Date(),
-
-          ffhMemberNo: '',
-          lastName: '',
-          firstNames: '',
-          idNumber: '',
-          removalDate: new Date(),
-          removalFrom: {
-            street: '',
-            city: '',
-            province: '',
-            zip: '',
-          },
-          deathCertificateRecipient: '',
-          createdBy: 'email',
-        },
+      ffhMemberNo: '',
+      lastName: '',
+      firstNames: '',
+      idNumber: '',
+      removalDate: new Date(),
+      removalFrom: {
+        street: '',
+        city: '',
+        province: '',
+        zip: '',
+      },
+      deathCertificateRecipient: '',
+      createdBy: 'email',
+    },
   });
 
   const onSubmit = async (data: DeceasedFormValues) => {
@@ -143,29 +119,42 @@ const AddDeceasedModal = () => {
     }
   };
 
+  const { control, handleSubmit, register, formState, watch, setValue } = form;
+
   const onClose = () => {
     deceasedModal.onClose();
-    router.push('/deceased');
-  };
+    form.reset();
 
-  const {
-    control,
-    handleSubmit,
-    register,
-    formState: { errors },
-    watch,
-    setValue,
-  } = form;
+    router.push('/deceased');
+    router.refresh();
+  };
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (deceased) {
+      setValue('firstNames', deceased.firstNames);
+      setValue('lastName', deceased.lastName);
+      setValue('dateOfBirth', new Date(deceased.dateOfBirth));
+      setValue('dateOfDeath', new Date(deceased.dateOfDeath));
+      setValue('deathCertificateRecipient', deceased.deathCertificateRecipient);
+      setValue('ffhMemberNo', deceased.ffhMemberNo);
+      setValue('idNumber', deceased.idNumber);
+      setValue('removalFrom.city', deceased.removalFrom.city);
+      setValue('removalFrom.zip', deceased.removalFrom.zip);
+      setValue('removalFrom.street', deceased.removalFrom.street);
+      setValue('removalFrom.province', deceased.removalFrom.province);
+      setValue('removalDate', new Date(deceased.removalDate));
+    }
+  }, [deceased]);
+
   if (!isMounted) {
     return null;
   }
 
-  if (isLoading) {
+  if (isLoading && !dataError) {
     return (
       <Modal
         title={`Loading`}
@@ -183,21 +172,6 @@ const AddDeceasedModal = () => {
         </div>
       </Modal>
     );
-  }
-
-  if (deceased) {
-    setValue('firstNames', deceased.firstNames);
-    setValue('lastName', deceased.lastName);
-    setValue('dateOfBirth', deceased.dateOfBirth);
-    setValue('dateOfDeath', deceased.dateOfDeath);
-    setValue('deathCertificateRecipient', deceased.deathCertificateRecipient);
-    setValue('ffhMemberNo', deceased.ffhMemberNo);
-    setValue('idNumber', deceased.idNumber);
-    setValue('removalFrom.city', deceased.removalFrom.city);
-    setValue('removalFrom.zip', deceased.removalFrom.zip);
-    setValue('removalFrom.street', deceased.removalFrom.street);
-    setValue('removalFrom.province', deceased.removalFrom.province);
-    setValue('removalDate', deceased.removalDate);
   }
 
   return (

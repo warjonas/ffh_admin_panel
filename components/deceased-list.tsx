@@ -1,4 +1,3 @@
-// import { PopoverTriggerProps } from '@radix-ui/react-popover';
 'use client';
 
 import React, { useCallback, useState } from 'react';
@@ -43,7 +42,7 @@ interface DeceasedListProps extends PopoverTriggerProps {
   items: any;
 }
 
-const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
+const DeceasedList = ({ className, items = [] }: DeceasedListProps) => {
   const deceasedModal = useDeceasedModal();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -64,6 +63,7 @@ const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
   const formattedItems = items.map((item: Deceased) => ({
     label: item.firstNames + ' ' + item.lastName,
     value: item.id,
+    idNumber: item.idNumber,
   }));
 
   const deceasedDetails = formattedItems.find((item: any) => item.value === id);
@@ -83,17 +83,16 @@ const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
           role="combobox"
           aria-expanded={open}
           aria-label="Select Store"
-          className={cn('w-fit px-5 justify-between h-11 text-xl', className)}
+          className={cn('w-1/2 p-2 justify-between text-lg', className)}
         >
-          <StoreIcon className="mr-2 h-5 w-5" />
-          {deceasedDetails?.label}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {deceasedDetails?.label} - {deceasedDetails?.idNumber}
+          <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0">
         <Command>
           <CommandList>
-            <CommandInput placeholder="Search Store..." />
+            <CommandInput placeholder="Search Deceased..." />
             <CommandEmpty>No Deceased found</CommandEmpty>
             <CommandGroup heading="Deceased">
               {formattedItems.map((item: any) => (
@@ -102,13 +101,11 @@ const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
                   onSelect={() => onDeceasedSelect(item.value)}
                   className="text-sm"
                 >
-                  <StoreIcon className="mr-4 text-white" /> {item.value}{' '}
+                  {item.label} - {item.idNumber}
                   <Check
                     className={cn(
                       'ml-2 h-4 w-4',
-                      deceasedDetails?.value === id
-                        ? 'opacity-100'
-                        : 'opacity-0'
+                      item.value === id ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                 </CommandItem>
@@ -121,12 +118,13 @@ const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
               <CommandItem
                 onSelect={() => {
                   setOpen(false);
+                  router.push('/deceased');
                   deceasedModal.onOpen();
                 }}
                 className="hover:cursor-pointer"
               >
                 <PlusCircle className="mr-2 h-5 w-5" />
-                Create Store
+                Add deceased
               </CommandItem>
             </CommandGroup>
           </CommandList>
@@ -136,4 +134,4 @@ const StoreSwitcher = ({ className, items = [] }: DeceasedListProps) => {
   );
 };
 
-export default StoreSwitcher;
+export default DeceasedList;

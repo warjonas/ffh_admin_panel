@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       programs,
       bus,
       car,
+      digger,
       wreaths,
       storageDays,
       decor,
@@ -44,92 +45,8 @@ export async function POST(req: Request) {
       afterHour,
     } = body;
 
-    if (!familyReps) {
-      return new NextResponse('Atleast 1 family representative is required', {
-        status: 400,
-      });
-    }
-
     if (!deceasedId) {
       return new NextResponse('Deceased ID is required', {
-        status: 400,
-      });
-    }
-
-    if (!deliveryAddress) {
-      return new NextResponse('Delivery Address is required', {
-        status: 400,
-      });
-    }
-
-    if (!deliveryTime) {
-      return new NextResponse('Delivery Time is required', {
-        status: 400,
-      });
-    }
-
-    if (!minister) {
-      return new NextResponse('Minister details is required', {
-        status: 400,
-      });
-    }
-
-    if (!crossSize) {
-      return new NextResponse('Cross Size is required', {
-        status: 400,
-      });
-    }
-
-    if (!cemetry) {
-      return new NextResponse('cemetry is required', {
-        status: 400,
-      });
-    }
-
-    if (!programs) {
-      return new NextResponse('Program amount is required', {
-        status: 400,
-      });
-    }
-
-    if (!storageDays) {
-      return new NextResponse('Storage days  is required', {
-        status: 400,
-      });
-    }
-
-    if (!decor) {
-      return new NextResponse('Decor details  is required', {
-        status: 400,
-      });
-    }
-
-    if (!tombstoneId) {
-      return new NextResponse('Tombstone is required', {
-        status: 400,
-      });
-    }
-
-    if (!totalPayable) {
-      return new NextResponse('Total payable is required', {
-        status: 400,
-      });
-    }
-
-    if (!amountPaid) {
-      return new NextResponse('Amount  be paid is required', {
-        status: 400,
-      });
-    }
-
-    if (!notes) {
-      return new NextResponse('Notes is required', {
-        status: 400,
-      });
-    }
-
-    if (!coffinid) {
-      return new NextResponse('Coffin is required', {
         status: 400,
       });
     }
@@ -148,7 +65,7 @@ export async function POST(req: Request) {
         church,
         cemetry,
         minister,
-        digger: true,
+        digger,
         crossSize,
         doves,
         liveStreaming,
@@ -164,6 +81,7 @@ export async function POST(req: Request) {
         cremationDoctor,
         doctor,
         amountPaid,
+        wreaths,
 
         coffinId: coffinid,
       },

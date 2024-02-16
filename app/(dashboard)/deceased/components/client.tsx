@@ -21,7 +21,7 @@ interface DeceasedClientProps {
 }
 
 export const DeceasedClient: React.FC<DeceasedClientProps> = ({ data }) => {
-  const [key, setKey] = useState('name');
+  const [key, setKey] = useState('lastName');
 
   return (
     <div className="w-full flex flex-col">

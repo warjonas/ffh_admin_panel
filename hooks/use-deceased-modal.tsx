@@ -11,3 +11,9 @@ export const useDeceasedModal = create<useDeceasedModalStore>((set) => ({
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),
 }));
+
+export const useDeceasedInfoModal = create<useDeceasedModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));

@@ -35,7 +35,7 @@ const Deceased = async (props: Props) => {
       />
       <section>
         <div className="flex justify-between">
-          <HeaderOptions title="New Deceased details" link="/deceased/new" />
+          <HeaderOptions title="New Deceased details" link="deceased" />
         </div>
       </section>
       <section>

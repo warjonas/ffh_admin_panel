@@ -22,32 +22,27 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
-import AddDeceasedModal from '@/components/modals/add-deceased-modal';
-import useSWR, { SWRConfiguration } from 'swr';
+
 import { Deceased } from '@prisma/client';
-import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import {
+  useDeceasedInfoModal,
+  useDeceasedModal,
+} from '@/hooks/use-deceased-modal';
 
 interface CellActionProps {
   data: DeceasedColumn;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const deceasedModal = useDeceasedModal();
+  const infoModal = useDeceasedInfoModal();
 
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-
-  const config: SWRConfiguration = {
-    revalidateOnFocus: false,
-    revalidateIfStale: true,
-  };
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -57,16 +52,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       return params.toString();
     },
     [searchParams]
-  );
-
-  const {
-    data: deceased,
-    error: dataError,
-    isLoading,
-  }: { data: Deceased; error: any; isLoading: any } = useSWR(
-    `/api/deceased/${data.id}`,
-    fetcher,
-    config
   );
 
   const onDelete = async () => {
@@ -89,23 +74,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     deceasedModal.onOpen();
   };
 
-  const onConfirm = async () => {
-    setLoading(true);
-    router.push(`/deceased/${data.id}`);
+  const onView = async () => {
+    router.push(pathname + '?' + createQueryString('deceasedId', data.id));
 
-    setLoading(false);
-    setOpen(false);
+    infoModal.onOpen();
   };
 
   return (
     <>
-      <InfoModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-        id={data.id}
-      />
       <AlertModal
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
@@ -122,7 +98,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem onClick={() => onView()}>
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>

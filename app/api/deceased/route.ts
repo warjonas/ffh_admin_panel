@@ -5,6 +5,17 @@ import { FamilyRep } from '@prisma/client';
 import { ObjectId } from 'bson';
 import { NextResponse } from 'next/server';
 
+export async function GET(req: Request) {
+  try {
+    const deceased = await prismadb.deceased.findMany({});
+
+    return NextResponse.json(deceased);
+  } catch (error) {
+    console.log('DECEASED_GET', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getSession();
@@ -74,6 +85,7 @@ export async function POST(req: Request) {
         deathCertificateRecipient,
         dateOfDeath: new Date(dateOfDeath),
         removalDate: new Date(removalDate),
+        createdBy: '',
       },
     });
 

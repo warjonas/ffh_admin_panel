@@ -29,6 +29,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 
 type Props = {};
 
@@ -39,6 +40,7 @@ const MainNavActions = (props: Props) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const deceasedModal = useDeceasedModal();
+  const arrangementModal = useArrangementModal();
 
   const actions = [
     {
@@ -88,7 +90,7 @@ const MainNavActions = (props: Props) => {
           link: '/arrangements/new',
           break: true,
           type: 'Function',
-          func: () => setOpen(true),
+          func: arrangementModal.onOpen,
         },
         {
           title: 'Funeral Programs',

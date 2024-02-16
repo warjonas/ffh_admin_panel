@@ -39,7 +39,7 @@ const Arrangements = async (props: Props) => {
       />
       <section>
         <div className="flex justify-between">
-          <HeaderOptions title="New Arrangement" path="/arrangements/new" />
+          <HeaderOptions title="New Arrangement" link="arrangement" />
         </div>
       </section>
       <section>
