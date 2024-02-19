@@ -6,12 +6,13 @@ import { CellAction } from './cell-action';
 
 export type ArrangementColumn = {
   id: string;
+  deceasedId: string;
   receiptNo: string;
   firstName: string;
   lastName: string;
 
   memberNo: string;
-  createdAt: string;
+  dateOfDeath: string;
 };
 
 export const columns: ColumnDef<ArrangementColumn>[] = [
@@ -28,16 +29,15 @@ export const columns: ColumnDef<ArrangementColumn>[] = [
       </div>
     ),
   },
+
   {
-    accessorKey: 'memberNo',
-    header: 'Member No.',
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Date',
+    accessorKey: 'dateOfDeath',
+    header: 'Passed on',
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => (
+      <CellAction data={row.original} deceasedId={row.original.deceasedId} />
+    ),
   },
 ];

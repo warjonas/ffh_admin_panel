@@ -23,11 +23,12 @@ const Arrangements = async (props: Props) => {
   const formattedArrangements: ArrangementColumn[] = arrangements.map(
     (item) => ({
       id: item.id,
+      deceasedId: item.deceasedId,
       receiptNo: item.receiptNo,
       memberNo: item.deceased.ffhMemberNo,
       firstName: item.deceased.firstNames,
       lastName: item.deceased.lastName,
-      createdAt: format(item.deceased.dateOfDeath, 'MM/dd/yyyy'),
+      dateOfDeath: format(item.deceased.dateOfDeath, 'MM/dd/yyyy'),
     })
   );
 

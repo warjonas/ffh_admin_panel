@@ -26,7 +26,7 @@ export async function GET(
 
     return NextResponse.json(deceased);
   } catch (error) {
-    console.log('DECEASED_SINGLE_GET', error);
+    // console.log('DECEASED_SINGLE_GET', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

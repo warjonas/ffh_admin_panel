@@ -1,8 +1,7 @@
 import { generateId } from '@/actions/getInvoiceId';
 import prismadb from '@/lib/prismadb';
 import { getSession } from '@auth0/nextjs-auth0';
-import { FamilyRep } from '@prisma/client';
-import { ObjectId } from 'bson';
+
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -17,7 +16,7 @@ export async function POST(req: Request) {
 
     const {
       familyReps,
-      deceasedId,
+      deceased,
       deliveryAddress,
       deliveryTime,
       dateOfFuneralService,
@@ -45,23 +44,29 @@ export async function POST(req: Request) {
       afterHour,
     } = body;
 
-    if (!deceasedId) {
+    let user;
+
+    if (!createdBy) {
+      user = session.user;
+    }
+
+    if (!deceased) {
       return new NextResponse('Deceased ID is required', {
         status: 400,
       });
     }
 
-    const receipt = await generateId();
+    const receiptNo = await generateId();
 
     const arrangement = await prismadb.arrangement.create({
       data: {
         dateOfFuneralService,
-        receiptNo: receipt,
-        createdBy,
-        deceasedId,
+        receiptNo,
+        createdBy: createdBy ? createdBy : user,
+        deceasedId: deceased,
         familyReps,
         deliveryAddress,
-        deliveryTime: deliveryTime,
+        deliveryTime,
         church,
         cemetry,
         minister,

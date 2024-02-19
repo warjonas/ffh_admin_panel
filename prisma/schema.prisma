@@ -69,10 +69,10 @@ model Arrangement{
  
   deceasedId          String @db.ObjectId @unique
   deceased            Deceased  @relation(fields: [deceasedId], references: [id])
-  tombstoneId         String @db.ObjectId
-  tombstone           Tombstone @relation(fields: [tombstoneId], references: [id])
-  coffinId            String  @db.ObjectId
-  coffin              Coffin    @relation(fields: [coffinId], references: [id])
+  tombstoneId         String? @db.ObjectId
+  tombstone           Tombstone? @relation(fields: [tombstoneId], references: [id])
+  coffinId            String?  @db.ObjectId
+  coffin              Coffin?    @relation(fields: [coffinId], references: [id])
 
 }
 

@@ -40,9 +40,14 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 
 interface DeceasedListProps extends PopoverTriggerProps {
   items: any;
+  disabled: boolean;
 }
 
-const DeceasedList = ({ className, items = [] }: DeceasedListProps) => {
+const DeceasedList = ({
+  className,
+  items = [],
+  disabled,
+}: DeceasedListProps) => {
   const deceasedModal = useDeceasedModal();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -76,7 +81,7 @@ const DeceasedList = ({ className, items = [] }: DeceasedListProps) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild disabled={disabled}>
         <Button
           variant={'outline'}
           size={'sm'}

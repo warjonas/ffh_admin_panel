@@ -128,7 +128,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               </div>
               <h1 className="text-center text-xl mb-5">
                 Receipt No.:{' '}
-                <span className="font-semibold"> {data.receiptNo}</span>
+                <span className="font-semibold"> {data?.receiptNo}</span>
               </h1>
               <h2 className="my-2"> Created by: {data?.createdBy}</h2>
 
@@ -151,7 +151,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 <p className="font-semibold">
                   Date Of Death:{' '}
                   <span className="font-normal">
-                    {format(new Date(data.deceased.dateOfDeath), 'MM/dd/yyyy')}
+                    {data.deceased &&
+                      format(
+                        new Date(data?.deceased?.dateOfDeath),
+                        'MM/dd/yyyy'
+                      )}
                   </span>
                 </p>
                 <div className="flex flex-row gap-x-2">
@@ -159,28 +163,29 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     First Name(s):{' '}
                     <span className="font-normal">
                       {' '}
-                      {data.deceased.firstNames}
+                      {data?.deceased?.firstNames}
                     </span>
                   </p>
                   <p className="font-semibold">
                     Last Name:{' '}
                     <span className="font-normal">
                       {' '}
-                      {data.deceased.lastName}
+                      {data?.deceased?.lastName}
                     </span>{' '}
                   </p>
                 </div>
                 <p className="font-medium">
                   Removal Date:{' '}
-                  {format(new Date(data.deceased.removalDate), 'MM/dd/yyyy')}
+                  {data.deceased &&
+                    format(new Date(data?.deceased?.removalDate), 'MM/dd/yyyy')}
                 </p>
                 <p className="font-semibold">
                   Removal From:{' '}
                   <span className="font-normal">
-                    {data.deceased.removalFrom.street},{' '}
-                    {data.deceased.removalFrom.city},{' '}
-                    {data.deceased.removalFrom.province},{' '}
-                    {data.deceased.removalFrom.zip}
+                    {data.deceased?.removalFrom?.street},{' '}
+                    {data.deceased?.removalFrom?.city},{' '}
+                    {data.deceased?.removalFrom?.province},{' '}
+                    {data.deceased?.removalFrom?.zip}
                   </span>
                 </p>
                 <p className="font-semibold">
@@ -198,7 +203,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   <p className="col-start-3">Relationship</p>
                   <p className="col-start-4">Phone No.</p>
                   <hr className="w-full my-1 col-span-4" />
-                  {data.familyReps.map((rep) => (
+                  {data?.familyReps.map((rep) => (
                     <>
                       <p className="col-start-1">{rep.firstName}</p>
                       <p className="col-start-2">{rep.lastName}</p>
@@ -217,15 +222,16 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   <div className="w-1/2 border-r border-gray-300">
                     <h2 className="uppercase font-semibold">Home</h2>
                     <p className="font-medium">
-                      Delivery Address: {data.deliveryAddress} <br />
-                      Delivery Time: {data.DeliveryTime}
+                      Delivery Address: {data?.deliveryAddress} <br />
+                      Delivery Time: {data?.DeliveryTime}
                     </p>
                     <h2 className="uppercase font-semibold mt-2">CHURCH</h2>
                     <p className="font-medium">
-                      Name of Church: {data.church.churchName} <br />
-                      Church Address: {data.church.Address.street},{' '}
-                      {data.church.Address.city}, {data.church.Address.province}
-                      , {data.church.Address.zip}
+                      Name of Church: {data?.church.churchName} <br />
+                      Church Address: {data?.church.Address.street},{' '}
+                      {data?.church?.Address.city},{' '}
+                      {data?.church?.Address.province},{' '}
+                      {data?.church?.Address.zip}
                     </p>
                     <h2 className="uppercase font-semibold mt-2">Cemetry</h2>
                     <p className="font-medium">
@@ -245,7 +251,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </div>
 
                   <div className="ml-2 w-1/2">
-                    <p className="font-medium">
+                    {/* <p className="font-medium">
                       <span className="font-semibold"> Coffin name: </span>
                       {data.coffin.coffinName}
                     </p>
@@ -270,7 +276,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     <p className="font-medium">
                       <span className="font-semibold"> Live Streaming: </span>
                       {data.liveStreaming === true ? 'Yes' : 'No'}
-                    </p>
+                    </p> */}
                     <p className="font-medium">
                       <span className="font-semibold">
                         {' '}
@@ -279,7 +285,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       {data.programs}
                     </p>
 
-                    <p className="font-medium">
+                    {/* <p className="font-medium">
                       <span className="font-semibold"> Family Car: </span>
                       {data.familyCar === true ? 'Yes' : 'No'}
                     </p>
@@ -299,14 +305,14 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       {data.tombstone.tombstoneName !== ''
                         ? data.tombstone.tombstoneName
                         : 'Not Applicable.'}
-                    </p>
+                    </p> */}
 
                     <p className="font-medium">
                       <span className="font-semibold">
                         {' '}
                         Days of Storage @ R300/day:{' '}
                       </span>
-                      {data.storageDays} days
+                      {data?.storageDays} days
                     </p>
 
                     <h2 className="uppercase font-semibold mt-2">Decor</h2>
@@ -334,33 +340,14 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       </div>
                     </div>
                     <hr className="w-2/3 mb-2" />
-
-                    <p className="font-medium">
-                      <span className="font-semibold">
-                        {' '}
-                        After hour @ R3 000:{' '}
-                      </span>
-                      {data.afterHour === true ? 'Yes' : 'No'}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold"> Doctor @ R550: </span>
-                      {data.doctor === true ? 'Yes' : 'No'}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold">
-                        {' '}
-                        Cremation Doctor @ R550:{' '}
-                      </span>
-                      {data.cremationDoctor === true ? 'Yes' : 'No'}
-                    </p>
                   </div>
                 </div>
               </div>
               <h1 className="text-xl font-semibold mt-10 pr-5 text-right">
-                Total Payable: {formatter.format(data.totalPayable)}
+                Total Payable: {formatter.format(data?.totalPayable)}
               </h1>
               <h1 className="text-xl font-semibold text-right pr-5">
-                Amount Paid: {formatter.format(data.amountPaid)}
+                Amount Paid: {formatter.format(data?.amountPaid)}
               </h1>
             </section>
           </section>

@@ -51,7 +51,7 @@ import DeceasedList from '../deceased-list';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const formSchema = z.object({
-  deceased: z.string().min(1),
+  deceased: z.string(),
   dateOfFuneralService: z.date(),
   familyReps: z
     .object({
@@ -132,8 +132,8 @@ const AddArrangmentModal = () => {
     data: initialData,
     error: initialDataError,
     isLoading: initialDataLoading,
-  }: { data: Deceased[]; error: any; isLoading: any } = useSWR(
-    `/api/deceased/${arrangementId}`,
+  }: { data: Arrangement; error: any; isLoading: any } = useSWR(
+    `/api/arrangement/${arrangementId}`,
     fetcher,
     config
   );
@@ -216,13 +216,13 @@ const AddArrangmentModal = () => {
         glass: false,
         banner: false,
       },
-      tombstoneId: '',
+      tombstoneId: '658436d1de42bdd8d5632f85',
       totalPayable: 0,
       amountPaid: 0,
       notes: '',
       doctor: 0,
       cremationDoctor: 0,
-      coffinid: '',
+      coffinid: '65d30ab955df5069abb2bd0d',
       createdBy: 'email',
     },
   });
@@ -232,6 +232,7 @@ const AddArrangmentModal = () => {
     handleSubmit,
     register,
     formState: { errors },
+    setValue,
   } = form;
 
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
@@ -245,6 +246,13 @@ const AddArrangmentModal = () => {
   );
 
   const onSubmit = async (data: ArrangementFormValues) => {
+    if (!deceasedId) {
+      form.setError('deceased', { message: 'Deceased ID is required' });
+      throw error;
+    }
+
+    data.deceased = deceasedId;
+
     try {
       setLoading(true);
       console.log(data);
@@ -254,6 +262,7 @@ const AddArrangmentModal = () => {
           data.createdBy = user.email;
         }
       }
+
       data.totalPayable = 20000;
       data.amountPaid = 1000;
 
@@ -283,6 +292,44 @@ const AddArrangmentModal = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (initialData) {
+      setValue('deceased', initialData.deceasedId);
+
+      if (initialData.dateOfFuneralService) {
+        setValue(
+          'dateOfFuneralService',
+          new Date(initialData.dateOfFuneralService)
+        );
+      }
+      setValue('amountPaid', initialData.amountPaid);
+      setValue('bus', initialData.bus);
+      setValue('car', initialData.familyCar);
+      setValue('afterHour', initialData.afterHour);
+      if (initialData.cemetry) setValue('cemetry', initialData.cemetry);
+      if (initialData.church) setValue('church', initialData.church);
+      if (initialData.familyReps)
+        setValue('familyReps', initialData.familyReps);
+      if (initialData.coffinId) setValue('coffinid', initialData.coffinId);
+      setValue('liveStreaming', initialData.liveStreaming);
+      setValue('doctor', initialData.doctor);
+      if (initialData.programs) setValue('programs', initialData.programs);
+      if (initialData.minister) setValue('minister', initialData.minister);
+
+      setValue('totalPayable', initialData.totalPayable);
+      setValue('amountPaid', initialData.amountPaid);
+      setValue('doves', initialData.doves);
+      setValue('notes', initialData.notes);
+
+      if (initialData.storageDays)
+        setValue('storageDays', initialData.storageDays);
+
+      setValue('cremationDoctor', initialData.cremationDoctor);
+      if (initialData.crossSize) setValue('crossSize', initialData.crossSize);
+      if (initialData.decor) setValue('decor', initialData.decor);
+    }
+  }, [initialData]);
 
   if (!isMounted) {
     return null;
@@ -329,7 +376,7 @@ const AddArrangmentModal = () => {
               </span>
             </div>
           ) : (
-            <DeceasedList items={deceasedData} />
+            <DeceasedList items={deceasedData} disabled={true} />
           )}
         </div>
 

@@ -1,9 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useParams, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import axios from 'axios';
 
 import { ArrangementColumn } from './columns';
@@ -17,17 +22,32 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
+import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 
 interface CellActionProps {
   data: ArrangementColumn;
+  deceasedId: string;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const arrangementModal = useArrangementModal();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
 
   const onDelete = async () => {
     try {
@@ -41,6 +61,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(false);
       setAlertOpen(false);
     }
+  };
+
+  const onUpdate = async () => {
+    router.push(
+      pathname +
+        '?' +
+        createQueryString('deceasedId', deceasedId) +
+        '&' +
+        createQueryString('arrangementId', data.id)
+    );
+    arrangementModal.onOpen();
   };
 
   const onConfirm = async () => {
@@ -79,9 +110,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/arrangements/${data.id}`)}
-          >
+          <DropdownMenuItem onClick={() => onUpdate()}>
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>
