@@ -6,11 +6,12 @@ export const getFuneralProgram = async (programId: string) => {
       id: programId,
     },
     include: {
-      tombstone: true,
-      coffin: true,
+      deceased: true,
     },
     orderBy: {
-      dateOfDeath: 'desc',
+      deceased: {
+        dateOfDeath: 'asc',
+      },
     },
   });
 

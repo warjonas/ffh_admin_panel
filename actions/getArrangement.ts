@@ -9,6 +9,7 @@ export const getArrangement = async (arrangementId: string) => {
     include: {
       tombstone: true,
       coffin: true,
+      deceased: true,
     },
     orderBy: {
       deceased: {
