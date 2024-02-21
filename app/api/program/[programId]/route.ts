@@ -47,10 +47,7 @@ export async function PATCH(
       atChurch,
       atHome,
       hymn,
-      nickName,
       otherInformation,
-      firstNameOfDeceased,
-      lastNameOfDeceased,
       orbituaryText,
       pallbearersGrave,
       pallbearersInChurch,
@@ -60,8 +57,6 @@ export async function PATCH(
       survivedBy,
       createdBy,
       needPallbearers,
-      dateOfBirth,
-      dateOfDeath,
     } = body;
 
     if (!languageOfProgram) {
@@ -84,14 +79,6 @@ export async function PATCH(
 
     if (!hymn) {
       return new NextResponse('Hymns are required', { status: 400 });
-    }
-
-    if (!firstNameOfDeceased) {
-      return new NextResponse('First name is required', { status: 400 });
-    }
-
-    if (!lastNameOfDeceased) {
-      return new NextResponse('Last name is required', { status: 400 });
     }
 
     if (!pallbearersGrave) {
@@ -131,9 +118,6 @@ export async function PATCH(
       data: {
         updatedBy: createdBy,
         languageOfProgram,
-        lastNameOfDeceased,
-        firstNameOfDeceased,
-        nickName,
         atChurch: {
           ...atChurch,
           officiatingMinister: atChurch.officiatingMinister,
@@ -146,8 +130,6 @@ export async function PATCH(
         pallbearersOutHouse,
         otherInformation,
         needPallbearers,
-        dateOfBirth: new Date(dateOfBirth),
-        dateOfDeath: new Date(dateOfDeath),
         createdBy,
         survivedBy,
         orbituaryText,
@@ -181,7 +163,7 @@ export async function DELETE(
 
     return NextResponse.json(funeralProgram);
   } catch (error) {
-    console.log('Internal Server Error', error);
+    console.log('FUNERAL_PROGRAM_DELETE', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const session = await getSession();
-    const headers = await req.headers.get('type')
+    const headers = await req.headers.get('type');
 
     if (!session) {
       return new NextResponse('Unauthorized', { status: 401 });
@@ -18,10 +18,8 @@ export async function POST(req: Request) {
       atChurch,
       atHome,
       hymn,
-      nickName,
+      deceasedId,
       otherInformation,
-      firstNameOfDeceased,
-      lastNameOfDeceased,
       orbituaryText,
       pallbearersGrave,
       pallbearersInChurch,
@@ -31,8 +29,6 @@ export async function POST(req: Request) {
       survivedBy,
       createdBy,
       needPallbearers,
-      dateOfBirth,
-      dateOfDeath,
     } = body;
 
     if (!languageOfProgram) {
@@ -55,14 +51,6 @@ export async function POST(req: Request) {
 
     if (!hymn) {
       return new NextResponse('Hymns are required', { status: 400 });
-    }
-
-    if (!firstNameOfDeceased) {
-      return new NextResponse('First name is required', { status: 400 });
-    }
-
-    if (!lastNameOfDeceased) {
-      return new NextResponse('Last name is required', { status: 400 });
     }
 
     if (!pallbearersGrave) {
@@ -98,9 +86,6 @@ export async function POST(req: Request) {
     const funeralProgram = await prismadb.funeralProgram.create({
       data: {
         languageOfProgram,
-        lastNameOfDeceased,
-        firstNameOfDeceased,
-        nickName,
         atChurch: {
           ...atChurch,
           officiatingMinister: atChurch.officiatingMinister,
@@ -112,12 +97,12 @@ export async function POST(req: Request) {
         pallbearersInHouse,
         pallbearersOutHouse,
         otherInformation,
-        dateOfBirth: new Date(dateOfBirth),
-        dateOfDeath: new Date(dateOfDeath),
+
         createdBy,
         survivedBy,
         orbituaryText,
         hymn,
+        deceasedId: deceasedId,
       },
     });
 
