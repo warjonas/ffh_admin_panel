@@ -7,15 +7,14 @@ interface Props {
 }
 
 const page = async ({ params }: Props) => {
-  let program = null;
-
-  if (params.programId !== 'new') {
-    program = await prismadb.funeralProgram.findUnique({
-      where: {
-        id: params.programId,
-      },
-    });
-  }
+  const program = await prismadb.funeralProgram.findUnique({
+    where: {
+      id: params.programId,
+    },
+    include: {
+      deceased: true,
+    },
+  });
 
   return (
     <div className="min-h-screen w-full p-5 overflow-auto mb-20">

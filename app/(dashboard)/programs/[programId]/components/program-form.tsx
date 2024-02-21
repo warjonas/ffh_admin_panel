@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/popover';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FuneralProgram } from '@prisma/client';
+import { Deceased, FuneralProgram } from '@prisma/client';
 import axios from 'axios';
 import { CalendarIcon, Plus, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -34,10 +34,15 @@ import { cn } from '@/lib/utils';
 import { UploadButton } from '@/lib/uploadthing';
 
 interface ProgramFormProps {
-  initialData: FuneralProgram | null;
+  initialData:
+    | (FuneralProgram & {
+        deceased: Deceased;
+      })
+    | null;
 }
 
 const formSchema = z.object({
+  deceasedId: z.string(),
   languageOfProgram: z.string().min(1),
   firstNameOfDeceased: z.string().min(1),
   nickName: z.string().min(1),
@@ -122,7 +127,7 @@ const ProgramForm = ({ initialData }: ProgramFormProps) => {
   const { user, error, isLoading } = useUser();
 
   const title = initialData
-    ? `Edit Funeral Program for ${initialData.firstNameOfDeceased} ${initialData.lastNameOfDeceased}`
+    ? `Edit Funeral Program for ${initialData.deceased.firstNames} ${initialData.deceased.lastName}`
     : 'Funeral Program';
   const description = initialData
     ? 'Make changes to existing funeral program.'
@@ -137,6 +142,7 @@ const ProgramForm = ({ initialData }: ProgramFormProps) => {
     defaultValues: initialData
       ? {
           ...initialData,
+          deceasedId: initialData.deceasedId,
         }
       : {
           languageOfProgram: '',
