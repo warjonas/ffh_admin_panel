@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 
 import { formatter } from '@/lib/utils';
-import { FuneralProgram } from '@prisma/client';
+import { Deceased, FuneralProgram } from '@prisma/client';
 import { useReactToPrint } from 'react-to-print';
 // import { Arrangement } from '@/types';
 
@@ -40,11 +40,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     data,
     error,
     isLoading,
-  }: { data: FuneralProgram; error: any; isLoading: any } = useSWR(
-    `/api/program/${id}`,
-    fetcher,
-    config
-  );
+  }: {
+    data: FuneralProgram & { deceased: Deceased };
+    error: any;
+    isLoading: any;
+  } = useSWR(`/api/program/${id}`, fetcher, config);
 
   const getPageMargins = () => {
     return `@page { margin: 1rem 2rem 1rem 2rem !important; }`;
@@ -54,7 +54,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: `Funeral Program Preview for the late ${data?.firstNameOfDeceased} ${data?.lastNameOfDeceased}`,
+    documentTitle: `Funeral Program Preview for the late ${data?.deceased.firstNames} ${data?.deceased.lastName}`,
   });
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   return (
     <Modal
-      title={`Viewing Funeral Program for: ${data?.firstNameOfDeceased} ${data?.lastNameOfDeceased}`}
+      title={`Viewing Funeral Program for: ${data?.deceased.firstNames} ${data?.deceased.firstNames}`}
       description="A preview of the funeral program"
       isOpen={isOpen}
       onClose={onClose}
@@ -136,32 +136,35 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   Name/s of Deceased:{' '}
                   <span className="font-normal">
                     {' '}
-                    {data?.firstNameOfDeceased}
+                    {data?.deceased.firstNames}
                   </span>
                 </p>
                 <p className="font-semibold">
                   Nickname:{' '}
-                  <span className="font-normal"> {data?.nickName}</span>
+                  <span className="font-normal">
+                    {' '}
+                    {data?.deceased.nickName}
+                  </span>
                 </p>
                 <p className="font-semibold">
                   Surname of Deceased:{' '}
                   <span className="font-normal">
                     {' '}
-                    {data?.lastNameOfDeceased}
+                    {data?.deceased.lastName}
                   </span>
                 </p>
                 <p className="font-semibold">
                   Date of Birth:{' '}
                   <span className="font-normal">
                     {' '}
-                    {format(new Date(data?.dateOfBirth), 'dd/MM/yyyy')}
+                    {format(new Date(data?.deceased.dateOfBirth), 'dd/MM/yyyy')}
                   </span>
                 </p>
                 <p className="font-semibold">
                   Date of Death:{' '}
                   <span className="font-normal">
                     {' '}
-                    {format(new Date(data?.dateOfDeath), 'dd/MM/yyyy')}
+                    {format(new Date(data?.deceased.dateOfDeath), 'dd/MM/yyyy')}
                   </span>
                 </p>
                 <p className="font-semibold">

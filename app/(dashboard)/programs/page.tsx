@@ -9,18 +9,22 @@ import { format } from 'date-fns';
 type Props = {};
 
 const Programs = async (props: Props) => {
-  const funeralPrograms = await prismadb.funeralProgram.findMany({});
+  const funeralPrograms = await prismadb.funeralProgram.findMany({
+    include: {
+      deceased: true,
+    },
+  });
 
   const formattedPrograms: FuneralProgramColumn[] = funeralPrograms.map(
     (program) => ({
       id: program.id,
-      firstName: program.firstNameOfDeceased,
-      lastName: program.lastNameOfDeceased,
+      firstName: program.deceased.firstNames,
+      lastName: program.deceased.lastName,
       createdBy: program.createdBy,
-      dateOfBirth: format(program.dateOfBirth, 'MM/dd/yyyy'),
+      dateOfBirth: format(program.deceased.dateOfBirth, 'MM/dd/yyyy'),
       language: program.languageOfProgram,
 
-      dateOfDeath: format(program.dateOfDeath, 'MM/dd/yyyy'),
+      dateOfDeath: format(program.deceased.dateOfDeath, 'MM/dd/yyyy'),
     })
   );
 
@@ -32,7 +36,7 @@ const Programs = async (props: Props) => {
       />
       <section>
         <div className="flex justify-between">
-          <HeaderOptions title="New Funeral Program" path="/programs/new" />
+          <HeaderOptions title="New Funeral Program" link="deceased" />
         </div>
       </section>
       <section>
