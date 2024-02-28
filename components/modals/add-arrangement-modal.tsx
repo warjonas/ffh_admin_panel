@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import { cn, formatter } from '@/lib/utils';
 import { Coffin, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, Trash } from 'lucide-react';
@@ -118,13 +118,14 @@ const AddArrangmentModal = () => {
   const deceasedId = searchParams.get('deceasedId');
   const arrangementId = searchParams.get('arrangementId');
   const [isMounted, setIsMounted] = useState(false);
+  const [amountDue, setAmountDue] = useState(0);
 
   const router = useRouter();
   const { user, error, isLoading } = useUser();
 
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
-    revalidateIfStale: true,
+    revalidateIfStale: false,
     revalidateOnMount: true,
   };
 
@@ -133,7 +134,7 @@ const AddArrangmentModal = () => {
     error: initialDataError,
     isLoading: initialDataLoading,
   }: { data: Arrangement; error: any; isLoading: any } = useSWR(
-    `/api/arrangement/${arrangementId}`,
+    arrangementId ? `/api/arrangement/${arrangementId}` : null,
     fetcher,
     config
   );
@@ -217,7 +218,7 @@ const AddArrangmentModal = () => {
         banner: false,
       },
       tombstoneId: '658436d1de42bdd8d5632f85',
-      totalPayable: 0,
+      totalPayable: amountDue,
       amountPaid: 0,
       notes: '',
       doctor: 0,
@@ -233,6 +234,7 @@ const AddArrangmentModal = () => {
     register,
     formState: { errors },
     setValue,
+    watch,
   } = form;
 
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
@@ -244,6 +246,33 @@ const AddArrangmentModal = () => {
       },
     }
   );
+
+  useEffect(() => {
+    const total =
+      Number(form.getValues().cremationDoctor) +
+      Number(form.getValues().doctor) +
+      Number(form.getValues().bus) +
+      Number(form.getValues().storageDays * 300) +
+      Number(form.getValues().liveStreaming) +
+      Number(form.getValues().doves) +
+      Number(form.getValues().wreaths) +
+      Number(form.getValues().afterHour) +
+      Number(form.getValues().car);
+
+    setAmountDue(total);
+  }, [
+    watch([
+      'cremationDoctor',
+      'doctor',
+      'storageDays',
+      'liveStreaming',
+      'car',
+      'bus',
+      'wreaths',
+      'doves',
+      'afterHour',
+    ]),
+  ]);
 
   const onSubmit = async (data: ArrangementFormValues) => {
     if (!deceasedId) {
@@ -376,7 +405,10 @@ const AddArrangmentModal = () => {
               </span>
             </div>
           ) : (
-            <DeceasedList items={deceasedData} disabled={true} />
+            <DeceasedList
+              items={deceasedData}
+              disabled={initialData ? true : false}
+            />
           )}
         </div>
 
@@ -1239,23 +1271,9 @@ const AddArrangmentModal = () => {
             </div>
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>
-              <FormField
-                control={form.control}
-                name="totalPayable"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="50 or 100"
-                        {...field}
-                        className="w-full"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              <h1 className="text-xl font-semibold text-end">
+                {formatter.format(amountDue)}{' '}
+              </h1>
             </div>
 
             <hr className="w-full my-4" />

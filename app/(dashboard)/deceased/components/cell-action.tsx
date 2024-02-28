@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
+import { Copy, Edit, Link, MoreHorizontal, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -80,6 +80,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     infoModal.onOpen();
   };
 
+  const generateLink = async () => {
+    navigator.clipboard.writeText(process.env.NEXT_PUBLIC_LINK_URL + data.id);
+    toast.success('Funeral Program Link copied to clipboard');
+  };
+
   return (
     <>
       <AlertModal
@@ -111,6 +116,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>
             <Trash className="mr-2 h-4 w-4" />
             Delete
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => generateLink()}>
+            <Link className="mr-2 h-4 w-4" />
+            Generate Program Link
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

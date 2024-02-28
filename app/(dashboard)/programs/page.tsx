@@ -11,15 +11,26 @@ type Props = {};
 const Programs = async (props: Props) => {
   const funeralPrograms = await prismadb.funeralProgram.findMany({
     include: {
-      deceased: true,
+      deceased: {
+        include: {
+          arrangement: true,
+        },
+      },
     },
   });
 
   const formattedPrograms: FuneralProgramColumn[] = funeralPrograms.map(
     (program) => ({
       id: program.id,
-      firstName: program.deceased.firstNames,
-      lastName: program.deceased.lastName,
+      name: program.deceased.firstNames + ' ' + program.deceased.lastName,
+      idNumber: program.deceased.idNumber,
+      dateOfFuneral: program.deceased.arrangement?.dateOfFuneralService
+        ? format(
+            program.deceased.arrangement.dateOfFuneralService,
+            'MM/dd/yyyy'
+          )
+        : 'Not available',
+
       createdBy: program.createdBy,
       dateOfBirth: format(program.deceased.dateOfBirth, 'MM/dd/yyyy'),
       language: program.languageOfProgram,
@@ -32,13 +43,13 @@ const Programs = async (props: Props) => {
     <section className="p-5 w-full h-full">
       <Heading
         title="Funeral Progams"
-        subtitle="Create and Manage programs for upcoming funerals"
+        subtitle="Manage programs for upcoming funerals"
       />
-      <section>
+      {/* <section>
         <div className="flex justify-between">
           <HeaderOptions title="New Funeral Program" link="deceased" />
         </div>
-      </section>
+      </section> */}
       <section>
         <FuneralClient data={formattedPrograms} />
       </section>

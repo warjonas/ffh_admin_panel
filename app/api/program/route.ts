@@ -2,14 +2,9 @@ import prismadb from '@/lib/prismadb';
 import { getSession } from '@auth0/nextjs-auth0';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
+export async function POST(req: Request, params: { approved: boolean }) {
   try {
-    const session = await getSession();
-    const headers = await req.headers.get('type');
-
-    if (!session) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
+    // const headers = await req.headers.get('type');
 
     const body = await req.json();
 
@@ -28,7 +23,6 @@ export async function POST(req: Request) {
       pallbearersOutHouse,
       survivedBy,
       createdBy,
-      needPallbearers,
     } = body;
 
     if (!languageOfProgram) {
@@ -51,6 +45,10 @@ export async function POST(req: Request) {
 
     if (!hymn) {
       return new NextResponse('Hymns are required', { status: 400 });
+    }
+
+    if (!deceasedId) {
+      return new NextResponse('Deceased Id is required', { status: 400 });
     }
 
     if (!pallbearersGrave) {
@@ -83,6 +81,18 @@ export async function POST(req: Request) {
       });
     }
 
+    const checkDeceased = await prismadb.deceased.findFirst({
+      where: {
+        id: deceasedId,
+      },
+    });
+
+    if (!checkDeceased) {
+      return new NextResponse('Incorrect Deceased details', {
+        status: 400,
+      });
+    }
+
     const funeralProgram = await prismadb.funeralProgram.create({
       data: {
         languageOfProgram,
@@ -102,7 +112,7 @@ export async function POST(req: Request) {
         survivedBy,
         orbituaryText,
         hymn,
-        deceasedId: deceasedId,
+        deceasedId,
       },
     });
 

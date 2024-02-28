@@ -9,13 +9,14 @@ export async function GET(
   req: Request,
   { params }: { params: { deceasedId: string } }
 ) {
-  const session = getSession();
-  if (!session) {
-    return new NextResponse('Unauthorized', { status: 401 });
+  let deceased;
+
+  if (params.deceasedId === null) {
+    return NextResponse.json(deceased);
   }
 
   try {
-    const deceased = await prismadb.deceased.findFirst({
+    deceased = await prismadb.deceased.findFirst({
       where: {
         id: params.deceasedId,
       },
@@ -26,7 +27,7 @@ export async function GET(
 
     return NextResponse.json(deceased);
   } catch (error) {
-    // console.log('DECEASED_SINGLE_GET', error);
+    console.log('DECEASED_SINGLE_GET', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { PenBoxIcon, PrinterIcon } from 'lucide-react';
-import { FuneralProgramColumn } from './columns';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Arrangement } from '@/types';
 import { format } from 'date-fns';
@@ -13,26 +12,21 @@ import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 import { formatter } from '@/lib/utils';
 import { Deceased, FuneralProgram } from '@prisma/client';
 import { useReactToPrint } from 'react-to-print';
+import { useFuneralProgramModal } from '@/hooks/use-program-modal';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // import { Arrangement } from '@/types';
-
-interface InfoModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  loading: boolean;
-  id: string;
-}
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export const InfoModal: React.FC<InfoModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  loading,
-  id,
-}) => {
+export const InfoModal = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const infoModal = useFuneralProgramModal();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const id = searchParams.get('programId');
+
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
   };
@@ -44,13 +38,18 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     data: FuneralProgram & { deceased: Deceased };
     error: any;
     isLoading: any;
-  } = useSWR(`/api/program/${id}`, fetcher, config);
+  } = useSWR(id ? `/api/program/${id}` : null, fetcher, config);
 
   const getPageMargins = () => {
     return `@page { margin: 1rem 2rem 1rem 2rem !important; }`;
   };
 
   const componentRef = useRef(null);
+
+  const closeModal = () => {
+    router.push('/programs');
+    infoModal.onClose();
+  };
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -71,8 +70,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       <Modal
         title={`Error Occurred`}
         description=""
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={infoModal.isOpen}
+        onClose={closeModal}
       >
         An error occurred whilte fetching the data.
       </Modal>
@@ -80,7 +79,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   if (isLoading)
     return (
-      <Modal title={`Loading`} description="" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        title={`Loading`}
+        description=""
+        isOpen={infoModal.isOpen}
+        onClose={closeModal}
+      >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -96,8 +100,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     <Modal
       title={`Viewing Funeral Program for: ${data?.deceased?.firstNames} ${data?.deceased?.firstNames}`}
       description="A preview of the funeral program"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={infoModal.isOpen}
+      onClose={closeModal}
     >
       {isLoading && <p>Loading</p>}
       {data && (
@@ -237,11 +241,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     Hymn Number
                   </p>
                   <p className="col-start-3 font-semibold underline">
-                    3 Brief details of Hymn
+                    Brief details of Hymn
                   </p>
                   {data?.hymn?.hymns.map((hymn, i) => (
                     <>
-                      <p className=""> {i + 1}</p>
                       <p className="col-start-2">{hymn?.hymnNumber}</p>
                       <p className="col-start-3">{hymn?.detailsOfHymn}</p>
                     </>
@@ -323,12 +326,9 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             </section>
           </section>
           <div className="flex w-full justify-end gap-x-2 mt-5">
-            <Button disabled={loading} variant={'outline'} onClick={onClose}>
-              Close
-            </Button>
-            <Button disabled={loading} variant={'default'} onClick={onConfirm}>
+            {/* <Button disabled={isLoading} variant={'default'} onClick={onConfirm}>
               <PenBoxIcon /> Edit
-            </Button>
+            </Button> */}
           </div>
         </>
       )}

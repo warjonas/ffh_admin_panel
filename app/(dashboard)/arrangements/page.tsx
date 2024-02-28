@@ -26,9 +26,10 @@ const Arrangements = async (props: Props) => {
       deceasedId: item.deceasedId,
       receiptNo: item.receiptNo,
       memberNo: item.deceased.ffhMemberNo,
-      firstName: item.deceased.firstNames,
-      lastName: item.deceased.lastName,
+      name: item.deceased.firstNames + ' ' + item.deceased.lastName,
       dateOfDeath: format(item.deceased.dateOfDeath, 'MM/dd/yyyy'),
+      paidUp: item.paidUp,
+      idNumber: item.deceased.idNumber,
     })
   );
 

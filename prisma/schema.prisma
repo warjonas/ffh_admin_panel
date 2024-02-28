@@ -62,11 +62,13 @@ model Arrangement{
   notes               String @default("")
   afterHour                 Int
   wreaths             Int
-
   doctor                 Int
-
   cremationDoctor                 Int
- 
+  paidUp              Boolean
+
+
+
+
   deceasedId          String @db.ObjectId @unique
   deceased            Deceased  @relation(fields: [deceasedId], references: [id])
   tombstoneId         String? @db.ObjectId

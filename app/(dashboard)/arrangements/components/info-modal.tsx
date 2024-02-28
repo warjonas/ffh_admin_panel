@@ -149,7 +149,17 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </span>
                 </p>
                 <p className="font-semibold">
-                  Date Of Death:{' '}
+                  Sunrise:{' '}
+                  <span className="font-normal">
+                    {data.deceased &&
+                      format(
+                        new Date(data?.deceased?.dateOfBirth),
+                        'MM/dd/yyyy'
+                      )}
+                  </span>
+                </p>
+                <p className="font-semibold">
+                  Sunset:{' '}
                   <span className="font-normal">
                     {data.deceased &&
                       format(
@@ -174,10 +184,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </span>{' '}
                   </p>
                 </div>
-                <p className="font-medium">
+                <p className="font-semibold">
                   Removal Date:{' '}
-                  {data.deceased &&
-                    format(new Date(data?.deceased?.removalDate), 'MM/dd/yyyy')}
+                  <span className="font-normal">
+                    {data.deceased &&
+                      format(
+                        new Date(data?.deceased?.removalDate),
+                        'MM/dd/yyyy'
+                      )}
+                  </span>
                 </p>
                 <p className="font-semibold">
                   Removal From:{' '}
@@ -204,12 +219,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   <p className="col-start-4">Phone No.</p>
                   <hr className="w-full my-1 col-span-4" />
                   {data?.familyReps.map((rep) => (
-                    <>
+                    <div
+                      key={rep.phoneNo}
+                      className="grid grid-cols-4 col-span-4"
+                    >
                       <p className="col-start-1">{rep.firstName}</p>
                       <p className="col-start-2">{rep.lastName}</p>
                       <p className="col-start-3">{rep.relationship}</p>
                       <p className="col-start-4">{rep.phoneNo}</p>
-                    </>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -251,13 +269,13 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </div>
 
                   <div className="ml-2 w-1/2">
-                    {/* <p className="font-medium">
+                    <p className="font-medium">
                       <span className="font-semibold"> Coffin name: </span>
                       {data.coffin.coffinName}
                     </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Digger: </span>
-                      {data.digger === true ? 'Yes' : 'No'}
+                      {data.digger ? formatter.format(data.digger) : 'N/A'}
                     </p>
 
                     <p className="font-medium">
@@ -266,17 +284,19 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Wreaths: </span>
-                      {data.wreaths === true ? 'Yes' : 'No'}
+                      {data.wreaths ? formatter.format(data.wreaths) : 'N/A'}
                     </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Doves: </span>
-                      {data.doves === true ? 'Yes' : 'No'}
+                      {data.doves ? formatter.format(data.doves) : 'N/A'}
                     </p>
 
                     <p className="font-medium">
                       <span className="font-semibold"> Live Streaming: </span>
-                      {data.liveStreaming === true ? 'Yes' : 'No'}
-                    </p> */}
+                      {data.liveStreaming
+                        ? formatter.format(data.liveStreaming)
+                        : 'N/A'}
+                    </p>
                     <p className="font-medium">
                       <span className="font-semibold">
                         {' '}
@@ -285,13 +305,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       {data.programs}
                     </p>
 
-                    {/* <p className="font-medium">
+                    <p className="font-medium">
                       <span className="font-semibold"> Family Car: </span>
-                      {data.familyCar === true ? 'Yes' : 'No'}
+                      {data.familyCar
+                        ? formatter.format(data.familyCar)
+                        : 'N/A'}
                     </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Bus from Home: </span>
-                      {data.bus === true ? 'Yes' : 'No'}
+                      {data.bus ? formatter.format(data.bus) : 'N/A'}
                     </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Tombstone: </span>
@@ -305,7 +327,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       {data.tombstone.tombstoneName !== ''
                         ? data.tombstone.tombstoneName
                         : 'Not Applicable.'}
-                    </p> */}
+                    </p>
 
                     <p className="font-medium">
                       <span className="font-semibold">

@@ -25,8 +25,6 @@ import {
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import AddDeceasedModal from './modals/add-deceased-modal';
-import axios from 'axios';
-import toast from 'react-hot-toast';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
@@ -38,7 +36,7 @@ const MainNavActions = (props: Props) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const deceasedModal = useDeceasedModal();
   const arrangementModal = useArrangementModal();
 
@@ -94,9 +92,9 @@ const MainNavActions = (props: Props) => {
         },
         {
           title: 'Funeral Programs',
-          link: '/arrangements/new',
+          link: '/programs',
           break: false,
-          type: 'Function',
+          type: 'Link',
           func: () => setOpen(true),
         },
       ],

@@ -7,8 +7,7 @@ import { CellAction } from './cell-action';
 export type DeceasedColumn = {
   id: string;
 
-  firstName: string;
-  lastName: string;
+  name: string;
   idNumber: string;
   dateOfBirth: string;
   dateOfDeath: string;
@@ -16,13 +15,9 @@ export type DeceasedColumn = {
 
 export const columns: ColumnDef<DeceasedColumn>[] = [
   {
-    accessorKey: 'lastName',
+    accessorKey: 'name',
     header: 'Full Name',
-    cell: ({ row }) => (
-      <div>
-        {row.original.firstName} {row.original.lastName}
-      </div>
-    ),
+    cell: ({ row }) => <div>{row.original.name}</div>,
   },
   {
     accessorKey: 'idNumber',

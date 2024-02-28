@@ -21,7 +21,7 @@ interface DeceasedClientProps {
 }
 
 export const DeceasedClient: React.FC<DeceasedClientProps> = ({ data }) => {
-  const [key, setKey] = useState('lastName');
+  const [key, setKey] = useState('name');
 
   return (
     <div className="w-full flex flex-col">
@@ -34,7 +34,7 @@ export const DeceasedClient: React.FC<DeceasedClientProps> = ({ data }) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Search By:</SelectLabel>
-              <SelectItem value="lastName">Last Name</SelectItem>
+              <SelectItem value="name">Full Name</SelectItem>
               <SelectItem value="idNumber">ID Number</SelectItem>
             </SelectGroup>
           </SelectContent>

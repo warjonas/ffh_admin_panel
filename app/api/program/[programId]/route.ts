@@ -21,6 +21,9 @@ export async function GET(
       where: {
         id: params.programId,
       },
+      include: {
+        deceased: true,
+      },
     });
 
     return NextResponse.json(program);
@@ -47,6 +50,7 @@ export async function PATCH(
       atChurch,
       atHome,
       hymn,
+      deceasedId,
       otherInformation,
       orbituaryText,
       pallbearersGrave,
@@ -75,6 +79,9 @@ export async function PATCH(
       return new NextResponse('Missing information for at home service', {
         status: 400,
       });
+    }
+    if (!deceasedId) {
+      return new NextResponse('Deceased ID is required', { status: 400 });
     }
 
     if (!hymn) {
@@ -114,6 +121,9 @@ export async function PATCH(
     const funeralProgram = await prismadb.funeralProgram.update({
       where: {
         id: params.programId,
+        deceased: {
+          idNumber: deceasedId,
+        },
       },
       data: {
         updatedBy: createdBy,

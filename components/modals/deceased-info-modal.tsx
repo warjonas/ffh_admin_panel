@@ -63,7 +63,7 @@ export const InfoModal = () => {
     error,
     isLoading,
   }: { data: Deceased; error: any; isLoading: any } = useSWR(
-    `/api/deceased/${id}`,
+    id ? `/api/deceased/${id}` : null,
     fetcher,
     config
   );

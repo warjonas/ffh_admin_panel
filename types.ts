@@ -9,20 +9,20 @@ export interface Arrangement {
   cemetry: Cemetry;
   minister: Minister;
   createdBy: string;
-  digger?: boolean;
+  digger?: number;
   crossSize: string;
-  doves: boolean;
-  liveStreaming: boolean;
+  doves: number;
+  liveStreaming: number;
   programs: number;
-  familyCar: boolean;
-  bus: boolean;
+  familyCar: number;
+  bus: number;
   storageDays: number;
   decor: Decor;
   notes: string;
   afterHour: boolean;
-  doctor: boolean;
-  cremationDoctor: boolean;
-  wreaths: boolean;
+  doctor: number;
+  cremationDoctor: number;
+  wreaths: number;
   totalPayable: number;
   amountPaid: number;
 
@@ -80,6 +80,7 @@ interface Deceased {
   lastName: string;
   firstNames: string;
   idNumber: string;
+  dateOfBirth: string;
   dateOfDeath: Date;
   removalDate: Date;
   removalFrom: Address;
