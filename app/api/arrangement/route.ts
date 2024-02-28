@@ -42,6 +42,7 @@ export async function POST(req: Request) {
       church,
       createdBy,
       afterHour,
+      paidUp,
     } = body;
 
     let user;
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
         doctor,
         amountPaid,
         wreaths,
+        paidUp: false,
 
         coffinId: coffinid,
       },
