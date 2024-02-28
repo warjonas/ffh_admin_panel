@@ -1,3 +1,5 @@
+'use client';
+
 import { formatter } from '@/lib/utils';
 
 import { Playfair, Playfair_Display_SC } from 'next/font/google';
