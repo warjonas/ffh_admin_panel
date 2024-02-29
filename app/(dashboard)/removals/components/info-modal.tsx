@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 
 import { formatter } from '@/lib/utils';
-import { Removal } from '@prisma/client';
+import { Deceased, Removal } from '@prisma/client';
 import { useReactToPrint } from 'react-to-print';
 import RemovalReceiptModal from './removalReceiptModal';
 // import { Arrangement } from '@/types';
@@ -46,15 +46,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     data,
     error,
     isLoading,
-  }: { data: Removal; error: any; isLoading: any } = useSWR(
-    `/api/removal/${id}`,
-    fetcher,
-    config
-  );
+  }: { data: Removal & { deceased: Deceased }; error: any; isLoading: any } =
+    useSWR(`/api/removal/${id}`, fetcher, config);
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: `Body Removal report - ${data?.firstName} ${data?.lastname}`,
+    documentTitle: `Body Removal report - ${data?.deceased.firstNames} ${data?.deceased.lastName}`,
   });
 
   useEffect(() => {
@@ -95,7 +92,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   return (
     <Modal
-      title={`Viewing details for the removal of the late: ${data?.firstName} ${data?.lastname}`}
+      title={`Viewing details for the removal of the late: ${data?.deceased.firstNames} ${data?.deceased.lastName}`}
       description="A preview of the funeral program"
       isOpen={isOpen}
       onClose={onClose}
@@ -134,18 +131,29 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               <div className="flex gap-x-10">
                 <p className="font-semibold">
                   Surname:{' '}
-                  <span className="font-normal"> {data?.firstName}</span>
+                  <span className="font-normal">
+                    {' '}
+                    {data?.deceased.firstNames}
+                  </span>
                 </p>{' '}
                 <p className="font-semibold">
                   First Name(s):{' '}
-                  <span className="font-normal"> {data?.lastname}</span>
+                  <span className="font-normal">
+                    {' '}
+                    {data?.deceased.lastName}
+                  </span>
                 </p>
               </div>
               <p className="font-semibold">
-                ID Number: <span className="font-normal">{data?.idNumber}</span>
+                ID Number:{' '}
+                <span className="font-normal">{data?.deceased.idNumber}</span>
               </p>
               <p className="font-semibold">
-                Address: <span className="font-normal">{data?.address}</span>
+                Address:{' '}
+                <span className="font-normal">
+                  {data?.deceased.removalFrom.street}{' '}
+                  {data?.deceased.removalFrom.city}
+                </span>
               </p>
             </section>
 
@@ -155,7 +163,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   Date Removed:{' '}
                   <span className="font-normal">
                     {' '}
-                    {format(new Date(data?.dateRemoved), 'dd/MM/yyyy')}
+                    {format(new Date(data?.deceased.removalDate), 'dd/MM/yyyy')}
                   </span>
                 </p>
                 <p className="font-semibold">
@@ -194,14 +202,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       )}
                     </span>
                   </p>
-                  <p className="font-semibold">
-                    Copies @ {formatter.format(data?.copyFee)}/day x{' '}
-                    {data?.copies} days -{' '}
-                    <span className="font-normal">
-                      {' '}
-                      {formatter.format(Number(data?.copyFee * data?.copies))}
-                    </span>
-                  </p>
+
                   <p className="font-semibold">
                     Booking of Grave:{' '}
                     <span className="font-normal">

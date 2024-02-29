@@ -34,8 +34,6 @@ const formSchema = z.object({
   removalFrom: z.object({
     street: z.string().min(1),
     city: z.string().min(1),
-    province: z.string().min(1),
-    zip: z.string().min(1),
   }),
   deathCertificateRecipient: z.string().min(1),
 
@@ -85,8 +83,6 @@ const AddDeceasedModal = () => {
       removalFrom: {
         street: '',
         city: '',
-        province: '',
-        zip: '',
       },
       deathCertificateRecipient: '',
       createdBy: 'email',
@@ -143,9 +139,9 @@ const AddDeceasedModal = () => {
       setValue('ffhMemberNo', deceased.ffhMemberNo);
       setValue('idNumber', deceased.idNumber);
       setValue('removalFrom.city', deceased.removalFrom.city);
-      setValue('removalFrom.zip', deceased.removalFrom.zip);
+
       setValue('removalFrom.street', deceased.removalFrom.street);
-      setValue('removalFrom.province', deceased.removalFrom.province);
+
       setValue('removalDate', new Date(deceased.removalDate));
     }
   }, [deceased]);
@@ -184,6 +180,40 @@ const AddDeceasedModal = () => {
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-y-5">
+            <div className="flex md:flex-row flex-col w-full gap-x-2">
+              <FormField
+                control={form.control}
+                name="ffhMemberNo"
+                render={({ field }) => (
+                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                    <FormLabel className="font-semibold">
+                      FFH Member No.
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Member No." {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="idNumber"
+                render={({ field }) => (
+                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                    <FormLabel className="font-semibold">ID Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="ID Number"
+                        {...field}
+                        minLength={13}
+                        maxLength={13}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="dateOfBirth"
@@ -258,7 +288,9 @@ const AddDeceasedModal = () => {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) => date > new Date()}
+                        disabled={(date) =>
+                          date < new Date(form.getValues().dateOfBirth)
+                        }
                         initialFocus
                       />
                     </PopoverContent>
@@ -266,40 +298,7 @@ const AddDeceasedModal = () => {
                 </FormItem>
               )}
             />
-            <div className="flex md:flex-row flex-col w-full gap-x-2">
-              <FormField
-                control={form.control}
-                name="ffhMemberNo"
-                render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
-                    <FormLabel className="font-semibold">
-                      FFH Member No.
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Member No." {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="idNumber"
-                render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
-                    <FormLabel className="font-semibold">ID Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="ID Number"
-                        {...field}
-                        minLength={13}
-                        maxLength={13}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+
             <div className="flex flex-col md:flex-row w-full gap-x-2">
               <FormField
                 control={form.control}
@@ -421,34 +420,6 @@ const AddDeceasedModal = () => {
                   <FormLabel className="font-semibold">City</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="City" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="removalFrom.province"
-              render={({ field }) => (
-                <FormItem className=" w-full md:flex-shrink xl:flex-1">
-                  <FormLabel className="font-semibold">Province</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Province"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="removalFrom.zip"
-              render={({ field }) => (
-                <FormItem className=" w-full md:w-1/4 xl:flex-1">
-                  <FormLabel className="font-semibold">Zip</FormLabel>
-                  <FormControl>
-                    <Input disabled={loading} placeholder="Zip" {...field} />
                   </FormControl>
                 </FormItem>
               )}

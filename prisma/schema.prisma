@@ -27,6 +27,8 @@ model Deceased{
 
   arrangement                 Arrangement?
   funeralProgram              FuneralProgram?
+  removal                     Removal?
+
 
 
 
@@ -106,23 +108,16 @@ model FuneralProgram {
 
 model Removal{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  lastname             String
-  firstName           String
-  idNumber            String
-  address             String
-  
-
-  dateRemoved         DateTime
+  dateRequested       DateTime @default(now())
   byUndertaker        String
   deathRegistration   Int
   doctorsFees         Int
   storageFee          Int
   storageDays         Int
-  copyFee             Int
-  copies              Int
   graveFee            Int
-  casket              Int
   gravediggerCost     Int
+  copies              Int
+  copyFee             Int
   adminFees           Int
   totalDue            Int
   receipts            RemovalReceipt[]
@@ -130,6 +125,9 @@ model Removal{
   created             DateTime @default(now())
   updatedBy           String @default("")
   updated             DateTime @updatedAt()
+
+  deceasedId          String @db.ObjectId @unique
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
 
 
 
@@ -231,8 +229,6 @@ type FamilyRep{
 type Address{
   street          String
   city            String
-  province        String
-  zip             String
 }
 
 

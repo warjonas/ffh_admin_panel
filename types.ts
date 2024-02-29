@@ -88,9 +88,40 @@ interface Deceased {
   dateOfFuneralService: Date;
 }
 
+interface Removal {
+  id: string;
+  byUndertaker: string;
+  deathRegistration: number;
+  doctorsFees: number;
+  storageFee: number;
+  storageDays: number;
+  copyFee: number;
+  adminFees: number;
+  totalDue: number;
+  receipts: RemovalReceipt[];
+  scheduledBy: string;
+  created: Date;
+  updatedBy: string;
+  updated: Date;
+
+  deceased: Deceased;
+}
+
+interface RemovalReceipt {
+  id: string;
+  receiptNo: string;
+  date: Date;
+  issuedBy: string;
+  methodOfPayment: string;
+  receivedAmount: number;
+  outstandingBalance: number;
+  receivedFrom: string;
+
+  removalId: string;
+  removal: Removal;
+}
+
 interface Address {
   street: string;
   city: string;
-  province: string;
-  zip: string;
 }

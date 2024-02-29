@@ -165,40 +165,26 @@ const MainNavActions = (props: Props) => {
     {
       name: 'Admin Utilities',
       icon: <BarChart />,
-      link: '/stats',
+      link: '/admin',
       items: [
         {
-          title: 'Add Deceased Details',
-          link: '/arrangements',
-          break: false,
-          type: 'Function',
-          func: () => setOpen(true),
-        },
-        {
-          title: 'Deceased Details',
-          link: '/arrangements',
-          break: true,
-          type: 'Link',
-          func: () => setOpen(true),
-        },
-        {
-          title: 'View Funeral Arrangements',
-          link: '/arrangements',
+          title: 'Pricing',
+          link: '/admin/pricing',
           break: false,
           type: 'Link',
           func: () => setOpen(true),
         },
 
         {
-          title: 'Create new Arrangement',
-          link: '/arrangements/new',
+          title: 'Manage Fortuin Website',
+          link: '/admin/site',
           break: true,
-          type: 'Function',
+          type: 'Link',
           func: () => setOpen(true),
         },
         {
-          title: 'Funeral Programs',
-          link: '/arrangements/new',
+          title: 'Settings',
+          link: '/admin',
           break: false,
           type: 'Link',
           func: () => setOpen(true),

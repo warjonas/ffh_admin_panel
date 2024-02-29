@@ -190,8 +190,7 @@ export const InfoModal = () => {
                 <p className="font-semibold">
                   Removal From:{' '}
                   <span className="font-normal">
-                    {data.removalFrom.street}, {data.removalFrom.city},{' '}
-                    {data.removalFrom.province}, {data.removalFrom.zip}
+                    {data.removalFrom.street}, {data.removalFrom.city}
                   </span>
                 </p>
                 <p className="font-semibold">

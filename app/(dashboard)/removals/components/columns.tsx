@@ -6,7 +6,7 @@ import { CellAction } from './cell-action';
 
 export type BodyRemovalColumn = {
   id: string;
-  removalDate: string;
+  requestedDate: string;
   undertaker: string;
   firstName: string;
   lastName: string;

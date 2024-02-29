@@ -14,16 +14,17 @@ const Removals = async (props: Props) => {
   const bodyRemovals = await prismadb.removal.findMany({
     include: {
       receipts: true,
+      deceased: true,
     },
   });
 
   const formattedRemovals: BodyRemovalColumn[] = bodyRemovals.map(
     (removal) => ({
       id: removal.id,
-      firstName: removal.firstName,
-      lastName: removal.lastname,
+      firstName: removal.deceased.firstNames,
+      lastName: removal.deceased.lastName,
       scheduledBy: removal.scheduledBy,
-      removalDate: format(removal.dateRemoved, 'MM/dd/yyyy'),
+      requestedDate: format(removal.deceased.removalDate, 'MM/dd/yyyy'),
       undertaker: removal.byUndertaker,
       total: formatter.format(removal.totalDue),
     })
@@ -36,7 +37,7 @@ const Removals = async (props: Props) => {
       />
       <section>
         <div className="flex justify-between">
-          <HeaderOptions title="Schedule removal" link="arrangement" />
+          <HeaderOptions title="Schedule removal" link="removal" />
         </div>
       </section>
       <BodyRemovalClient data={formattedRemovals} />

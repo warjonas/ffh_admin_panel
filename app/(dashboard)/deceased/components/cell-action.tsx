@@ -28,6 +28,7 @@ import {
   useDeceasedInfoModal,
   useDeceasedModal,
 } from '@/hooks/use-deceased-modal';
+import { useRemovalModal } from '@/hooks/use-removal-modal';
 
 interface CellActionProps {
   data: DeceasedColumn;
@@ -37,6 +38,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const deceasedModal = useDeceasedModal();
   const infoModal = useDeceasedInfoModal();
+  const removalModal = useRemovalModal();
 
   const [loading, setLoading] = useState(false);
   const params = useParams();
@@ -80,6 +82,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     infoModal.onOpen();
   };
 
+  const onRemoval = async () => {
+    router.push(pathname + '?' + createQueryString('deceasedId', data.id));
+
+    infoModal.onOpen();
+  };
+
   const generateLink = async () => {
     navigator.clipboard.writeText(process.env.NEXT_PUBLIC_LINK_URL + data.id);
     toast.success('Funeral Program Link copied to clipboard');
@@ -116,6 +124,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>
             <Trash className="mr-2 h-4 w-4" />
             Delete
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onRemoval()}>
+            <Link className="mr-2 h-4 w-4" />
+            Request Removal Estimate
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => generateLink()}>
             <Link className="mr-2 h-4 w-4" />

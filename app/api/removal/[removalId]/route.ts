@@ -73,11 +73,7 @@ export async function PATCH(
     const body = await req.json();
 
     const {
-      lastname,
-      firstName,
-      idNumber,
-      address,
-      dateRemoved,
+      deceasedId,
       byUndertaker,
       doctorsFees,
       storageFee,
@@ -93,21 +89,6 @@ export async function PATCH(
       deathRegistration,
     } = body;
 
-    if (!lastname) {
-      return new NextResponse('Last name is required', { status: 401 });
-    }
-    if (!firstName) {
-      return new NextResponse('First name is required', { status: 401 });
-    }
-    if (!idNumber) {
-      return new NextResponse('ID Number is required', { status: 401 });
-    }
-    if (!address) {
-      return new NextResponse('Address is required', { status: 401 });
-    }
-    if (!dateRemoved) {
-      return new NextResponse('Removal Date is required', { status: 401 });
-    }
     if (!byUndertaker) {
       return new NextResponse('Undertaker name is required', {
         status: 401,
@@ -161,11 +142,7 @@ export async function PATCH(
         id: params.removalId,
       },
       data: {
-        lastname,
-        firstName,
-        idNumber,
-        address,
-        dateRemoved,
+        deceasedId,
         byUndertaker,
         doctorsFees,
         storageFee,
@@ -173,7 +150,6 @@ export async function PATCH(
         copyFee,
         copies,
         graveFee,
-        casket,
         gravediggerCost,
         adminFees,
         totalDue,

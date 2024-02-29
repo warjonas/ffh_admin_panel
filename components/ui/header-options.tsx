@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import { useRemovalModal } from '@/hooks/use-removal-modal';
 import { PlusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -10,13 +11,13 @@ import React from 'react';
 type Props = {
   title: string;
   onClick?: () => void;
-  link: 'deceased' | 'arrangement';
+  link: 'deceased' | 'arrangement' | 'removal';
 };
 
 const HeaderOptions = ({ title, onClick, link }: Props) => {
-  const router = useRouter();
   const arrangementModal = useArrangementModal();
   const deceasedModal = useDeceasedModal();
+  const removalModal = useRemovalModal();
 
   const onSubmit = () => {
     switch (link) {
@@ -25,6 +26,9 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
         break;
       case 'arrangement':
         arrangementModal.onOpen();
+        break;
+      case 'removal':
+        removalModal.onOpen();
         break;
     }
   };

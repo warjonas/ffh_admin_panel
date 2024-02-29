@@ -199,8 +199,6 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   <span className="font-normal">
                     {data.deceased?.removalFrom?.street},{' '}
                     {data.deceased?.removalFrom?.city},{' '}
-                    {data.deceased?.removalFrom?.province},{' '}
-                    {data.deceased?.removalFrom?.zip}
                   </span>
                 </p>
                 <p className="font-semibold">
@@ -248,8 +246,6 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       Name of Church: {data?.church.churchName} <br />
                       Church Address: {data?.church.Address.street},{' '}
                       {data?.church?.Address.city},{' '}
-                      {data?.church?.Address.province},{' '}
-                      {data?.church?.Address.zip}
                     </p>
                     <h2 className="uppercase font-semibold mt-2">Cemetry</h2>
                     <p className="font-medium">

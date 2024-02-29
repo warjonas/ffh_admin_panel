@@ -10,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import {
   Popover,
@@ -68,8 +67,6 @@ const formSchema = z.object({
     Address: z.object({
       street: z.string(),
       city: z.string(),
-      province: z.string(),
-      zip: z.string(),
     }),
   }),
   minister: z.object({
@@ -188,8 +185,6 @@ const AddArrangmentModal = () => {
         Address: {
           street: '',
           city: '',
-          province: '',
-          zip: '',
         },
       },
       minister: {
@@ -650,40 +645,6 @@ const AddArrangmentModal = () => {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="church.Address.province"
-                      render={({ field }) => (
-                        <FormItem className="flex-auto">
-                          <FormLabel className="font-semibold">
-                            Province
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              placeholder="Province"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="church.Address.zip"
-                      render={({ field }) => (
-                        <FormItem className="w-1/4">
-                          <FormLabel className="font-semibold">Zip</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              placeholder="Zip"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
                   </div>
                 </div>
 
@@ -1067,7 +1028,7 @@ const AddArrangmentModal = () => {
               render={({ field }) => (
                 <FormItem className=" mb-5 flex items-baseline gap-x-2">
                   <FormLabel className="font-semibold">
-                    Storage @ R300/day
+                    Storage @ R350/day
                   </FormLabel>
                   <FormControl>
                     <Input

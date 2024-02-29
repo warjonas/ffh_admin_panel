@@ -169,7 +169,6 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   Removal From:{' '}
                   <span className="font-normal">
                     {data.removalFrom.street}, {data.removalFrom.city},{' '}
-                    {data.removalFrom.province}, {data.removalFrom.zip}
                   </span>
                 </p>
                 <p className="font-semibold">
