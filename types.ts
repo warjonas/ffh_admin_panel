@@ -1,3 +1,5 @@
+import { number } from 'zod';
+
 export interface Arrangement {
   id: string;
   receiptNo: string;
@@ -76,6 +78,7 @@ interface FamilyRep {
 }
 
 interface Deceased {
+  id: string;
   ffhMemberNo: string;
   lastName: string;
   firstNames: string;
@@ -88,13 +91,13 @@ interface Deceased {
   dateOfFuneralService: Date;
 }
 
-interface Removal {
+export interface Removal {
   id: string;
   byUndertaker: string;
   deathRegistration: number;
   doctorsFees: number;
   storageFee: number;
-  storageDays: number;
+  storage: number;
   copyFee: number;
   adminFees: number;
   totalDue: number;
@@ -103,11 +106,15 @@ interface Removal {
   created: Date;
   updatedBy: string;
   updated: Date;
+  dateRequested: Date;
+  graveFee: number;
+  gravediggerCost: number;
+  copies: number;
 
   deceased: Deceased;
 }
 
-interface RemovalReceipt {
+export interface RemovalReceipt {
   id: string;
   receiptNo: string;
   date: Date;

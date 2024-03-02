@@ -28,6 +28,10 @@ import AddDeceasedModal from './modals/add-deceased-modal';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
+import {
+  useRemovalModal,
+  useUpcomingRemovalsModal,
+} from '@/hooks/use-removal-modal';
 
 type Props = {};
 
@@ -39,6 +43,8 @@ const MainNavActions = (props: Props) => {
 
   const deceasedModal = useDeceasedModal();
   const arrangementModal = useArrangementModal();
+  const removalModal = useRemovalModal();
+  const upcomingModal = useUpcomingRemovalsModal();
 
   const actions = [
     {
@@ -109,21 +115,21 @@ const MainNavActions = (props: Props) => {
           link: '/removals',
           break: false,
           type: 'Link',
-          func: () => setOpen(true),
+          func: () => {},
         },
         {
           title: 'Schedule body removal',
           link: '/removals/new',
           break: false,
-          type: 'Link',
-          func: () => setOpen(true),
+          type: 'Function',
+          func: removalModal.onOpen,
         },
         {
           title: 'Upcoming Body Removals',
           link: '/removals',
           break: false,
           type: 'Function',
-          func: () => setOpen(true),
+          func: upcomingModal.onOpen,
         },
       ],
     },

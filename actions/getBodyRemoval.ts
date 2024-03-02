@@ -9,7 +9,7 @@ export const getBodyRemoval = async (removalId: string) => {
       receipts: true,
     },
     orderBy: {
-      dateRemoved: 'desc',
+      dateRequested: 'asc',
     },
   });
 

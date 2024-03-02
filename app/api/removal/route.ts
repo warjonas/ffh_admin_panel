@@ -1,3 +1,4 @@
+import { calculate_days } from '@/actions/getUpcomingRemovals';
 import prismadb from '@/lib/prismadb';
 import { getSession } from '@auth0/nextjs-auth0';
 import { NextResponse } from 'next/server';
@@ -16,16 +17,16 @@ export async function POST(req: Request) {
       byUndertaker,
       doctorsFees,
       storageFee,
-      storageDays,
+      storage,
       copyFee,
       copies,
       graveFee,
-      casket,
       gravediggerCost,
       adminFees,
       totalDue,
       scheduledBy,
       deathRegistration,
+      dateRequested,
     } = body;
 
     if (!byUndertaker) {
@@ -33,6 +34,9 @@ export async function POST(req: Request) {
     }
     if (!doctorsFees) {
       return new NextResponse('Doctor fee is required', { status: 401 });
+    }
+    if (!dateRequested) {
+      return new NextResponse('Date requested is required', { status: 401 });
     }
 
     if (!deathRegistration) {
@@ -43,8 +47,8 @@ export async function POST(req: Request) {
     if (!storageFee) {
       return new NextResponse('Storage fee is required', { status: 401 });
     }
-    if (!storageDays) {
-      return new NextResponse('Amount of storage days is required', {
+    if (!storage) {
+      return new NextResponse('Storage amount is required', {
         status: 401,
       });
     }
@@ -56,9 +60,6 @@ export async function POST(req: Request) {
     }
     if (!graveFee) {
       return new NextResponse('Grave fee is required', { status: 401 });
-    }
-    if (!casket) {
-      return new NextResponse('Casket is required', { status: 401 });
     }
 
     if (!gravediggerCost) {
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
         byUndertaker,
         doctorsFees,
         storageFee,
-        storageDays,
+        storage,
         copyFee,
         copies,
         graveFee,
@@ -86,12 +87,47 @@ export async function POST(req: Request) {
         totalDue,
         scheduledBy,
         deathRegistration,
+        dateRequested,
       },
     });
 
     return NextResponse.json(bodyRemoval);
   } catch (error) {
     console.log('[REMOVAL_POST]', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  const session = await getSession();
+
+  if (!session) {
+    return new NextResponse('Unauthorized', { status: 500 });
+  }
+
+  try {
+    const removals = await prismadb.removal.findMany({
+      include: {
+        receipts: true,
+        deceased: true,
+      },
+    });
+    const upcomingRemovals = removals.filter(async (removal) => {
+      let d = new Date();
+      // d.setDate(d.getDate() + 7);
+
+      let days = await calculate_days(d, removal.dateRequested);
+
+      if (days < 7) {
+        return removal;
+      }
+    });
+
+    // console.log(upcomingRemovals);
+
+    return NextResponse.json(upcomingRemovals);
+  } catch (error) {
+    console.log('[REMOVAL_GET]', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

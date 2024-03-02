@@ -8,8 +8,7 @@ export type BodyRemovalColumn = {
   id: string;
   requestedDate: string;
   undertaker: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   total: string;
   scheduledBy: string;
 };
@@ -18,15 +17,10 @@ export const columns: ColumnDef<BodyRemovalColumn>[] = [
   {
     accessorKey: 'name',
     header: 'Full Name of Deceased',
-    cell: ({ row }) => (
-      <div>
-        {row.original.firstName} {row.original.lastName}
-      </div>
-    ),
   },
   {
-    accessorKey: 'removalDate',
-    header: 'Removal Date',
+    accessorKey: 'requestedDate',
+    header: 'Requested Date',
   },
   {
     accessorKey: 'undertaker',

@@ -12,9 +12,11 @@ import Heading from '@/components/ui/heading';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
@@ -36,6 +38,16 @@ import DeceasedList from '../deceased-list';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
+  let timeDifference = date2.getTime() - date1.getTime();
+
+  let days = Math.round(timeDifference / (1000 * 3600 * 24));
+
+  let fee = storageFee * days;
+
+  return fee;
+};
+
 const formSchema = z.object({
   scheduledBy: z.string().min(1),
   deceasedId: z.string().min(1),
@@ -44,12 +56,11 @@ const formSchema = z.object({
   }),
   byUndertaker: z.string().min(1),
   doctorsFees: z.coerce.number().default(1),
-  storageFee: z.coerce.number().default(300),
-  storageDays: z.coerce.number().default(1),
+  storageFee: z.coerce.number().default(350),
+  storage: z.coerce.number().default(1),
   copyFee: z.coerce.number().default(5),
   copies: z.coerce.number().default(1),
   graveFee: z.coerce.number().default(1),
-  casket: z.coerce.number().default(1),
   gravediggerCost: z.coerce.number().default(1),
   adminFees: z.coerce.number().default(1),
   totalDue: z.coerce.number().default(1),
@@ -61,6 +72,8 @@ type RemovalFromValues = z.infer<typeof formSchema>;
 const AddRemovalModal = () => {
   const [loading, setLoading] = useState(false);
   const [amountDue, setAmountDue] = useState(0);
+  const [storage, setStorage] = useState(0);
+
   const { user, error, isLoading } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -95,8 +108,6 @@ const AddRemovalModal = () => {
     config
   );
 
-  const title = 'Body Removal Sheet';
-  const description = 'Body removal request';
   const toastMessage = 'Body removal scheduled successfully';
   const action = 'Save changes';
 
@@ -104,9 +115,20 @@ const AddRemovalModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       scheduledBy: 'email',
-      storageFee: 300,
+      storageFee: 350,
       copyFee: 5,
+      deathRegistration: 0,
+      gravediggerCost: 0,
+
+      adminFees: 0,
+      graveFee: 0,
+      doctorsFees: 0,
+      copies: 0,
+      storage: 0,
+      deceasedId: 'id',
+
       byUndertaker: '',
+      dateRequested: new Date(),
     },
   });
 
@@ -115,7 +137,8 @@ const AddRemovalModal = () => {
   const onSubmit = async (data: RemovalFromValues) => {
     try {
       setLoading(true);
-      data.totalDue = amountDue;
+      data.storage = storage;
+      data.totalDue = amountDue + storage;
 
       if (!error || !isLoading) {
         if (user?.email) {
@@ -123,20 +146,43 @@ const AddRemovalModal = () => {
         }
       }
 
+      if (deceasedId) {
+        data.deceasedId = deceasedId;
+      } else {
+        throw new Error('Deceased Id is required');
+      }
+
       if (initialData) {
         await axios.patch(`/api/removal/${initialData.id}`, data);
       } else {
         await axios.post('/api/removal', data);
       }
+      removalModal.onClose;
       router.push('/removals');
       router.refresh();
 
-      toast.success(toastMessage);
+      toast.success('Body removal updated.');
     } catch (error) {
-      console.log('Submit Error', error);
-      toast.error('Something went wrong');
+      console.log('Removal Form not submitted', error);
+
+      if (deceasedId) {
+        toast.error(`${error}`);
+      } else {
+        toast.error('Something went wrong');
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onClose = () => {
+    removalModal.onClose();
+    form.reset();
+    setStorage(0);
+    if (deceasedId && removalId) {
+      router.push('/removals');
+    } else if (deceasedId) {
+      router.back();
     }
   };
 
@@ -145,11 +191,9 @@ const AddRemovalModal = () => {
       Number(form.getValues().doctorsFees) +
       Number(form.getValues().gravediggerCost) +
       Number(form.getValues().adminFees) +
-      Number(form.getValues().storageDays * 350) +
       Number(form.getValues().copies * 5) +
       Number(form.getValues().graveFee) +
       Number(form.getValues().deathRegistration);
-
     setAmountDue(total);
   }, [
     watch([
@@ -158,6 +202,8 @@ const AddRemovalModal = () => {
       'doctorsFees',
       'storageFee',
       'copies',
+
+      'deathRegistration',
       'graveFee',
       'deathRegistration',
     ]),
@@ -170,15 +216,40 @@ const AddRemovalModal = () => {
       setValue('dateRequested', new Date(initialData.dateRequested));
       setValue('byUndertaker', initialData.byUndertaker);
       setValue('storageFee', initialData.storageFee);
-      setValue('storageDays', initialData.storageDays);
+      setValue('storage', initialData.storage);
       setValue('copyFee', initialData.copyFee);
       setValue('copies', initialData.copies);
       setValue('graveFee', initialData.doctorsFees);
       setValue('adminFees', initialData.adminFees);
       setValue('totalDue', initialData.totalDue);
+      setValue('doctorsFees', initialData.doctorsFees);
+      setValue('gravediggerCost', initialData.gravediggerCost);
       setValue('deathRegistration', initialData.deathRegistration);
     }
-  }, [initialData]);
+  }, [deceasedId, initialData]);
+
+  useEffect(() => {
+    let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
+
+    if (deceasedDate) {
+      setValue(
+        'storage',
+        calculate_storageFee(
+          new Date(deceasedDate.removalDate),
+          new Date(form.getValues().dateRequested),
+          form.getValues().storageFee
+        )
+      );
+
+      setStorage(
+        calculate_storageFee(
+          new Date(deceasedDate.removalDate),
+          new Date(form.getValues().dateRequested),
+          form.getValues().storageFee
+        )
+      );
+    }
+  }, [deceasedData, deceasedId, watch('dateRequested')]);
 
   if (initialDataLoading && !initialDataError) {
     return (
@@ -186,7 +257,7 @@ const AddRemovalModal = () => {
         title={`Loading`}
         description=""
         isOpen={removalModal.isOpen}
-        onClose={removalModal.onClose}
+        onClose={onClose}
       >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -205,7 +276,7 @@ const AddRemovalModal = () => {
       title={`Body Removal Request`}
       description=""
       isOpen={removalModal.isOpen}
-      onClose={removalModal.onClose}
+      onClose={onClose}
     >
       <div className="flex flex-col  gap-x-2 mb-5">
         <div className="flex flex-col w-full ">
@@ -241,7 +312,7 @@ const AddRemovalModal = () => {
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-20 flex flex-col w-full xl:w-1/2 gap-y-3"
+          className="mb-20 flex flex-col w-full gap-y-3"
         >
           <div className="flex flex-row gap-x-5">
             <FormField
@@ -249,7 +320,9 @@ const AddRemovalModal = () => {
               name="dateRequested"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-1/2">
-                  <FormLabel className="mb-2">Date removed*</FormLabel>
+                  <FormLabel className="mb-2">
+                    Requested Removal Date*
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -345,30 +418,21 @@ const AddRemovalModal = () => {
           <div className="flex flex-row gap-x-5 items-center">
             <FormField
               control={form.control}
-              name="storageDays"
+              name="storage"
+              disabled
               render={({ field }) => (
                 <FormItem className=" w-2/3">
-                  <FormLabel className="font-semibold">
-                    Storage Days @ R300/day
-                  </FormLabel>
+                  <FormLabel className="font-semibold">Storage Fee</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="3"
-                      {...field}
-                      min={1}
-                    />
+                    <Input placeholder="3" {...field} min={1} />
                   </FormControl>
+                  <FormDescription className="text-sm">
+                    Amount automatically calculated based on requested removal
+                    date and the original removal date of the deceased.
+                  </FormDescription>
                 </FormItem>
               )}
             />
-            <p className="text-lg">
-              Total:{' '}
-              <span className="font-semibold">
-                {' '}
-                {formatter.format(300 * watch('storageDays'))}
-              </span>
-            </p>
           </div>
 
           <div className="flex flex-row gap-x-5 items-center">
@@ -437,23 +501,7 @@ const AddRemovalModal = () => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="casket"
-            render={({ field }) => (
-              <FormItem className=" w-2/3">
-                <FormLabel className="font-semibold">Casket</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled={loading}
-                    placeholder="4000"
-                    {...field}
-                    min={1}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="adminFees"
@@ -466,6 +514,7 @@ const AddRemovalModal = () => {
                     placeholder="300"
                     {...field}
                     min={1}
+                    type="number"
                   />
                 </FormControl>
               </FormItem>
@@ -474,9 +523,25 @@ const AddRemovalModal = () => {
 
           <div className="my-5 flex flex-col gap-y-5 items-end">
             <h1 className="text-xl font-semibold text-end">
-              Total Amount Due: {formatter.format(amountDue)}{' '}
+              Total Amount Due: {formatter.format(amountDue + storage)}{' '}
             </h1>
-            <Button className="font-semibold text-lg w-1/3">{action}</Button>
+            <div className="flex flex-row w-1/2 gap-x-2">
+              <Button
+                className="font-semibold text-lg w-1/2"
+                type="submit"
+                disabled={deceasedId === null}
+              >
+                {action}
+              </Button>
+              <Button
+                variant={'outline'}
+                className="font-semibold text-lg w-1/2"
+                onClick={onClose}
+                type="button"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

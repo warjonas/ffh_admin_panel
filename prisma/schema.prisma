@@ -113,7 +113,7 @@ model Removal{
   deathRegistration   Int
   doctorsFees         Int
   storageFee          Int
-  storageDays         Int
+  storage             Int
   graveFee            Int
   gravediggerCost     Int
   copies              Int

@@ -21,10 +21,9 @@ const Removals = async (props: Props) => {
   const formattedRemovals: BodyRemovalColumn[] = bodyRemovals.map(
     (removal) => ({
       id: removal.id,
-      firstName: removal.deceased.firstNames,
-      lastName: removal.deceased.lastName,
+      name: removal.deceased.firstNames + ' ' + removal.deceased.lastName,
       scheduledBy: removal.scheduledBy,
-      requestedDate: format(removal.deceased.removalDate, 'MM/dd/yyyy'),
+      requestedDate: format(removal.dateRequested, 'MM/dd/yyyy'),
       undertaker: removal.byUndertaker,
       total: formatter.format(removal.totalDue),
     })

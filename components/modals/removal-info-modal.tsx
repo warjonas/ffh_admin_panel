@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { PenBoxIcon, PrinterIcon, ReceiptIcon } from 'lucide-react';
@@ -10,30 +10,28 @@ import { format } from 'date-fns';
 import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 
 import { formatter } from '@/lib/utils';
-import { Deceased, Removal } from '@prisma/client';
+import { Removal } from '@/types';
 import { useReactToPrint } from 'react-to-print';
-// import RemovalReceiptModal from './removalReceiptModal';
-// import { Arrangement } from '@/types';
-
-interface InfoModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  loading: boolean;
-  id: string;
-}
+import RemovalReceiptModal from './removalReceiptModal';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useRemovalInfoModal,
+  useRemovalModal,
+} from '@/hooks/use-removal-modal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export const InfoModal: React.FC<InfoModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  loading,
-  id,
-}) => {
+export const RemovalInfoModal = () => {
   const [isMounted, setIsMounted] = useState(false);
   const componentRef = useRef(null);
+  const searchParams = useSearchParams();
+  const infoModal = useRemovalInfoModal();
+  const removalModal = useRemovalModal();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const id = searchParams.get('removalId');
+
   const getPageMargins = () => {
     return `@page { margin: 0rem 2rem 0rem 2rem !important; }`;
   };
@@ -42,21 +40,50 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     revalidateOnFocus: true,
   };
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const {
     data,
     error,
     isLoading,
-  }: { data: Removal & { deceased: Deceased }; error: any; isLoading: any } =
-    useSWR(`/api/removal/${id}`, fetcher, config);
+  }: { data: Removal; error: any; isLoading: any } = useSWR(
+    id ? `/api/removal/${id}` : null,
+    fetcher,
+    config
+  );
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: `Body Removal report - ${
-      isLoading || !error
-        ? 'Loading'
-        : data?.deceased.firstNames + ' ' + data?.deceased.lastName
+      data?.deceased.firstNames + ' ' + data?.deceased.lastName
     } `,
   });
+
+  const onConfirm = async () => {
+    // console.log(pathname + '?' + createQueryString('deceasedId', data.id));
+    router.push(
+      pathname + '?' + createQueryString('deceasedId', data.deceased.id)
+    );
+
+    removalModal.onOpen();
+
+    infoModal.onClose();
+  };
+
+  const onClose = () => {
+    if (id) {
+      router.back();
+    }
+    infoModal.onClose();
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -71,7 +98,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       <Modal
         title={`Error Occurred`}
         description=""
-        isOpen={isOpen}
+        isOpen={infoModal.isOpen}
         onClose={onClose}
       >
         An error occurred whilte fetching the data.
@@ -81,7 +108,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   if (isLoading) {
     return (
-      <Modal title={`Loading`} description="" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        title={`Loading`}
+        description=""
+        isOpen={infoModal.isOpen}
+        onClose={onClose}
+      >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -96,9 +128,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   return (
     <Modal
-      title={`Viewing details for the removal of the late: ${data?.deceased.firstNames} ${data?.deceased.lastName}`}
-      description="A preview of the funeral program"
-      isOpen={isOpen}
+      title={`Viewing details for the body removal of the late:  ${
+        data?.deceased.firstNames + ' ' + data?.deceased.lastName
+      }`}
+      description="A preview of the body removal request."
+      isOpen={infoModal.isOpen}
       onClose={onClose}
     >
       {isLoading && <p>Loading</p>}
@@ -137,14 +171,14 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   Surname:{' '}
                   <span className="font-normal">
                     {' '}
-                    {data?.deceased.firstNames}
+                    {data?.deceased.lastName}
                   </span>
                 </p>{' '}
                 <p className="font-semibold">
                   First Name(s):{' '}
                   <span className="font-normal">
                     {' '}
-                    {data?.deceased.lastName}
+                    {data?.deceased.firstNames}
                   </span>
                 </p>
               </div>
@@ -159,15 +193,22 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   {data?.deceased.removalFrom.city}
                 </span>
               </p>
+              <p className="font-semibold">
+                Body removed by us on:{' '}
+                <span className="font-normal">
+                  {' '}
+                  {format(new Date(data?.deceased.removalDate), 'dd/MM/yyyy')}
+                </span>
+              </p>
             </section>
 
             <section className="w-full h-fit">
               <div className="flex gap-x-20 mb-2">
                 <p className="font-semibold">
-                  Date Removed:{' '}
+                  Requested Removal Date:{' '}
                   <span className="font-normal">
                     {' '}
-                    {format(new Date(data?.deceased.removalDate), 'dd/MM/yyyy')}
+                    {format(new Date(data?.dateRequested), 'dd/MM/yyyy')}
                   </span>
                 </p>
                 <p className="font-semibold">
@@ -178,7 +219,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
               <div className="">
                 <div className="flex flex-col gap-y-2">
-                  <h1 className="font-semibold text-lg">Removal</h1>
+                  <h1 className="font-semibold text-lg">Removal Expenses</h1>
                   <div className="flex gap-x-10">
                     <p className="font-semibold">
                       Doctors Fees:{' '}
@@ -200,9 +241,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     Storage @ {formatter.format(data?.storageFee)}/day x{' '}
                     <span className="font-normal">
                       {' '}
-                      {formatter.format(
-                        Number(data?.storage * data?.storageFee)
-                      )}
+                      {formatter.format(Number(data?.storage))}
                     </span>
                   </p>
 
@@ -242,10 +281,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             </section>
           </section>
           <div className="flex w-full justify-end gap-x-2 mt-5">
-            <Button disabled={loading} variant={'outline'} onClick={onClose}>
+            <Button variant={'outline'} onClick={onClose}>
               Close
             </Button>
-            <Button disabled={loading} variant={'default'} onClick={onConfirm}>
+            <Button variant={'default'} onClick={onConfirm}>
               <PenBoxIcon /> Edit
             </Button>
           </div>

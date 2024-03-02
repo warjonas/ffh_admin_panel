@@ -20,6 +20,9 @@ export async function GET(
       where: {
         id: params.removalId,
       },
+      include: {
+        deceased: true,
+      },
     });
 
     return NextResponse.json(bodyRemoval);
@@ -77,11 +80,11 @@ export async function PATCH(
       byUndertaker,
       doctorsFees,
       storageFee,
-      storageDays,
+      storage,
       copyFee,
       copies,
       graveFee,
-      casket,
+      dateRequested,
       gravediggerCost,
       adminFees,
       totalDue,
@@ -100,8 +103,8 @@ export async function PATCH(
     if (!storageFee) {
       return new NextResponse('Storage fee is required', { status: 401 });
     }
-    if (!storageDays) {
-      return new NextResponse('Amount of storage days is required', {
+    if (!storage) {
+      return new NextResponse('Storage Fee is required', {
         status: 401,
       });
     }
@@ -116,9 +119,6 @@ export async function PATCH(
     if (!graveFee) {
       return new NextResponse('Grave fee is required', { status: 401 });
     }
-    if (!casket) {
-      return new NextResponse('Casket is required', { status: 401 });
-    }
 
     if (!gravediggerCost) {
       return new NextResponse('Gravedigger cost is required', {
@@ -127,6 +127,9 @@ export async function PATCH(
     }
     if (!adminFees) {
       return new NextResponse('Admin fee is required', { status: 401 });
+    }
+    if (!dateRequested) {
+      return new NextResponse('Date requested is required', { status: 401 });
     }
     if (!totalDue) {
       return new NextResponse('Total Due is required', { status: 401 });
@@ -146,7 +149,7 @@ export async function PATCH(
         byUndertaker,
         doctorsFees,
         storageFee,
-        storageDays,
+        storage,
         copyFee,
         copies,
         graveFee,
@@ -155,6 +158,7 @@ export async function PATCH(
         totalDue,
         updatedBy: scheduledBy,
         deathRegistration,
+        dateRequested,
       },
     });
 

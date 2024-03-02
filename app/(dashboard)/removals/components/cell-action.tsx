@@ -1,9 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useParams, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import axios from 'axios';
 
 import { BodyRemovalColumn } from './columns';
@@ -17,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
+import { useRemovalInfoModal } from '@/hooks/use-removal-modal';
 
 interface CellActionProps {
   data: BodyRemovalColumn;
@@ -26,8 +32,21 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const infoModal = useRemovalInfoModal();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const params = useParams();
   const router = useRouter();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
 
   const onDelete = async () => {
     try {
@@ -43,23 +62,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const onConfirm = async () => {
-    setLoading(true);
-    router.push(`/removals/${data.id}`);
-
-    setLoading(false);
-    setOpen(false);
+  const onPreview = () => {
+    router.push(pathname + '?' + createQueryString('removalId', data.id));
+    infoModal.onOpen();
   };
 
   return (
     <>
-      <InfoModal
+      {/* <InfoModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
         id={data.id}
-      />
+      /> */}
       <AlertModal
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
@@ -76,7 +92,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem onClick={onPreview}>
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>
