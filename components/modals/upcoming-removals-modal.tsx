@@ -25,7 +25,7 @@ export const UpcomingRemovalsModal = () => {
     error,
     isLoading,
   }: { data: Removal[]; error: any; isLoading: any } = useSWR(
-    '/api/removal',
+    isMounted ? '/api/removal/upcoming' : null,
     fetcher,
     config
   );
@@ -74,8 +74,6 @@ export const UpcomingRemovalsModal = () => {
       </Modal>
     );
   }
-
-  console.log(data);
 
   return (
     <Modal

@@ -244,6 +244,7 @@ const AddDeceasedModal = () => {
                       align="start"
                     >
                       <Calendar
+                        captionLayout="dropdown-buttons"
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
@@ -377,6 +378,7 @@ const AddDeceasedModal = () => {
                       align="start"
                     >
                       <Calendar
+                        captionLayout="dropdown"
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}

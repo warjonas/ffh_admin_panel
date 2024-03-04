@@ -5,7 +5,9 @@ import AddDeceasedModal from '@/components/modals/add-deceased-modal';
 import AddRemovalModal from '@/components/modals/add-removal-modal';
 import { InfoModal as DeceasedInfoModal } from '@/components/modals/deceased-info-modal';
 import { InfoModal as ProgramInfoModal } from '@/components/modals/program-info-modal';
+import { ReceiptModal } from '@/components/modals/receipt-modal';
 import { RemovalInfoModal } from '@/components/modals/removal-info-modal';
+import RemovalReceiptModal from '@/components/modals/removalReceiptModal';
 import { UpcomingRemovalsModal } from '@/components/modals/upcoming-removals-modal';
 import { useEffect, useState } from 'react';
 
@@ -29,6 +31,8 @@ export const ModalProvider = () => {
       <ProgramInfoModal />
       <RemovalInfoModal />
       <UpcomingRemovalsModal />
+      <ReceiptModal />
+      <RemovalReceiptModal />
     </>
   );
 };

@@ -112,20 +112,8 @@ export async function GET(req: Request) {
         deceased: true,
       },
     });
-    const upcomingRemovals = removals.filter(async (removal) => {
-      let d = new Date();
-      // d.setDate(d.getDate() + 7);
 
-      let days = await calculate_days(d, removal.dateRequested);
-
-      if (days < 7) {
-        return removal;
-      }
-    });
-
-    // console.log(upcomingRemovals);
-
-    return NextResponse.json(upcomingRemovals);
+    return NextResponse.json(removals);
   } catch (error) {
     console.log('[REMOVAL_GET]', error);
     return new NextResponse('Internal Server Error', { status: 500 });
