@@ -110,7 +110,7 @@ export interface Removal {
   graveFee: number;
   gravediggerCost: number;
   copies: number;
-
+  outstandingBalance: number;
   deceased: Deceased;
 }
 
