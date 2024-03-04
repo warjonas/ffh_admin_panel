@@ -125,7 +125,9 @@ model Removal{
   created             DateTime @default(now())
   updatedBy           String @default("")
   updated             DateTime @updatedAt()
+  outstandingBalance  Int
 
+  
   deceasedId          String @db.ObjectId @unique
   deceased            Deceased  @relation(fields: [deceasedId], references: [id])
 
@@ -140,7 +142,6 @@ model RemovalReceipt{
   issuedBy            String
   methodOfPayment     String @default("EFT")
   receivedAmount      Int @default(0)
-  outstandingBalance  Int
   receivedFrom        String
 
   removalId           String @db.ObjectId
