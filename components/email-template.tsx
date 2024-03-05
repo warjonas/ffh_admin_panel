@@ -3,6 +3,7 @@
 import { formatter } from '@/lib/utils';
 
 import { Playfair, Playfair_Display_SC } from 'next/font/google';
+import Image from 'next/image';
 import React from 'react';
 
 interface ProgramEmailTemplateProps {
@@ -133,7 +134,8 @@ export const ProgramEmailTemplate: React.FC<
                                       className="alignment"
                                     >
                                       <div style={{ maxWidth: ' 166.667px' }}>
-                                        <img
+                                        <Image
+                                          alt="logo"
                                           src="images/1_Logo.png"
                                           style={{
                                             display: 'block',

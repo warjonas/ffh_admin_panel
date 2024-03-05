@@ -269,8 +269,8 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Into House
                     </h2>
-                    {data?.pallbearersInHouse.map((house) => (
-                      <p>
+                    {data?.pallbearersInHouse.map((house, index) => (
+                      <p key={index + house.lastName}>
                         {house.firstName} {house.lastName}
                       </p>
                     ))}
@@ -279,8 +279,8 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Out of House
                     </h2>
-                    {data?.pallbearersOutHouse.map((house) => (
-                      <p>
+                    {data?.pallbearersOutHouse.map((house, index) => (
+                      <p key={index + house.lastName}>
                         {house.firstName} {house.lastName}
                       </p>
                     ))}
@@ -293,8 +293,8 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Into Church
                     </h2>
-                    {data?.pallbearersInChurch.map((church) => (
-                      <p>
+                    {data?.pallbearersInChurch.map((church, index) => (
+                      <p key={index + church.lastName}>
                         {church.firstName} {church.lastName}
                       </p>
                     ))}
@@ -303,8 +303,8 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Out of Church
                     </h2>
-                    {data?.pallbearersOutChurch.map((church) => (
-                      <p>
+                    {data?.pallbearersOutChurch.map((church, index) => (
+                      <p key={index + church.lastName}>
                         {church.firstName} {church.lastName}
                       </p>
                     ))}
@@ -316,8 +316,8 @@ export const InfoModal = () => {
                   <h2 className="text-center font-semibold underline">
                     To the Grave
                   </h2>
-                  {data?.pallbearersGrave.map((grave) => (
-                    <p>
+                  {data?.pallbearersGrave.map((grave, index) => (
+                    <p key={index + grave.lastName}>
                       {grave.firstName} {grave.lastName}
                     </p>
                   ))}
