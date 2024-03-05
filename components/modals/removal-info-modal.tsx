@@ -12,12 +12,13 @@ import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 import { formatter } from '@/lib/utils';
 import { Removal } from '@/types';
 import { useReactToPrint } from 'react-to-print';
-import RemovalReceiptModal from './removalReceiptModal';
+import RemovalReceiptModal from './removalPaymentModal';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   useRemovalInfoModal,
   useRemovalModal,
 } from '@/hooks/use-removal-modal';
+import { useRemovalReceiptModal } from '@/hooks/use-receipt-modal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -27,6 +28,7 @@ export const RemovalInfoModal = () => {
   const searchParams = useSearchParams();
   const infoModal = useRemovalInfoModal();
   const removalModal = useRemovalModal();
+  const removalReceiptModal = useRemovalReceiptModal();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -49,6 +51,16 @@ export const RemovalInfoModal = () => {
     },
     [searchParams]
   );
+
+  const processPayment = () => {
+    router.push(
+      pathname + '?' + createQueryString('deceasedId', data.deceased.id)
+    );
+
+    removalReceiptModal.onOpen();
+
+    infoModal.onClose();
+  };
 
   const {
     data,
@@ -292,9 +304,9 @@ export const RemovalInfoModal = () => {
           <div className="flex flex-col w-full">
             <button
               className="self-end text-lg  flex items-center underline"
-              onClick={() => {}}
+              onClick={processPayment}
             >
-              <ReceiptIcon className="h-5 w-5 mr-2" /> Generate Receipt
+              <ReceiptIcon className="h-5 w-5 mr-2" /> Process Payment
             </button>
           </div>
         </>

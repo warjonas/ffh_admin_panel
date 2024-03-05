@@ -23,3 +23,9 @@ export const useUpcomingRemovalsModal = create<useRemovalModalStore>((set) => ({
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),
 }));
+
+export const useRemovalReceiptModal = create<useRemovalModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));

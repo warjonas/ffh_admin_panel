@@ -85,7 +85,10 @@ export const UpcomingRemovalsModal = () => {
     >
       {data.map((removal) => {
         return (
-          <div className="p-3 rounded-lg shadow-md border border-solid grid grid-cols-3">
+          <div
+            className="p-3 rounded-lg shadow-md border border-solid grid grid-cols-3"
+            key={removal.id}
+          >
             <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
               <h2 className="font-semibold">Full Name</h2>
               <p>
@@ -98,9 +101,15 @@ export const UpcomingRemovalsModal = () => {
             </div>
             <div className="flex flex-col gap-y-2">
               <h2 className="font-semibold">Paid</h2>
-              <p className="text-white bg-red-700 p-1 w-fit rounded shadow-md">
-                Unpaid
-              </p>
+              {removal.outstandingBalance === 0 ? (
+                <p className="text-white bg-green-700 p-1 w-fit rounded shadow-md">
+                  Paid
+                </p>
+              ) : (
+                <p className="text-white bg-red-700 p-1 w-fit rounded shadow-md">
+                  Unpaid
+                </p>
+              )}
             </div>
           </div>
         );

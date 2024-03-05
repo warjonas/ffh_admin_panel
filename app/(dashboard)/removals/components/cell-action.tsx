@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
+import { Copy, Edit, MoreHorizontal, ScanEye, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -28,6 +28,11 @@ interface CellActionProps {
   data: BodyRemovalColumn;
 }
 
+interface QueryProps {
+  name: string;
+  value: string;
+}
+
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -39,9 +44,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
 
   const createQueryString = useCallback(
-    (name: string, value: string) => {
+    (queries: QueryProps[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
+
+      queries.map((query) => {
+        params.set(query.name, query.value);
+      });
 
       return params.toString();
     },
@@ -62,9 +70,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const onPreview = () => {
-    router.push(pathname + '?' + createQueryString('removalId', data.id));
+  const onView = () => {
+    const query: QueryProps[] = [{ name: 'removalId', value: data.id }];
+
+    router.push(pathname + '?' + createQueryString(query));
     infoModal.onOpen();
+  };
+
+  const onPreview = () => {
+    const query: QueryProps[] = [
+      { name: 'removalId', value: data.id },
+      { name: 'preview', value: 'true' },
+    ];
+
+    router.push(pathname + '?' + createQueryString(query));
   };
 
   return (
@@ -92,7 +111,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={onPreview}>
+          <DropdownMenuItem onClick={onView}>
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>
@@ -100,6 +119,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => router.push(`/removals/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" />
             Update
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={onPreview}>
+            <ScanEye className="mr-2 h-4 w-4" />
+            Preview
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>

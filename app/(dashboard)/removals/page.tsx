@@ -7,10 +7,9 @@ import { format } from 'date-fns';
 import { formatter } from '@/lib/utils';
 import { BodyRemovalClient } from './components/client';
 import { Receipt } from 'lucide-react';
+import RemovalPreview from './components/removal-preview';
 
-type Props = {};
-
-const Removals = async (props: Props) => {
+const Removals = async () => {
   const bodyRemovals = await prismadb.removal.findMany({
     include: {
       receipts: true,
@@ -25,7 +24,8 @@ const Removals = async (props: Props) => {
       scheduledBy: removal.scheduledBy,
       requestedDate: format(removal.dateRequested, 'MM/dd/yyyy'),
       undertaker: removal.byUndertaker,
-      total: formatter.format(removal.totalDue),
+      total: removal.totalDue,
+      outstandingBalance: removal.outstandingBalance,
     })
   );
   return (
@@ -39,8 +39,14 @@ const Removals = async (props: Props) => {
           <HeaderOptions title="Schedule removal" link="removal" />
         </div>
       </section>
-      <BodyRemovalClient data={formattedRemovals} />
-      <section></section>
+      <section className="flex flex-row h-full mt-5 mb-5">
+        <div className="w-2/3 h-full">
+          <BodyRemovalClient data={formattedRemovals} />
+        </div>
+        <div className="w-1/3 px-5">
+          <RemovalPreview />
+        </div>
+      </section>
     </section>
   );
 };
