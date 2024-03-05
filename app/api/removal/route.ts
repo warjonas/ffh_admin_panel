@@ -74,6 +74,7 @@ export async function POST(req: Request) {
 
     const bodyRemoval = await prismadb.removal.create({
       data: {
+        outstandingBalance: totalDue,
         deceasedId,
         byUndertaker,
         doctorsFees,

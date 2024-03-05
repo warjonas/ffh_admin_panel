@@ -21,6 +21,7 @@ export async function GET(
         id: params.removalId,
       },
       include: {
+        receipts: true,
         deceased: true,
       },
     });

@@ -1,12 +1,13 @@
 import { randomInt } from 'crypto';
 
-export const generateId = async () => {
+export const generateId = async (msg: string) => {
   const d = new Date();
   const i = await randomInt(99);
   const month = d.getMonth() + 1;
 
   const invoiceId =
-    'INV-' +
+    msg +
+    '-' +
     d.getDate().toString() +
     month.toString() +
     d.getFullYear().toString() +

@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const receiptNo = await generateId();
+    const receiptNo = await generateId('INV');
 
     const arrangement = await prismadb.arrangement.create({
       data: {
