@@ -127,8 +127,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 </h2>
               </div>
               <h1 className="text-center text-xl mb-5">
-                Receipt No.:{' '}
-                <span className="font-semibold"> {data?.receiptNo}</span>
+                Invoice No.:{' '}
+                <span className="font-semibold"> {data?.invoiceNo}</span>
               </h1>
               <h2 className="my-2"> Created by: {data?.createdBy}</h2>
 
@@ -362,10 +362,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 </div>
               </div>
               <h1 className="text-xl font-semibold mt-10 pr-5 text-right">
-                Total Payable: {formatter.format(data?.totalPayable)}
+                Total Payable: {formatter.format(data?.totalDue)}
               </h1>
               <h1 className="text-xl font-semibold text-right pr-5">
-                Amount Paid: {formatter.format(data?.amountPaid)}
+                Outstanding Balance:{' '}
+                {formatter.format(data?.outstandingBalance)}
               </h1>
             </section>
           </section>
