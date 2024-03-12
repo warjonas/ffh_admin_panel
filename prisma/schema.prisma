@@ -37,7 +37,7 @@ model Deceased{
 
 model Arrangement{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  receiptNo           String
+  invoiceNo           String
    dateOfFuneralService        DateTime?
   
   familyReps          FamilyRep[]
@@ -55,8 +55,8 @@ model Arrangement{
   bus                 Int
   storageDays         Int?
   decor               Decor?
-  totalPayable        Int
-  amountPaid          Int   @default(0)
+  totalDue        Int
+  outstandingBalance          Int   @default(0)
   createdBy           String
   created             DateTime @default(now())
   updatedBy           String @default("")
@@ -67,6 +67,7 @@ model Arrangement{
   doctor                 Int
   cremationDoctor                 Int
   paidUp              Boolean
+  receipts            Receipt[]
 
 
 
@@ -109,6 +110,7 @@ model FuneralProgram {
 model Removal{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   dateRequested       DateTime @default(now())
+  invoiceNo           String
   byUndertaker        String
   deathRegistration   Int
   doctorsFees         Int
@@ -120,12 +122,14 @@ model Removal{
   copyFee             Int
   adminFees           Int
   totalDue            Int
-  receipts            RemovalReceipt[]
+  receipts            Receipt[]
   scheduledBy         String
   created             DateTime @default(now())
   updatedBy           String @default("")
   updated             DateTime @updatedAt()
   outstandingBalance  Int
+  paidUp              Boolean @default(false)
+
 
   
   deceasedId          String @db.ObjectId @unique
@@ -135,7 +139,7 @@ model Removal{
 
 }
 
-model RemovalReceipt{
+model Receipt{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   receiptNo           String
   date                DateTime
@@ -144,8 +148,10 @@ model RemovalReceipt{
   receivedAmount      Int @default(0)
   receivedFrom        String
 
-  removalId           String @db.ObjectId
-  removal             Removal @relation(fields: [removalId],references: [id])
+  invoiceId           String @db.ObjectId
+  removal             Removal? @relation(fields: [invoiceId],references: [id])
+  arrangement         Arrangement? @relation(fields: [invoiceId],references: [id])
+
 
 
 }
