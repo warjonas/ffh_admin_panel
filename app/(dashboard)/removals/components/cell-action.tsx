@@ -80,7 +80,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onPreview = () => {
     const query: QueryProps[] = [
       { name: 'removalId', value: data.id },
-      { name: 'preview', value: 'true' },
+      { name: 'preview', value: 'removal' },
     ];
 
     router.push(pathname + '?' + createQueryString(query));
@@ -88,13 +88,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
-      {/* <InfoModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-        id={data.id}
-      /> */}
       <AlertModal
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}

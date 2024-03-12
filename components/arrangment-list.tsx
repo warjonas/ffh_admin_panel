@@ -28,28 +28,27 @@ import {
   CommandList,
   CommandSeparator,
 } from './ui/command';
-import { Removal } from '@/types';
+import { Arrangement, Removal } from '@/types';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
 interface BodyRemovalListProps extends PopoverTriggerProps {
-  items: Removal[];
+  items: Arrangement[];
   disabled: boolean;
 }
 
-const BodyRemovalList = ({
+const ArrangementList = ({
   className,
   items = [],
   disabled,
 }: BodyRemovalListProps) => {
-  const deceasedModal = useDeceasedModal();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const id = searchParams.get('removalId');
+  const id = searchParams.get('arrangementId');
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -62,21 +61,23 @@ const BodyRemovalList = ({
   );
 
   const filteredItems = items.filter(
-    (item: Removal) => item.outstandingBalance !== 0
+    (item: Arrangement) => item.outstandingBalance !== 0
   );
 
-  const formattedItems = filteredItems.map((item: Removal) => ({
+  const formattedItems = filteredItems.map((item: Arrangement) => ({
     label: item.deceased.firstNames + ' ' + item.deceased.lastName,
     value: item.id,
-    receiptNo: item.deceased.idNumber,
+    invoiceNo: item.invoiceNo,
   }));
 
-  const removalDetails = formattedItems.find((item: any) => item.value === id);
+  const arrangementDetails = formattedItems.find(
+    (item: any) => item.value === id
+  );
 
   const [open, setOpen] = useState(false);
 
   const onDeceasedSelect = (id: string) => {
-    router.push(pathname + '?' + createQueryString('removalId', id));
+    router.push(pathname + '?' + createQueryString('arrangementId', id));
   };
 
   return (
@@ -90,16 +91,16 @@ const BodyRemovalList = ({
           aria-label="Select removal"
           className={cn('w-1/2 p-2 justify-between text-lg', className)}
         >
-          {removalDetails?.label} - {removalDetails?.receiptNo}
+          {arrangementDetails?.label} - {arrangementDetails?.invoiceNo}
           <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0">
         <Command>
           <CommandList>
-            <CommandInput placeholder="Search Deceased..." />
-            <CommandEmpty>No Deceased found</CommandEmpty>
-            <CommandGroup heading="Deceased">
+            <CommandInput placeholder="Search Funeral Arrangements..." />
+            <CommandEmpty>No Arrangement found</CommandEmpty>
+            <CommandGroup heading="Arrangments">
               {formattedItems.map((item: any) => (
                 <CommandItem
                   key={item.value}
@@ -109,7 +110,7 @@ const BodyRemovalList = ({
                   }}
                   className="text-sm"
                 >
-                  {item.label} - {item.receiptNo}
+                  {item.label} - {item.invoiceNo}
                   <Check
                     className={cn(
                       'ml-2 h-4 w-4',
@@ -127,4 +128,4 @@ const BodyRemovalList = ({
   );
 };
 
-export default BodyRemovalList;
+export default ArrangementList;

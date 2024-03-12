@@ -13,6 +13,7 @@ export type BodyRemovalColumn = {
   total: number;
   scheduledBy: string;
   outstandingBalance: number;
+  paidUp: boolean;
 };
 
 export const columns: ColumnDef<BodyRemovalColumn>[] = [
@@ -33,18 +34,34 @@ export const columns: ColumnDef<BodyRemovalColumn>[] = [
     header: 'Total',
     cell: ({ row }) => <div>{formatter.format(row.original.total)}</div>,
   },
+  // {
+  //   accessorKey: 'outstandingBalance',
+  //   header: 'Outstanding Balance',
+  //   cell: ({ row }) => (
+  //     <div
+  //       className={`${
+  //         row.original.outstandingBalance > 0
+  //           ? 'text-red-700'
+  //           : 'text-green-700'
+  //       }`}
+  //     >
+  //       {formatter.format(row.original.outstandingBalance)}
+  //     </div>
+  //   ),
+  // },
   {
-    accessorKey: 'outstandingBalance',
-    header: 'Outstanding Balance',
+    accessorKey: 'paidUp',
+    header: 'Is Paid',
     cell: ({ row }) => (
-      <div
-        className={`${
-          row.original.outstandingBalance > 0
-            ? 'text-red-700'
-            : 'text-green-700'
-        }`}
-      >
-        {formatter.format(row.original.outstandingBalance)}
+      <div className="w-fit rounded-lg shadow-md">
+        {row.original.paidUp ? (
+          <div className="text-slate-50 p-2 bg-green-700 rounded-lg">
+            {' '}
+            Paid Up
+          </div>
+        ) : (
+          <div className="text-slate-50 p-2 bg-red-800 rounded-lg"> Unpaid</div>
+        )}
       </div>
     ),
   },

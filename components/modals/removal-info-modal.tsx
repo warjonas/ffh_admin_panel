@@ -12,13 +12,13 @@ import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 import { formatter } from '@/lib/utils';
 import { Removal } from '@/types';
 import { useReactToPrint } from 'react-to-print';
-import RemovalReceiptModal from './removalPaymentModal';
+import RemovalReceiptModal from './process-Payment-Modal';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   useRemovalInfoModal,
   useRemovalModal,
 } from '@/hooks/use-removal-modal';
-import { useRemovalReceiptModal } from '@/hooks/use-receipt-modal';
+import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -28,7 +28,7 @@ export const RemovalInfoModal = () => {
   const searchParams = useSearchParams();
   const infoModal = useRemovalInfoModal();
   const removalModal = useRemovalModal();
-  const removalReceiptModal = useRemovalReceiptModal();
+  const paymentModal = useProcessPaymentModal();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -57,7 +57,7 @@ export const RemovalInfoModal = () => {
       pathname + '?' + createQueryString('deceasedId', data.deceased.id)
     );
 
-    removalReceiptModal.onOpen();
+    paymentModal.onOpen();
 
     infoModal.onClose();
   };

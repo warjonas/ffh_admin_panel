@@ -7,7 +7,8 @@ import { format } from 'date-fns';
 import { formatter } from '@/lib/utils';
 import { BodyRemovalClient } from './components/client';
 import { Receipt } from 'lucide-react';
-import RemovalPreview from './components/removal-preview';
+import RemovalPreview from '../../../components/data-preview';
+import DataPreview from '../../../components/data-preview';
 
 const Removals = async () => {
   const bodyRemovals = await prismadb.removal.findMany({
@@ -26,8 +27,10 @@ const Removals = async () => {
       undertaker: removal.byUndertaker,
       total: removal.totalDue,
       outstandingBalance: removal.outstandingBalance,
+      paidUp: removal.paidUp,
     })
   );
+
   return (
     <section className="p-5 w-full h-full">
       <Heading
@@ -44,7 +47,7 @@ const Removals = async () => {
           <BodyRemovalClient data={formattedRemovals} />
         </div>
         <div className="w-1/3 px-5">
-          <RemovalPreview />
+          <DataPreview heading="Deceased Removal Preview" />
         </div>
       </section>
     </section>

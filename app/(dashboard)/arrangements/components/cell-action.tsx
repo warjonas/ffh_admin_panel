@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, MoreHorizontal, Trash, View } from 'lucide-react';
+import { Copy, Edit, MoreHorizontal, ScanEye, Trash, View } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -29,6 +29,11 @@ interface CellActionProps {
   deceasedId: string;
 }
 
+interface QueryProps {
+  name: string;
+  value: string;
+}
+
 export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -40,9 +45,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const arrangementModal = useArrangementModal();
 
   const createQueryString = useCallback(
-    (name: string, value: string) => {
+    (queries: QueryProps[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
+      queries.map((query) => {
+        params.set(query.name, query.value);
+      });
 
       return params.toString();
     },
@@ -64,13 +71,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   };
 
   const onUpdate = async () => {
-    router.push(
-      pathname +
-        '?' +
-        createQueryString('deceasedId', deceasedId) +
-        '&' +
-        createQueryString('arrangementId', data.id)
-    );
+    const query: QueryProps[] = [
+      { name: 'deceasedId', value: deceasedId },
+      { name: 'arrangementId', value: data.id },
+    ];
+    router.push(pathname + '?' + createQueryString(query));
     arrangementModal.onOpen();
   };
 
@@ -80,6 +85,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
 
     setLoading(false);
     setOpen(false);
+  };
+
+  const onPreview = () => {
+    const query: QueryProps[] = [
+      { name: 'arrangementId', value: data.id },
+      { name: 'preview', value: 'arrangement' },
+    ];
+
+    router.push(pathname + '?' + createQueryString(query));
   };
   return (
     <>
@@ -113,6 +127,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuItem onClick={() => onUpdate()}>
             <Edit className="mr-2 h-4 w-4" />
             Update
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onPreview}>
+            <ScanEye className="mr-2 h-4 w-4" />
+            Preview
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>

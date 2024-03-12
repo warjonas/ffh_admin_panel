@@ -95,7 +95,8 @@ const formSchema = z.object({
   }),
   tombstoneId: z.string(),
   coffinid: z.string(),
-  totalPayable: z.coerce.number().default(10000),
+  totalDue: z.coerce.number().default(10000),
+  outstandingBalance: z.coerce.number(),
   doctor: z.coerce.number(),
   cremationDoctor: z.coerce.number(),
   afterHour: z.coerce.number(),
@@ -213,8 +214,8 @@ const AddArrangmentModal = () => {
         banner: false,
       },
       tombstoneId: '658436d1de42bdd8d5632f85',
-      totalPayable: amountDue,
-      amountPaid: 0,
+      totalDue: amountDue,
+      outstandingBalance: 0,
       notes: '',
       doctor: 0,
       cremationDoctor: 0,
@@ -276,6 +277,7 @@ const AddArrangmentModal = () => {
     }
 
     data.deceased = deceasedId;
+    data.outstandingBalance = amountDue;
 
     try {
       setLoading(true);
@@ -287,8 +289,7 @@ const AddArrangmentModal = () => {
         }
       }
 
-      data.totalPayable = 20000;
-      data.amountPaid = 1000;
+      data.totalDue = 20000;
 
       if (initialData) {
         await axios.patch(`/api/arrangement/${arrangementId}`, data);
@@ -327,7 +328,7 @@ const AddArrangmentModal = () => {
           new Date(initialData.dateOfFuneralService)
         );
       }
-      setValue('amountPaid', initialData.amountPaid);
+
       setValue('bus', initialData.bus);
       setValue('car', initialData.familyCar);
       setValue('afterHour', initialData.afterHour);
@@ -341,8 +342,7 @@ const AddArrangmentModal = () => {
       if (initialData.programs) setValue('programs', initialData.programs);
       if (initialData.minister) setValue('minister', initialData.minister);
 
-      setValue('totalPayable', initialData.totalPayable);
-      setValue('amountPaid', initialData.amountPaid);
+      setValue('totalDue', initialData.totalDue);
       setValue('doves', initialData.doves);
       setValue('notes', initialData.notes);
 
@@ -1212,23 +1212,6 @@ const AddArrangmentModal = () => {
             <hr className="w-full my-4" />
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Amount Paid: </h2>
-              <FormField
-                control={form.control}
-                name="amountPaid"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="50 or 100"
-                        {...field}
-                        className="w-full"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
             </div>
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>

@@ -32,7 +32,7 @@ import {
   useRemovalModal,
   useUpcomingRemovalsModal,
 } from '@/hooks/use-removal-modal';
-import { useReceiptModal } from '@/hooks/use-receipt-modal';
+import { usePaymentTypeModal } from '@/hooks/use-payment-modal';
 
 type Props = {};
 
@@ -46,7 +46,7 @@ const MainNavActions = (props: Props) => {
   const arrangementModal = useArrangementModal();
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
-  const receiptModal = useReceiptModal();
+  const paymentType = usePaymentTypeModal();
 
   const actions = [
     {
@@ -162,11 +162,11 @@ const MainNavActions = (props: Props) => {
           func: () => setOpen(true),
         },
         {
-          title: 'New Payment Receipt',
+          title: 'New Payment',
           link: '/invoices',
           break: false,
           type: 'Function',
-          func: receiptModal.onOpen,
+          func: paymentType.onOpen,
         },
       ],
     },
