@@ -4,6 +4,19 @@ import { getSession } from '@auth0/nextjs-auth0';
 
 import { NextResponse } from 'next/server';
 
+export async function GET(req: Request) {
+  try {
+    const arrangement = await prismadb.arrangement.findMany({
+      include: { deceased: true },
+    });
+
+    return NextResponse.json(arrangement);
+  } catch (error) {
+    console.log('ARRANGEMENTS_GET', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getSession();
@@ -32,8 +45,8 @@ export async function POST(req: Request) {
       storageDays,
       decor,
       tombstoneId,
-      totalPayable,
-      amountPaid,
+      totalDue,
+      outstandingBalance,
       notes,
       doctor,
       cremationDoctor,
@@ -57,12 +70,12 @@ export async function POST(req: Request) {
       });
     }
 
-    const receiptNo = await generateId('INV');
+    const invoiceNo = await generateId('INV');
 
     const arrangement = await prismadb.arrangement.create({
       data: {
         dateOfFuneralService,
-        receiptNo,
+        invoiceNo,
         createdBy: createdBy ? createdBy : user,
         deceasedId: deceased,
         familyReps,
@@ -79,14 +92,14 @@ export async function POST(req: Request) {
         bus,
         familyCar: car,
         decor,
-        totalPayable,
+        totalDue,
         storageDays,
         notes,
         tombstoneId,
         afterHour,
         cremationDoctor,
         doctor,
-        amountPaid,
+        outstandingBalance,
         wreaths,
         paidUp: false,
 

@@ -32,7 +32,12 @@ export async function POST(
       receivedAmount,
       methodOfPayment,
       outstandingBalance,
+      paidUp,
     } = body;
+
+    if (!paidUp) {
+      return new NextResponse('Paid Up is required', { status: 401 });
+    }
 
     if (!issuedBy) {
       return new NextResponse('Issurer name is required', { status: 401 });
@@ -59,12 +64,13 @@ export async function POST(
     const receiptNo = await generateId('REC');
 
     const [bodyRemovalReceipt, bodyRemoval] = await prismadb.$transaction([
-      prismadb.removalReceipt.create({
+      prismadb.receipt.create({
         data: {
           date: new Date(),
           issuedBy,
           receivedFrom,
-          removalId: params.removalId,
+
+          invoiceId: params.removalId,
           receivedAmount,
           methodOfPayment,
           receiptNo,
@@ -75,6 +81,7 @@ export async function POST(
           id: params.removalId,
         },
         data: {
+          paidUp,
           outstandingBalance,
         },
       }),

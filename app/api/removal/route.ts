@@ -1,3 +1,4 @@
+import { generateId } from '@/actions/getInvoiceId';
 import { calculate_days } from '@/actions/getUpcomingRemovals';
 import prismadb from '@/lib/prismadb';
 import { getSession } from '@auth0/nextjs-auth0';
@@ -72,8 +73,11 @@ export async function POST(req: Request) {
       return new NextResponse('Total Due is required', { status: 401 });
     }
 
+    const invoiceNo = await generateId('INV');
+
     const bodyRemoval = await prismadb.removal.create({
       data: {
+        invoiceNo,
         outstandingBalance: totalDue,
         deceasedId,
         byUndertaker,
