@@ -81,7 +81,6 @@ export async function PATCH(
       byUndertaker,
       doctorsFees,
       storageFee,
-      storage,
       copyFee,
       copies,
       graveFee,
@@ -104,11 +103,7 @@ export async function PATCH(
     if (!storageFee) {
       return new NextResponse('Storage fee is required', { status: 401 });
     }
-    if (!storage) {
-      return new NextResponse('Storage Fee is required', {
-        status: 401,
-      });
-    }
+
     if (!copyFee) {
       return new NextResponse('Copy Fee is required', { status: 401 });
     }
@@ -150,7 +145,6 @@ export async function PATCH(
         byUndertaker,
         doctorsFees,
         storageFee,
-        storage,
         copyFee,
         copies,
         graveFee,
