@@ -75,7 +75,7 @@ model Arrangement{
 
 
   deceasedId          String @db.ObjectId @unique
-  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id], onDelete: Cascade)
   tombstoneId         String? @db.ObjectId
   tombstone           Tombstone? @relation(fields: [tombstoneId], references: [id])
   coffinId            String?  @db.ObjectId
@@ -105,7 +105,7 @@ model FuneralProgram {
   updated             DateTime @updatedAt()
 
   deceasedId          String @db.ObjectId @unique
-  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id], onDelete: Cascade)
 
 }
 
@@ -134,7 +134,7 @@ model Removal{
 
   
   deceasedId          String @db.ObjectId @unique
-  deceased            Deceased  @relation(fields: [deceasedId], references: [id])
+  deceased            Deceased  @relation(fields: [deceasedId], references: [id], onDelete: Cascade)
 
 
 
