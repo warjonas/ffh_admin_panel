@@ -1,5 +1,4 @@
 import { Receipt } from '@prisma/client';
-import { number } from 'zod';
 
 export interface Arrangement {
   id: string;
@@ -33,6 +32,7 @@ export interface Arrangement {
   created: Date;
   tombstoneId: string;
   tombstone: Tombstone;
+  updatedBy: string;
 
   coffinId: string;
   coffin: Coffin;
@@ -92,6 +92,7 @@ interface Deceased {
   removalFrom: Address;
   deathCertificateRecipient: string;
   dateOfFuneralService: Date;
+  updatedBy: string;
 }
 
 export interface Removal {
@@ -107,6 +108,7 @@ export interface Removal {
   totalDue: number;
   receipts: RemovalReceipt[];
   scheduledBy: string;
+
   created: Date;
   updatedBy: string;
   updated: Date;

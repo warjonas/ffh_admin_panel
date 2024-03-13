@@ -23,6 +23,8 @@ model Deceased{
   removalFrom                 Address
   deathCertificateRecipient   String
   createdBy                   String
+  updatedBy           String @default("")
+  updated             DateTime @updatedAt()
  
 
   arrangement                 Arrangement?

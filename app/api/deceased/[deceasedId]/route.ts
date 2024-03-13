@@ -55,6 +55,7 @@ export async function PATCH(
       removalFrom,
       ffhMemberNo,
       deathCertificateRecipient,
+      updatedBy,
     } = body;
 
     if (!dateOfBirth) {
@@ -107,6 +108,7 @@ export async function PATCH(
         deathCertificateRecipient,
         dateOfDeath: new Date(dateOfDeath),
         removalDate: new Date(removalDate),
+        updatedBy,
       },
     });
 

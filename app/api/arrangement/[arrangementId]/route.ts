@@ -70,6 +70,7 @@ export async function PATCH(
       coffinid,
       church,
       digger,
+      updatedBy,
 
       afterHour,
     } = body;
@@ -103,6 +104,7 @@ export async function PATCH(
         outstandingBalance,
         tombstoneId,
         coffinId: coffinid,
+        updatedBy,
       },
     });
 

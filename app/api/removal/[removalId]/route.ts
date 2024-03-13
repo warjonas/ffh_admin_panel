@@ -89,6 +89,7 @@ export async function PATCH(
       adminFees,
       totalDue,
       scheduledBy,
+      updatedBy,
       deathRegistration,
     } = body;
 
@@ -151,9 +152,9 @@ export async function PATCH(
         gravediggerCost,
         adminFees,
         totalDue,
-        updatedBy: scheduledBy,
         deathRegistration,
         dateRequested,
+        updatedBy,
       },
     });
 

@@ -66,6 +66,7 @@ const formSchema = z.object({
   adminFees: z.coerce.number().default(1),
   totalDue: z.coerce.number().default(1),
   deathRegistration: z.coerce.number().default(1),
+  updatedBy: z.string(),
 });
 
 type RemovalFromValues = z.infer<typeof formSchema>;
@@ -130,6 +131,7 @@ const AddRemovalModal = () => {
 
       byUndertaker: '',
       dateRequested: new Date(),
+      updatedBy: '',
     },
   });
 
@@ -154,8 +156,18 @@ const AddRemovalModal = () => {
       }
 
       if (initialData) {
+        if (!error || !isLoading) {
+          if (user?.name) {
+            data.updatedBy = user.name;
+          }
+        }
         await axios.patch(`/api/removal/${initialData.id}`, data);
       } else {
+        if (!error || !isLoading) {
+          if (user?.name) {
+            data.scheduledBy = user.name;
+          }
+        }
         await axios.post('/api/removal', data);
       }
       removalModal.onClose;

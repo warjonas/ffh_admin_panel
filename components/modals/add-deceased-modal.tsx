@@ -42,46 +42,8 @@ const formSchema = z.object({
   deathCertificateRecipient: z.string().min(1),
 
   createdBy: z.string(),
+  updatedBy: z.string(),
 });
-
-const options = {
-  title: 'Demo Title',
-  autoHide: true,
-  todayBtn: false,
-  clearBtn: true,
-  clearBtnText: 'Clear',
-  maxDate: new Date('2030-01-01'),
-  minDate: new Date('1950-01-01'),
-  theme: {
-    background: 'bg-gray-700 dark:bg-gray-800',
-    todayBtn: '',
-    clearBtn: '',
-    icons: '',
-    text: '',
-    disabledText: 'bg-red-500',
-    input: '',
-    inputIcon: '',
-    selected: '',
-  },
-  icons: {
-    // () => ReactElement | JSX.Element
-    prev: () => <span>Previous</span>,
-    next: () => <span>Next</span>,
-  },
-  datepickerClassNames: 'top-12',
-  defaultDate: new Date('2022-01-01'),
-  language: 'en',
-  disabledDates: [],
-  weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-  inputNameProp: 'date',
-  inputIdProp: 'date',
-  inputPlaceholderProp: 'Select Date',
-  inputDateFormatProp: {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  },
-};
 
 type DeceasedFormValues = z.infer<typeof formSchema>;
 
@@ -90,7 +52,6 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const AddDeceasedModal = () => {
   const deceasedModal = useDeceasedModal();
   const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
   const searchParams = useSearchParams();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -130,6 +91,7 @@ const AddDeceasedModal = () => {
       },
       deathCertificateRecipient: '',
       createdBy: 'email',
+      updatedBy: '',
     },
   });
 
@@ -137,15 +99,19 @@ const AddDeceasedModal = () => {
     setLoading(true);
 
     try {
-      if (!error || !userLoading) {
-        if (user?.email) {
-          data.createdBy = user.email;
-        }
-      }
-
       if (deceased) {
+        if (!error || !userLoading) {
+          if (user?.name) {
+            data.updatedBy = user.name;
+          }
+        }
         await axios.patch(`/api/deceased/${deceased.id}`, data);
       } else {
+        if (!error || !userLoading) {
+          if (user?.name) {
+            data.createdBy = user.name;
+          }
+        }
         await axios.post('/api/deceased', data);
       }
 

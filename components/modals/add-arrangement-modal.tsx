@@ -107,6 +107,7 @@ const formSchema = z.object({
   amountPaid: z.coerce.number().default(0),
   notes: z.string().max(190).default(''),
   createdBy: z.string(),
+  updatedBy: z.string(),
 });
 
 type ArrangementFormValues = z.infer<typeof formSchema>;
@@ -224,6 +225,7 @@ const AddArrangmentModal = () => {
       cremationDoctor: 0,
       coffinid: '65d30ab955df5069abb2bd0d',
       createdBy: 'email',
+      updatedBy: '',
     },
   });
 
@@ -280,23 +282,25 @@ const AddArrangmentModal = () => {
     }
 
     data.deceased = deceasedId;
+    data.totalDue = amountDue;
     data.outstandingBalance = amountDue;
 
     try {
       setLoading(true);
-      console.log(data);
-
-      if (!error || !isLoading) {
-        if (user?.email) {
-          data.createdBy = user.email;
-        }
-      }
-
-      data.totalDue = 20000;
 
       if (initialData) {
+        if (!error || !isLoading) {
+          if (user?.name) {
+            data.updatedBy = user.name;
+          }
+        }
         await axios.patch(`/api/arrangement/${arrangementId}`, data);
       } else {
+        if (!error || !isLoading) {
+          if (user?.name) {
+            data.createdBy = user.name;
+          }
+        }
         await axios.post('/api/arrangement', data);
       }
 
