@@ -43,6 +43,7 @@
     "prisma": "^5.7.1",
     "react": "^18",
     "react-aria": "^3.32.1",
+    "react-datepicker": "^6.3.0",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
     "react-hook-form": "^7.49.2",
@@ -52,6 +53,7 @@
     "react-to-print": "^2.14.15",
     "resend": "^3.2.0",
     "swr": "^2.2.4",
+    "tailwind-datepicker-react": "^1.4.3",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.1.0",
@@ -61,6 +63,7 @@
   "devDependencies": {
     "@types/node": "^20.10.5",
     "@types/react": "^18",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "8.57.0",
