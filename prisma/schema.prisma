@@ -53,7 +53,7 @@ model Arrangement{
   programs            Int?
   familyCar           Int
   bus                 Int
-  storageDays         Int?
+  storage         Int?
   decor               Decor?
   totalDue        Int
   outstandingBalance          Int   @default(0)
@@ -114,8 +114,7 @@ model Removal{
   byUndertaker        String
   deathRegistration   Int
   doctorsFees         Int
-  storageFee          Int
-  storage             Int
+  storageFee            Int
   graveFee            Int
   gravediggerCost     Int
   copies              Int
@@ -213,6 +212,7 @@ type Decor{
 type Church{
   churchName        String
   Address     Address
+  time          String
 }
 
 type Cemetry{

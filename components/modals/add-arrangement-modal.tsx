@@ -46,6 +46,7 @@ import useSWR, { SWRConfiguration } from 'swr';
 import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import DeceasedList from '../deceased-list';
+import NextDatePicker from '../ui/custom-datepicker';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -64,6 +65,7 @@ const formSchema = z.object({
   deliveryTime: z.string(),
   church: z.object({
     churchName: z.string(),
+    time: z.string(),
     Address: z.object({
       street: z.string(),
       city: z.string(),
@@ -86,7 +88,7 @@ const formSchema = z.object({
   car: z.coerce.number(),
   wreaths: z.coerce.number(),
 
-  storageDays: z.coerce.number().min(1),
+  storage: z.coerce.number().min(1),
   decor: z.object({
     candle: z.boolean().default(false),
     photo: z.boolean().default(false),
@@ -183,6 +185,7 @@ const AddArrangmentModal = () => {
       deliveryTime: '',
       church: {
         churchName: '',
+        time: '',
         Address: {
           street: '',
           city: '',
@@ -204,7 +207,7 @@ const AddArrangmentModal = () => {
       bus: 0,
       car: 0,
       wreaths: 0,
-      storageDays: 1,
+      storage: 1,
       liveStreaming: 0,
       afterHour: 0,
       decor: {
@@ -248,7 +251,7 @@ const AddArrangmentModal = () => {
       Number(form.getValues().cremationDoctor) +
       Number(form.getValues().doctor) +
       Number(form.getValues().bus) +
-      Number(form.getValues().storageDays * 300) +
+      Number(form.getValues().storage) +
       Number(form.getValues().liveStreaming) +
       Number(form.getValues().doves) +
       Number(form.getValues().wreaths) +
@@ -260,7 +263,7 @@ const AddArrangmentModal = () => {
     watch([
       'cremationDoctor',
       'doctor',
-      'storageDays',
+      'storage',
       'liveStreaming',
       'car',
       'bus',
@@ -319,7 +322,7 @@ const AddArrangmentModal = () => {
   }, []);
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData && deceasedId) {
       setValue('deceased', initialData.deceasedId);
 
       if (initialData.dateOfFuneralService) {
@@ -346,14 +349,13 @@ const AddArrangmentModal = () => {
       setValue('doves', initialData.doves);
       setValue('notes', initialData.notes);
 
-      if (initialData.storageDays)
-        setValue('storageDays', initialData.storageDays);
+      if (initialData.storage) setValue('storage', initialData.storage);
 
       setValue('cremationDoctor', initialData.cremationDoctor);
       if (initialData.crossSize) setValue('crossSize', initialData.crossSize);
       if (initialData.decor) setValue('decor', initialData.decor);
     }
-  }, [initialData]);
+  }, [deceasedId, initialData]);
 
   if (!isMounted) {
     return null;
@@ -428,38 +430,13 @@ const AddArrangmentModal = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Date of Funeral Service:*</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal ',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span className="text-gray-400">Select date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto bg-primary-foreground p-0"
-                        align="start"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <div className="relative">
+                      <NextDatePicker
+                        onChange={field.onChange}
+                        value={field.value}
+                        maxDate={new Date()}
+                      />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -639,6 +616,24 @@ const AddArrangmentModal = () => {
                             <Input
                               disabled={loading}
                               placeholder="City"
+                              {...field}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="church.time"
+                      render={({ field }) => (
+                        <FormItem className=" w-1/2">
+                          <FormLabel className="font-semibold">
+                            Removal Time
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              disabled={loading}
+                              placeholder="Time"
                               {...field}
                             />
                           </FormControl>
@@ -1024,7 +1019,8 @@ const AddArrangmentModal = () => {
 
             <FormField
               control={form.control}
-              name="storageDays"
+              name="storage"
+              disabled
               render={({ field }) => (
                 <FormItem className=" mb-5 flex items-baseline gap-x-2">
                   <FormLabel className="font-semibold">

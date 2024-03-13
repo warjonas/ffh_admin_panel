@@ -34,7 +34,7 @@ export const columns: ColumnDef<DeceasedColumn>[] = [
 
   {
     accessorKey: 'createdAt',
-    header: 'Date',
+    header: 'Added On',
   },
   {
     id: 'actions',

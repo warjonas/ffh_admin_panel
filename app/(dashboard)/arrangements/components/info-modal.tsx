@@ -326,11 +326,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </p>
 
                     <p className="font-medium">
-                      <span className="font-semibold">
-                        {' '}
-                        Days of Storage @ R300/day:{' '}
-                      </span>
-                      {data?.storageDays} days
+                      <span className="font-semibold"> Storage: </span>
+                      {formatter.format(data?.storage)}
                     </p>
 
                     <h2 className="uppercase font-semibold mt-2">Decor</h2>

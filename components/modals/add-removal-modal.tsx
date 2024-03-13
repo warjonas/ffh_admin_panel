@@ -35,6 +35,7 @@ import useSWR, { SWRConfiguration } from 'swr';
 import { useRemovalModal } from '@/hooks/use-removal-modal';
 import { Modal } from '../ui/modal';
 import DeceasedList from '../deceased-list';
+import NextDatePicker from '../ui/custom-datepicker';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -179,12 +180,18 @@ const AddRemovalModal = () => {
     removalModal.onClose();
     form.reset();
     setStorage(0);
+    setAmountDue(0);
     if (deceasedId && removalId) {
       router.push('/removals');
     } else if (deceasedId) {
       router.back();
     }
   };
+
+  useEffect(() => {
+    setAmountDue(0);
+    setStorage(0);
+  }, []);
 
   useEffect(() => {
     const total =
@@ -202,21 +209,21 @@ const AddRemovalModal = () => {
       'doctorsFees',
       'storageFee',
       'copies',
-
       'deathRegistration',
       'graveFee',
       'deathRegistration',
     ]),
+    amountDue,
   ]);
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData && deceasedId) {
       setValue('scheduledBy', initialData.scheduledBy);
       setValue('deceasedId', initialData.deceasedId);
       setValue('dateRequested', new Date(initialData.dateRequested));
       setValue('byUndertaker', initialData.byUndertaker);
       setValue('storageFee', initialData.storageFee);
-      setValue('storage', initialData.storage);
+      setValue('storage', initialData.storageFee);
       setValue('copyFee', initialData.copyFee);
       setValue('copies', initialData.copies);
       setValue('graveFee', initialData.doctorsFees);
@@ -231,7 +238,7 @@ const AddRemovalModal = () => {
   useEffect(() => {
     let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
 
-    if (deceasedDate) {
+    if (deceasedDate && deceasedId) {
       setValue(
         'storage',
         calculate_storageFee(
@@ -323,38 +330,13 @@ const AddRemovalModal = () => {
                   <FormLabel className="mb-2">
                     Requested Removal Date*
                   </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal ',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, 'PPP')
-                          ) : (
-                            <span className="text-gray-400">Select date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto bg-primary-foreground p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <NextDatePicker
+                      onChange={field.onChange}
+                      value={field.value}
+                      maxDate={new Date()}
+                    />
+                  </div>
                 </FormItem>
               )}
             />

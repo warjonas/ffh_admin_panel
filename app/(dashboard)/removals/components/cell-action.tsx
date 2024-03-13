@@ -22,10 +22,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
-import { useRemovalInfoModal } from '@/hooks/use-removal-modal';
+import {
+  useRemovalInfoModal,
+  useRemovalModal,
+} from '@/hooks/use-removal-modal';
 
 interface CellActionProps {
   data: BodyRemovalColumn;
+  deceasedId: string;
 }
 
 interface QueryProps {
@@ -33,7 +37,7 @@ interface QueryProps {
   value: string;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,6 +46,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const pathname = usePathname();
   const params = useParams();
   const router = useRouter();
+  const removalModal = useRemovalModal();
 
   const createQueryString = useCallback(
     (queries: QueryProps[]) => {
@@ -72,9 +77,22 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onView = () => {
     const query: QueryProps[] = [{ name: 'removalId', value: data.id }];
+    router.push('/removals');
 
     router.push(pathname + '?' + createQueryString(query));
     infoModal.onOpen();
+  };
+
+  const onUpdate = async () => {
+    const query: QueryProps[] = [
+      { name: 'deceasedId', value: deceasedId },
+      { name: 'removalId', value: data.id },
+    ];
+
+    router.push('/removals');
+
+    router.push(pathname + '?' + createQueryString(query));
+    removalModal.onOpen();
   };
 
   const onPreview = () => {
@@ -109,7 +127,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             View
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => router.push(`/removals/${data.id}`)}>
+          <DropdownMenuItem onClick={onUpdate}>
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>

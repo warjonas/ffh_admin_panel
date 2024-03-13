@@ -21,6 +21,7 @@ const Removals = async () => {
   const formattedRemovals: BodyRemovalColumn[] = bodyRemovals.map(
     (removal) => ({
       id: removal.id,
+      deceasedId: removal.deceasedId,
       name: removal.deceased.firstNames + ' ' + removal.deceased.lastName,
       scheduledBy: removal.scheduledBy,
       requestedDate: format(removal.dateRequested, 'MM/dd/yyyy'),

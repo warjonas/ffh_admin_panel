@@ -21,6 +21,10 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import { DatePickerOptions } from '@/lib/utils';
+
+import Datepicker from 'tailwind-datepicker-react';
+import NextDatePicker from '../ui/custom-datepicker';
 
 const formSchema = z.object({
   ffhMemberNo: z.string(),
@@ -40,6 +44,45 @@ const formSchema = z.object({
   createdBy: z.string(),
 });
 
+const options = {
+  title: 'Demo Title',
+  autoHide: true,
+  todayBtn: false,
+  clearBtn: true,
+  clearBtnText: 'Clear',
+  maxDate: new Date('2030-01-01'),
+  minDate: new Date('1950-01-01'),
+  theme: {
+    background: 'bg-gray-700 dark:bg-gray-800',
+    todayBtn: '',
+    clearBtn: '',
+    icons: '',
+    text: '',
+    disabledText: 'bg-red-500',
+    input: '',
+    inputIcon: '',
+    selected: '',
+  },
+  icons: {
+    // () => ReactElement | JSX.Element
+    prev: () => <span>Previous</span>,
+    next: () => <span>Next</span>,
+  },
+  datepickerClassNames: 'top-12',
+  defaultDate: new Date('2022-01-01'),
+  language: 'en',
+  disabledDates: [],
+  weekDays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+  inputNameProp: 'date',
+  inputIdProp: 'date',
+  inputPlaceholderProp: 'Select Date',
+  inputDateFormatProp: {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  },
+};
+
 type DeceasedFormValues = z.infer<typeof formSchema>;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -47,6 +90,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const AddDeceasedModal = () => {
   const deceasedModal = useDeceasedModal();
   const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
   const searchParams = useSearchParams();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -150,6 +194,8 @@ const AddDeceasedModal = () => {
     return null;
   }
 
+  console.log(watch('dateOfBirth'));
+
   if (isLoading && !dataError) {
     return (
       <Modal
@@ -220,39 +266,13 @@ const AddDeceasedModal = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date of Birth:*</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal ',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), 'PPP')
-                          ) : (
-                            <span className="text-gray-400">Select date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto bg-primary-foreground p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        captionLayout="dropdown-buttons"
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date > new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <NextDatePicker
+                      onChange={field.onChange}
+                      value={field.value}
+                      maxDate={new Date()}
+                    />
+                  </div>
                 </FormItem>
               )}
             />
@@ -262,40 +282,14 @@ const AddDeceasedModal = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date of Death:*</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal ',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), 'PPP')
-                          ) : (
-                            <span className="text-gray-400">Select date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto bg-primary-foreground p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date(form.getValues().dateOfBirth)
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <NextDatePicker
+                      onChange={field.onChange}
+                      value={field.value}
+                      minDate={form.getValues().dateOfBirth}
+                      maxDate={new Date()}
+                    />
+                  </div>
                 </FormItem>
               )}
             />
@@ -354,39 +348,13 @@ const AddDeceasedModal = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date of Removal:*</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal ',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), 'PPP')
-                          ) : (
-                            <span className="text-gray-400">Select date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto bg-primary-foreground p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        captionLayout="dropdown"
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date > new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <NextDatePicker
+                      onChange={field.onChange}
+                      value={field.value}
+                      maxDate={new Date()}
+                    />
+                  </div>
                 </FormItem>
               )}
             />

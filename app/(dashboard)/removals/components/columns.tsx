@@ -14,6 +14,7 @@ export type BodyRemovalColumn = {
   scheduledBy: string;
   outstandingBalance: number;
   paidUp: boolean;
+  deceasedId: string;
 };
 
 export const columns: ColumnDef<BodyRemovalColumn>[] = [
@@ -72,6 +73,8 @@ export const columns: ColumnDef<BodyRemovalColumn>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => (
+      <CellAction data={row.original} deceasedId={row.original.deceasedId} />
+    ),
   },
 ];

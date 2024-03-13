@@ -124,7 +124,12 @@ const MainNavActions = (props: Props) => {
           link: '/removals/new',
           break: false,
           type: 'Function',
-          func: removalModal.onOpen,
+          func: () => {
+            router.push('/removals');
+            setTimeout(() => {
+              removalModal.onOpen();
+            }, 500);
+          },
         },
         {
           title: 'Upcoming Body Removals',

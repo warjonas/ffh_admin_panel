@@ -20,7 +20,7 @@ export interface Arrangement {
   programs: number;
   familyCar: number;
   bus: number;
-  storageDays: number;
+  storage: number;
   decor: Decor;
   notes: string;
   afterHour: boolean;

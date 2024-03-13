@@ -75,12 +75,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
       { name: 'deceasedId', value: deceasedId },
       { name: 'arrangementId', value: data.id },
     ];
+
+    router.push('/arrangements');
+
     router.push(pathname + '?' + createQueryString(query));
     arrangementModal.onOpen();
   };
 
   const onConfirm = async () => {
     setLoading(true);
+    router.push('/arrangements');
     router.push(`/arrangements/${data.id}`);
 
     setLoading(false);

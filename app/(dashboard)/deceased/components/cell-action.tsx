@@ -1,7 +1,15 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, Link, MoreHorizontal, Trash, View } from 'lucide-react';
+import {
+  Car,
+  Copy,
+  Edit,
+  Link,
+  MoreHorizontal,
+  Trash,
+  View,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -125,13 +133,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Trash className="mr-2 h-4 w-4" />
             Delete
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onRemoval()}>
-            <Link className="mr-2 h-4 w-4" />
+          {/* <DropdownMenuItem onClick={() => onRemoval()}>
+            <Car className="mr-2 h-4 w-4" />
             Request Removal Estimate
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem onClick={() => generateLink()}>
             <Link className="mr-2 h-4 w-4" />
-            Generate Program Link
+            Copy Program Link
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

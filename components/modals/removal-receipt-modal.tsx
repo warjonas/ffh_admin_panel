@@ -106,8 +106,6 @@ const RemovalReceiptModal = () => {
       </Modal>
     );
 
-  console.log('data', data);
-
   return (
     <Modal
       title={`Viewing Payment receipt for: ${
