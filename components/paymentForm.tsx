@@ -47,6 +47,7 @@ const PaymentForm = ({ onSubmit }: PaymentFormProps) => {
       receivedAmount: 0,
       receivedFrom: '',
       outstandingBalance: 0,
+      paidUp: false,
     },
   });
 
