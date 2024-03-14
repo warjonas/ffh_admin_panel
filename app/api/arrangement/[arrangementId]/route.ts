@@ -71,6 +71,7 @@ export async function PATCH(
       church,
       digger,
       updatedBy,
+      paidUp,
 
       afterHour,
     } = body;
@@ -105,6 +106,7 @@ export async function PATCH(
         tombstoneId,
         coffinId: coffinid,
         updatedBy,
+        paidUp,
       },
     });
 

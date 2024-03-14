@@ -67,7 +67,9 @@ const ProcessPaymentModal = () => {
   }: { data: Removal[]; error: any; isLoading: any } = useSWR(
     `/api/removal`,
     fetcher,
-    config
+    {
+      refreshInterval: 800,
+    }
   );
 
   const {
@@ -77,7 +79,9 @@ const ProcessPaymentModal = () => {
   }: { data: Arrangement[]; error: any; isLoading: any } = useSWR(
     `/api/arrangement`,
     fetcher,
-    config
+    {
+      refreshInterval: 800,
+    }
   );
 
   const {
@@ -131,8 +135,7 @@ const ProcessPaymentModal = () => {
 
       paymentReceiptModal.onClose();
       toast.success('Payment Processed Successfully!');
-
-      router.push(`/payments`);
+      router.refresh();
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong. Try again!');

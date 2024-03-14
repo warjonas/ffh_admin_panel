@@ -35,10 +35,6 @@ export async function POST(
       paidUp,
     } = body;
 
-    if (!paidUp) {
-      return new NextResponse('Paid Up is required', { status: 401 });
-    }
-
     if (!issuedBy) {
       return new NextResponse('Issurer name is required', { status: 401 });
     }

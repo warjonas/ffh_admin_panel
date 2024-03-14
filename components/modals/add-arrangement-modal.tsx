@@ -37,7 +37,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
 
 import { revalidatePath } from 'next/cache';
-import { Arrangement, Deceased } from '@prisma/client';
+import { Arrangement, Deceased } from '@/types';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
@@ -109,6 +109,7 @@ const formSchema = z.object({
   cremationDoctor: z.coerce.number(),
   afterHour: z.coerce.number(),
   digger: z.coerce.number(),
+  paidUp: z.boolean(),
 
   amountPaid: z.coerce.number().default(0),
   notes: z.string().max(190).default(''),
@@ -127,6 +128,7 @@ const AddArrangmentModal = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [amountDue, setAmountDue] = useState(0);
   const [storageFee, setStorageFee] = useState(0);
+  const [paymentsMade, setPaymentsMade] = useState(0);
 
   const router = useRouter();
   const { user, error, isLoading } = useUser();
@@ -154,7 +156,7 @@ const AddArrangmentModal = () => {
   }: { data: Deceased[]; error: any; isLoading: any } = useSWR(
     `/api/deceased`,
     fetcher,
-    config
+    { refreshInterval: 1000 }
   );
 
   const {
@@ -164,7 +166,7 @@ const AddArrangmentModal = () => {
   }: { data: Tombstone[]; error: any; isLoading: any } = useSWR(
     `/api/tombstone`,
     fetcher,
-    config
+    { refreshInterval: 1000 }
   );
 
   const {
@@ -174,7 +176,7 @@ const AddArrangmentModal = () => {
   }: { data: Coffin[]; error: any; isLoading: any } = useSWR(
     `/api/coffin`,
     fetcher,
-    config
+    { refreshInterval: 1000 }
   );
 
   const toastMessage = initialData
@@ -233,6 +235,7 @@ const AddArrangmentModal = () => {
       coffinid: '65d30ab955df5069abb2bd0d',
       createdBy: 'email',
       updatedBy: '',
+      paidUp: false,
     },
   });
 
@@ -319,7 +322,13 @@ const AddArrangmentModal = () => {
 
     data.deceased = deceasedId;
     data.totalDue = amountDue;
-    data.outstandingBalance = amountDue;
+
+    if (paymentsMade !== 0) {
+      data.outstandingBalance = amountDue - paymentsMade;
+      data.paidUp = false;
+    } else {
+      data.outstandingBalance = amountDue;
+    }
     data.storage = storageFee;
 
     try {
@@ -365,7 +374,7 @@ const AddArrangmentModal = () => {
 
   useEffect(() => {
     if (initialData && deceasedId) {
-      setValue('deceased', initialData.deceasedId);
+      setValue('deceased', initialData.deceased.id);
 
       if (initialData.dateOfFuneralService) {
         setValue(
@@ -373,6 +382,7 @@ const AddArrangmentModal = () => {
           new Date(initialData.dateOfFuneralService)
         );
       }
+      setValue('paidUp', initialData.paidUp);
 
       setValue('bus', initialData.bus);
       setValue('car', initialData.familyCar);
@@ -386,6 +396,7 @@ const AddArrangmentModal = () => {
       setValue('doctor', initialData.doctor);
       if (initialData.programs) setValue('programs', initialData.programs);
       if (initialData.minister) setValue('minister', initialData.minister);
+      setValue('wreaths', initialData.wreaths);
 
       setValue('totalDue', initialData.totalDue);
       setValue('doves', initialData.doves);
@@ -396,6 +407,12 @@ const AddArrangmentModal = () => {
       setValue('cremationDoctor', initialData.cremationDoctor);
       if (initialData.crossSize) setValue('crossSize', initialData.crossSize);
       if (initialData.decor) setValue('decor', initialData.decor);
+
+      setPaymentsMade(
+        initialData.receipts.reduce((total, deceased) => {
+          return total + deceased.receivedAmount;
+        }, 0)
+      );
     }
   }, [deceasedId, initialData]);
 
@@ -1187,7 +1204,7 @@ const AddArrangmentModal = () => {
                 render={({ field }) => (
                   <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
                     <FormLabel className="font-semibold w-32 text-left">
-                      Live Streaming
+                      Doctor
                     </FormLabel>
                     <FormControl>
                       <Input

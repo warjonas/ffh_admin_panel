@@ -127,7 +127,12 @@ const PaymentForm = ({ onSubmit }: PaymentFormProps) => {
               <FormItem className=" w-full md:w-1/2 xl:w-1/2">
                 <FormLabel className="font-semibold">Amount Received</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. 4500" {...field} />
+                  <Input
+                    placeholder="e.g. 4500"
+                    {...field}
+                    type="number"
+                    max={outstandingBalance}
+                  />
                 </FormControl>
               </FormItem>
             )}

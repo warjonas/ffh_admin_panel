@@ -22,7 +22,7 @@ export interface Arrangement {
   storage: number;
   decor: Decor;
   notes: string;
-  afterHour: boolean;
+  afterHour: number;
   doctor: number;
   cremationDoctor: number;
   wreaths: number;
@@ -33,7 +33,7 @@ export interface Arrangement {
   tombstoneId: string;
   tombstone: Tombstone;
   updatedBy: string;
-
+  paidUp: boolean;
   coffinId: string;
   coffin: Coffin;
 }
@@ -60,6 +60,7 @@ interface Decor {
 interface Church {
   churchName: string;
   Address: Address;
+  time: string;
 }
 
 interface Cemetry {
@@ -80,7 +81,7 @@ interface FamilyRep {
   phoneNo: string;
 }
 
-interface Deceased {
+export interface Deceased {
   id: string;
   ffhMemberNo: string;
   lastName: string;
