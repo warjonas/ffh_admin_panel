@@ -11,11 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+
 import { cn, formatter } from '@/lib/utils';
 import { Coffin, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,6 +45,16 @@ import DeceasedList from '../deceased-list';
 import NextDatePicker from '../ui/custom-datepicker';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
+  let timeDifference = date2.getTime() - date1.getTime();
+
+  let days = Math.round(timeDifference / (1000 * 3600 * 24));
+
+  let fee = storageFee * days;
+
+  return fee;
+};
 
 const formSchema = z.object({
   deceased: z.string(),
@@ -88,7 +94,7 @@ const formSchema = z.object({
   car: z.coerce.number(),
   wreaths: z.coerce.number(),
 
-  storage: z.coerce.number().min(1),
+  storage: z.coerce.number().default(350),
   decor: z.object({
     candle: z.boolean().default(false),
     photo: z.boolean().default(false),
@@ -120,13 +126,14 @@ const AddArrangmentModal = () => {
   const arrangementId = searchParams.get('arrangementId');
   const [isMounted, setIsMounted] = useState(false);
   const [amountDue, setAmountDue] = useState(0);
+  const [storageFee, setStorageFee] = useState(0);
 
   const router = useRouter();
   const { user, error, isLoading } = useUser();
 
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
-    revalidateIfStale: false,
+    revalidateIfStale: true,
     revalidateOnMount: true,
   };
 
@@ -208,7 +215,7 @@ const AddArrangmentModal = () => {
       bus: 0,
       car: 0,
       wreaths: 0,
-      storage: 1,
+      storage: storageFee,
       liveStreaming: 0,
       afterHour: 0,
       decor: {
@@ -218,7 +225,7 @@ const AddArrangmentModal = () => {
         banner: false,
       },
       tombstoneId: '658436d1de42bdd8d5632f85',
-      totalDue: amountDue,
+      totalDue: 0,
       outstandingBalance: 0,
       notes: '',
       doctor: 0,
@@ -249,16 +256,21 @@ const AddArrangmentModal = () => {
   );
 
   useEffect(() => {
+    setValue('totalDue', amountDue);
+  }, [amountDue]);
+
+  useEffect(() => {
     const total =
       Number(form.getValues().cremationDoctor) +
       Number(form.getValues().doctor) +
       Number(form.getValues().bus) +
-      Number(form.getValues().storage) +
+      storageFee +
       Number(form.getValues().liveStreaming) +
       Number(form.getValues().doves) +
       Number(form.getValues().wreaths) +
       Number(form.getValues().afterHour) +
-      Number(form.getValues().car);
+      Number(form.getValues().car) +
+      Number(form.getValues().digger);
 
     setAmountDue(total);
   }, [
@@ -273,7 +285,31 @@ const AddArrangmentModal = () => {
       'doves',
       'afterHour',
     ]),
+    storageFee,
   ]);
+
+  useEffect(() => {
+    let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
+
+    if (deceasedDate && deceasedId) {
+      setValue(
+        'storage',
+        calculate_storageFee(
+          new Date(deceasedDate.removalDate),
+          new Date(form.getValues().dateOfFuneralService),
+          350
+        )
+      );
+
+      setStorageFee(
+        calculate_storageFee(
+          new Date(deceasedDate.removalDate),
+          new Date(form.getValues().dateOfFuneralService),
+          350
+        )
+      );
+    }
+  }, [deceasedData, deceasedId, watch('dateOfFuneralService')]);
 
   const onSubmit = async (data: ArrangementFormValues) => {
     if (!deceasedId) {
@@ -284,6 +320,7 @@ const AddArrangmentModal = () => {
     data.deceased = deceasedId;
     data.totalDue = amountDue;
     data.outstandingBalance = amountDue;
+    data.storage = storageFee;
 
     try {
       setLoading(true);
@@ -303,6 +340,7 @@ const AddArrangmentModal = () => {
         }
         await axios.post('/api/arrangement', data);
       }
+      arrangementModal.onClose();
 
       router.push('/arrangements');
       router.refresh();
@@ -438,7 +476,6 @@ const AddArrangmentModal = () => {
                       <NextDatePicker
                         onChange={field.onChange}
                         value={field.value}
-                        maxDate={new Date()}
                       />
                     </div>
                   </FormItem>
@@ -1210,9 +1247,6 @@ const AddArrangmentModal = () => {
           <section className="flex flex-col mt-10 w-full  text-right">
             <h1 className="text-xl font-semibold">Summary</h1>
             <hr className="w-full my-4" />
-            <div className="w-full flex flex-row justify-end items-center">
-              <h2 className="text-xl mr-2">Amount Paid: </h2>
-            </div>
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>
               <h1 className="text-xl font-semibold text-end">

@@ -2,12 +2,13 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import { redirect } from 'next/navigation';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { extractRouterConfig } from 'uploadthing/server';
 import { ourFileRouter } from '../api/uploadthing/core';
 import Navbar from '@/components/navbar';
 import Image from 'next/image';
 import { ModalProvider } from '@/providers/modal-provider';
+import Loading from './Loading';
 
 interface Props {
   children: React.ReactNode;
@@ -34,8 +35,7 @@ export default async function DashboardLayout({ children }: Props) {
         routerConfig={extractRouterConfig(ourFileRouter)}
       />
       <ModalProvider />
-
-      {children}
+      <Suspense fallback={<Loading />}>{children}</Suspense>
       <footer className="w-full flex justify-end p-2">
         <Image
           src="https://i.ibb.co/G9z3n0M/Logo-color-alt.png"

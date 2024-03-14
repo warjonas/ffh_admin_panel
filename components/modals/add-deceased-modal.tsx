@@ -30,7 +30,7 @@ const formSchema = z.object({
   ffhMemberNo: z.string(),
   lastName: z.string().min(1),
   firstNames: z.string().min(1),
-  idNumber: z.string().min(1),
+  idNumber: z.string().min(13).max(13),
   dateOfDeath: z.date({ required_error: 'Date of Death is required' }),
   dateOfBirth: z.date({ required_error: 'Date of Birth is required' }),
 
@@ -115,8 +115,11 @@ const AddDeceasedModal = () => {
         await axios.post('/api/deceased', data);
       }
 
+      toast.success('Deceased Details added!');
+
       deceasedModal.onClose();
       router.push(`/deceased`);
+      router.refresh();
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong!');
@@ -159,8 +162,6 @@ const AddDeceasedModal = () => {
   if (!isMounted) {
     return null;
   }
-
-  console.log(watch('dateOfBirth'));
 
   if (isLoading && !dataError) {
     return (

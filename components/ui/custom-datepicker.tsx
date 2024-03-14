@@ -9,7 +9,13 @@ interface NextDatePickerProps {
   value: Date;
   onChange: () => void;
   minDate?: Date;
-  maxDate: Date;
+  maxDate?: Date;
+}
+
+function addDays(days: number) {
+  var result = new Date();
+  result.setDate(result.getDate() + days);
+  return result;
 }
 
 const NextDatePicker = ({
@@ -20,6 +26,12 @@ const NextDatePicker = ({
 }: NextDatePickerProps) => {
   const [show, setShow] = useState(false);
 
+  let newMaxDate;
+
+  if (maxDate) {
+    newMaxDate = addDays(14);
+  }
+
   return (
     <Datepicker
       options={{
@@ -27,7 +39,7 @@ const NextDatePicker = ({
         todayBtn: false,
         clearBtn: true,
         clearBtnText: 'Clear',
-        maxDate: maxDate,
+        maxDate: maxDate ? maxDate : newMaxDate,
         minDate: minDate ? minDate : new Date('1640/01/01'),
         theme: {
           background: 'bg-background ',
