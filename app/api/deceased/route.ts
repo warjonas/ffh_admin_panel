@@ -7,7 +7,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
-    const deceased = await prismadb.deceased.findMany({});
+    const deceased = await prismadb.deceased.findMany({
+      where: {
+        flagDelete: false,
+      },
+    });
 
     return NextResponse.json(deceased);
   } catch (error) {
@@ -35,6 +39,7 @@ export async function POST(req: Request) {
       dateOfBirth,
       removalFrom,
       ffhMemberNo,
+      createdBy,
       deathCertificateRecipient,
     } = body;
 
@@ -85,7 +90,7 @@ export async function POST(req: Request) {
         deathCertificateRecipient,
         dateOfDeath: new Date(dateOfDeath),
         removalDate: new Date(removalDate),
-        createdBy: '',
+        createdBy,
       },
     });
 

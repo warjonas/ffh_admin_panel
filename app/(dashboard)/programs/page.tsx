@@ -10,6 +10,11 @@ type Props = {};
 
 const Programs = async (props: Props) => {
   const funeralPrograms = await prismadb.funeralProgram.findMany({
+    where: {
+      deceased: {
+        flagDelete: false,
+      },
+    },
     include: {
       deceased: {
         include: {

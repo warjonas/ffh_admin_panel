@@ -75,7 +75,11 @@ export async function POST(req: Request) {
       data: {
         invoiceNo,
         outstandingBalance: totalDue,
-        deceasedId,
+        deceased: {
+          connect: {
+            id: deceasedId,
+          },
+        },
         byUndertaker,
         doctorsFees,
         storageFee,
@@ -107,6 +111,11 @@ export async function GET(req: Request) {
 
   try {
     const removals = await prismadb.removal.findMany({
+      where: {
+        deceased: {
+          flagDelete: false,
+        },
+      },
       include: {
         receipts: true,
         deceased: true,

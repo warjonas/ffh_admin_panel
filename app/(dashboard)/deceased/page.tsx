@@ -10,6 +10,9 @@ type Props = {};
 
 const Deceased = async (props: Props) => {
   const deceased = await prismadb.deceased.findMany({
+    where: {
+      flagDelete: false,
+    },
     orderBy: {
       dateOfDeath: 'desc',
     },

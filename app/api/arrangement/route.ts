@@ -7,6 +7,11 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   try {
     const arrangement = await prismadb.arrangement.findMany({
+      where: {
+        deceased: {
+          flagDelete: false,
+        },
+      },
       include: { deceased: true },
     });
 
@@ -70,6 +75,16 @@ export async function POST(req: Request) {
       });
     }
 
+    const deceasedData = await prismadb.deceased.findFirst({
+      where: {
+        id: deceased,
+      },
+    });
+
+    if (!deceasedData) {
+      return new NextResponse('Internal Error', { status: 500 });
+    }
+
     const invoiceNo = await generateId('INV');
 
     const arrangement = await prismadb.arrangement.create({
@@ -77,7 +92,11 @@ export async function POST(req: Request) {
         dateOfFuneralService,
         invoiceNo,
         createdBy: createdBy ? createdBy : user,
-        deceasedId: deceased,
+        deceased: {
+          connect: {
+            id: deceased,
+          },
+        },
         familyReps,
         deliveryAddress,
         deliveryTime,
@@ -95,7 +114,11 @@ export async function POST(req: Request) {
         totalDue,
         storage,
         notes,
-        tombstoneId,
+        tombstone: {
+          connect: {
+            id: tombstoneId,
+          },
+        },
         afterHour,
         cremationDoctor,
         doctor,
@@ -103,7 +126,11 @@ export async function POST(req: Request) {
         wreaths,
         paidUp: false,
 
-        coffinId: coffinid,
+        coffin: {
+          connect: {
+            id: coffinid,
+          },
+        },
       },
     });
 

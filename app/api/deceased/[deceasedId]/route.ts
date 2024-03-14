@@ -130,9 +130,12 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const deceased = await prismadb.deceased.deleteMany({
+    const deceased = await prismadb.deceased.update({
       where: {
         id: params.deceasedId,
+      },
+      data: {
+        flagDelete: true,
       },
     });
 

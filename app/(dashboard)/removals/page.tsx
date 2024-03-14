@@ -12,6 +12,11 @@ import DataPreview from '../../../components/data-preview';
 
 const Removals = async () => {
   const bodyRemovals = await prismadb.removal.findMany({
+    where: {
+      deceased: {
+        flagDelete: false,
+      },
+    },
     include: {
       receipts: true,
       deceased: true,

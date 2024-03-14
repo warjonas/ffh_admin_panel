@@ -12,6 +12,11 @@ type Props = {};
 
 const Arrangements = async (props: Props) => {
   const arrangements = await prismadb.arrangement.findMany({
+    where: {
+      deceased: {
+        flagDelete: false,
+      },
+    },
     include: {
       deceased: true,
     },

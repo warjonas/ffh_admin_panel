@@ -20,6 +20,9 @@ export async function GET(
     const program = await prismadb.funeralProgram.findFirst({
       where: {
         id: params.programId,
+        deceased: {
+          flagDelete: false,
+        },
       },
       include: {
         deceased: true,
