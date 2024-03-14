@@ -23,17 +23,14 @@ model Deceased{
   removalFrom                 Address
   deathCertificateRecipient   String
   createdBy                   String
-  updatedBy           String @default("")
-  updated             DateTime @updatedAt()
+  updatedBy           String? @default("")
+  updated             DateTime? @updatedAt()
+  flagDelete             Boolean @default(false)
  
 
   arrangement                 Arrangement?
   funeralProgram              FuneralProgram?
   removal                     Removal?
-
-
-
-
 
 }
 
@@ -61,8 +58,8 @@ model Arrangement{
   outstandingBalance          Int   @default(0)
   createdBy           String
   created             DateTime @default(now())
-  updatedBy           String @default("")
-  updated             DateTime @updatedAt()
+  updatedBy           String? @default("")
+  updated             DateTime? @updatedAt()
   notes               String @default("")
   afterHour                 Int
   wreaths             Int
@@ -101,8 +98,8 @@ model FuneralProgram {
 
   createdBy           String
   created             DateTime @default(now())
-  updatedBy           String @default("")
-  updated             DateTime @updatedAt()
+  updatedBy           String? @default("")
+  updated             DateTime? @updatedAt()
 
   deceasedId          String @db.ObjectId @unique
   deceased            Deceased  @relation(fields: [deceasedId], references: [id], onDelete: Cascade)
@@ -126,8 +123,8 @@ model Removal{
   receipts            Receipt[]
   scheduledBy         String
   created             DateTime @default(now())
-  updatedBy           String @default("")
-  updated             DateTime @updatedAt()
+  updatedBy           String? @default("")
+  updated             DateTime? @updatedAt()
   outstandingBalance  Int
   paidUp              Boolean @default(false)
 
