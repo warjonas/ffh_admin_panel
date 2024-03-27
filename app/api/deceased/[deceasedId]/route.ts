@@ -12,7 +12,7 @@ export async function GET(
   let deceased;
 
   if (params.deceasedId === null) {
-    return NextResponse.json(deceased);
+    return new NextResponse('No deceased Id', { status: 500 });
   }
 
   try {
@@ -22,6 +22,7 @@ export async function GET(
       },
       include: {
         arrangement: true,
+        funeralProgram: true,
       },
     });
 

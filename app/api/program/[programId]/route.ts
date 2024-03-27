@@ -40,12 +40,6 @@ export async function PATCH(
   req: Request,
   { params }: { params: { programId: string } }
 ) {
-  const session = await getSession();
-
-  if (!session) {
-    return new NextResponse('Unauthorized', { status: 401 });
-  }
-
   try {
     const body = await req.json();
     const {
@@ -124,9 +118,6 @@ export async function PATCH(
     const funeralProgram = await prismadb.funeralProgram.update({
       where: {
         id: params.programId,
-        deceased: {
-          idNumber: deceasedId,
-        },
       },
       data: {
         updatedBy: createdBy,
