@@ -1183,7 +1183,7 @@ const AddArrangmentModal = () => {
                           name="decor.glass.price"
                           render={({ field }) => (
                             <FormItem className="flex flex-row gap-x-2 items-center w-full">
-                              <FormLabel>Price</FormLabel>
+                              <FormLabel>Unit Price</FormLabel>
 
                               <FormControl>
                                 <Input
@@ -1226,7 +1226,7 @@ const AddArrangmentModal = () => {
                           name="decor.banner.price"
                           render={({ field }) => (
                             <FormItem className="flex flex-row gap-x-2 items-center w-full">
-                              <FormLabel>Price</FormLabel>
+                              <FormLabel>Unit Price</FormLabel>
 
                               <FormControl>
                                 <Input
@@ -1270,7 +1270,7 @@ const AddArrangmentModal = () => {
                           name="decor.candle.price"
                           render={({ field }) => (
                             <FormItem className="flex flex-row gap-x-2 items-center w-full">
-                              <FormLabel>Price</FormLabel>
+                              <FormLabel>Unit Price</FormLabel>
 
                               <FormControl>
                                 <Input
@@ -1314,7 +1314,7 @@ const AddArrangmentModal = () => {
                           name="decor.photo.price"
                           render={({ field }) => (
                             <FormItem className="flex flex-row gap-x-2 items-center w-full">
-                              <FormLabel>Price</FormLabel>
+                              <FormLabel> Unit Price</FormLabel>
 
                               <FormControl>
                                 <Input
