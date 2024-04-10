@@ -43,7 +43,6 @@ model Arrangement{
   deliveryAddress     String?
   deliveryTime        String?
   church              Church?
-  cemetry             Cemetry?
   minister            Minister?  
   digger              Int
   crossSize           String?
@@ -67,10 +66,15 @@ model Arrangement{
   cremationDoctor                 Int
   paidUp              Boolean
   receipts            Receipt[]
+  additionalItems     AdditionalItems[]
+  graveTime           String
+  flagDelete          Boolean @default(false)
 
 
 
 
+  graveId             String @db.ObjectId
+  grave               Grave @relation(fields: [graveId], references: [id])
   deceasedId          String @db.ObjectId @unique
   deceased            Deceased  @relation(fields: [deceasedId], references: [id], onDelete: Cascade)
   tombstoneId         String? @db.ObjectId
@@ -78,6 +82,14 @@ model Arrangement{
   coffinId            String?  @db.ObjectId
   coffin              Coffin?    @relation(fields: [coffinId], references: [id])
 
+
+
+}
+
+
+type AdditionalItems{
+  description         String
+  amount              Int
 }
 
 model FuneralProgram {
@@ -160,6 +172,7 @@ model Tombstone{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   type                String
   tombstoneName                String @default("")
+  price               Int
   arrangements        Arrangement[]
 }
 
@@ -168,6 +181,14 @@ model Coffin{
   coffinName                String
   price               Int
   arrangements        Arrangement[]
+
+}
+
+model Grave{
+    id                  String @id @default(auto()) @map("_id") @db.ObjectId
+    graveName           String
+    price               Int
+    arrangements        Arrangement[]
 
 }
 
@@ -200,12 +221,17 @@ type AtChurch{
 }
 
 type Decor{
-  candle              Boolean @default(false)
-  photo               Boolean @default(false)
-  glass               Boolean @default(false)
-  banner              Boolean @default(false)
+  candle              DecorItem
+  photo               DecorItem
+  glass               DecorItem
+  banner              DecorItem
 
 
+}
+
+type DecorItem{
+  qty               Int
+  price             Int
 }
 
 type Church{
@@ -214,10 +240,7 @@ type Church{
   time          String
 }
 
-type Cemetry{
-  cemetryName        String
-  time        String
-}
+
 
 type Minister{
   firstName       String

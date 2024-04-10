@@ -9,7 +9,8 @@ export interface Arrangement {
   deliveryAddress: string;
   DeliveryTime: string;
   church: Church;
-  cemetry: Cemetry;
+  grave: Grave;
+  graveTime: string;
   minister: Minister;
   createdBy: string;
   digger?: number;
@@ -36,12 +37,19 @@ export interface Arrangement {
   paidUp: boolean;
   coffinId: string;
   coffin: Coffin;
+  additionalItems: AdditionalItems[];
+}
+
+interface AdditionalItems {
+  description: string;
+  amount: number;
 }
 
 export interface Tombstone {
   id: string;
   type: string;
   tombstoneName: string;
+  price: number;
 }
 
 export interface Coffin {
@@ -50,21 +58,35 @@ export interface Coffin {
   price: number;
 }
 
+export interface Grave {
+  id: string;
+  graveName: string;
+  price: number;
+}
+
+export interface User {
+  full_name: string;
+  email: string;
+  username: string;
+  last_login: string;
+  role: string;
+}
+
 interface Decor {
-  candle: boolean;
-  photo: boolean;
-  glass: boolean;
-  banner: boolean;
+  candle: DecorItem;
+  photo: DecorItem;
+  glass: DecorItem;
+  banner: DecorItem;
+}
+
+interface DecorItem {
+  qty: number;
+  price: number;
 }
 
 interface Church {
   churchName: string;
   Address: Address;
-  time: string;
-}
-
-interface Cemetry {
-  cemetryName: string;
   time: string;
 }
 
@@ -94,6 +116,8 @@ export interface Deceased {
   deathCertificateRecipient: string;
   dateOfFuneralService: Date;
   updatedBy: string;
+  arrangement: Arrangement;
+  removal: Removal;
 }
 
 export interface Removal {
