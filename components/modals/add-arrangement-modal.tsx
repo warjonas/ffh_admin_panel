@@ -1350,7 +1350,10 @@ const AddArrangmentModal = () => {
 
                     <div className="grid grid-cols-[auto auto 40px] w-full gap-2">
                       {additionalFields.map((field, index) => (
-                        <div className="col-span-3 grid grid-cols-[auto auto 40px] w-full gap-2 items-center">
+                        <div
+                          className="col-span-3 grid grid-cols-[auto auto 40px] w-full gap-2 items-center"
+                          key={field.id}
+                        >
                           <FormItem className={cn('w-full col-start-1')}>
                             <FormControl>
                               <Input
