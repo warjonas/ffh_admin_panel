@@ -11,6 +11,10 @@ export async function GET(req: Request) {
       where: {
         flagDelete: false,
       },
+      include: {
+        arrangement: true,
+        removal: true,
+      },
     });
 
     return NextResponse.json(deceased);

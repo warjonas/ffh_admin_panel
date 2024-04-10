@@ -5,11 +5,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
-    const coffins = await prismadb.coffin.findMany({});
+    const graves = await prismadb.grave.findMany({});
 
-    return NextResponse.json(coffins);
+    return NextResponse.json(graves);
   } catch (error) {
-    console.log('COFFINS_GET', error);
+    console.log('GRAVES_GET', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
@@ -23,30 +23,25 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const { coffinName, price } = body;
+  const { graveName, price } = body;
 
-  if (!coffinName) {
-    return new NextResponse('Coffin name is required', {
-      status: 400,
-    });
-  }
-  if (!price) {
-    return new NextResponse('Coffin Price is required', {
+  if (!graveName) {
+    return new NextResponse('Grave name is required', {
       status: 400,
     });
   }
 
   try {
-    const coffin = await prismadb.coffin.create({
+    const grave = await prismadb.grave.create({
       data: {
-        coffinName,
+        graveName,
         price,
       },
     });
 
-    return NextResponse.json(coffin);
+    return NextResponse.json(grave);
   } catch (error) {
-    console.log('COFFIN_POST');
+    console.log('GRAVE_POST');
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

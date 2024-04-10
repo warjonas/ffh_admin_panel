@@ -40,6 +40,8 @@ export async function POST(req: Request) {
       dateOfFuneralService,
       minister,
       crossSize,
+      graveId,
+      graveTime,
       cemetry,
       doves,
       programs,
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
       doctor,
       cremationDoctor,
       liveStreaming,
-      coffinid,
+      coffinId,
       church,
       createdBy,
       afterHour,
@@ -101,7 +103,12 @@ export async function POST(req: Request) {
         deliveryAddress,
         deliveryTime,
         church,
-        cemetry,
+        grave: {
+          connect: {
+            id: graveId,
+          },
+        },
+        graveTime,
         minister,
         digger,
         crossSize,
@@ -128,7 +135,7 @@ export async function POST(req: Request) {
 
         coffin: {
           connect: {
-            id: coffinid,
+            id: coffinId,
           },
         },
       },

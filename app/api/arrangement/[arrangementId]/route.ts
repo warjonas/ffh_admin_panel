@@ -24,6 +24,7 @@ export async function GET(
         tombstone: true,
         deceased: true,
         receipts: true,
+        grave: true,
       },
     });
 
@@ -72,7 +73,8 @@ export async function PATCH(
       digger,
       updatedBy,
       paidUp,
-
+      grave,
+      graveTime,
       afterHour,
     } = body;
 
@@ -86,7 +88,12 @@ export async function PATCH(
         deliveryAddress,
         deliveryTime: deliveryTime,
         church,
-        cemetry,
+        grave: {
+          connect: {
+            id: grave,
+          },
+        },
+        graveTime,
         minister,
         digger,
         crossSize,
