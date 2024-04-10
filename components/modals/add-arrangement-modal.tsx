@@ -43,6 +43,7 @@ import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import DeceasedList from '../deceased-list';
 import NextDatePicker from '../ui/custom-datepicker';
+import { init } from 'next/dist/compiled/webpack/webpack';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -603,6 +604,12 @@ const AddArrangmentModal = () => {
                 Loading...
               </span>
             </div>
+          ) : initialData ? (
+            <p className="text-xl font-medium">
+              {initialData.deceased.firstNames +
+                ' ' +
+                initialData.deceased.lastName}
+            </p>
           ) : (
             <DeceasedList
               items={deceasedData}
