@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { PenBoxIcon, PrinterIcon } from 'lucide-react';
-import { getArrangement } from '@/actions/getArrangement';
-import { ArrangementColumn } from './columns';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Arrangement } from '@/types';
 import { format } from 'date-fns';
@@ -249,8 +247,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </p>
                     <h2 className="uppercase font-semibold mt-2">Cemetry</h2>
                     <p className="font-medium">
-                      Cemetry Name: {data.cemetry.cemetryName} <br />
-                      Cemetry Time: {data.cemetry.time}
+                      Cemetry Name: {data.grave.graveName} <br />
+                      Cemetry Time: {data.graveTime}
                     </p>
                     <h2 className="uppercase font-semibold mt-2">
                       Minister Information
@@ -336,21 +334,25 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       <div>
                         <p className="font-medium">
                           <span className="font-semibold"> Candle: </span>
-                          {data.decor.candle === true ? 'Yes' : 'No'}
+                          <p>Qty:&nbsp; {data.decor.candle.qty}</p>
+                          <p>Price:&nbsp; {data.decor.candle.price}</p>
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Photo: </span>
-                          {data.decor.photo === true ? 'Yes' : 'No'}
+                          <p>Qty:&nbsp; {data.decor.photo.qty}</p>
+                          <p>Price:&nbsp; {data.decor.photo.price}</p>
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">
                           <span className="font-semibold"> Banner: </span>
-                          {data.decor.banner === true ? 'Yes' : 'No'}
+                          <p>Qty:&nbsp; {data.decor.banner.qty}</p>
+                          <p>Price:&nbsp; {data.decor.banner.price}</p>
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Glass: </span>
-                          {data.decor.glass === true ? 'Yes' : 'No'}
+                          <p>Qty:&nbsp; {data.decor.glass.qty}</p>
+                          <p>Price:&nbsp; {data.decor.glass.price}</p>
                         </p>
                       </div>
                     </div>
