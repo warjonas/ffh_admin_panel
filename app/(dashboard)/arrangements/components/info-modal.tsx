@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { PenBoxIcon, PrinterIcon } from 'lucide-react';
-import { getArrangement } from '@/actions/getArrangement';
-import { ArrangementColumn } from './columns';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Arrangement } from '@/types';
 import { format } from 'date-fns';
