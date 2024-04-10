@@ -249,8 +249,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </p>
                     <h2 className="uppercase font-semibold mt-2">Cemetry</h2>
                     <p className="font-medium">
-                      Cemetry Name: {data.grave.graveName} <br />
-                      Cemetry Time: {data.graveTime}
+                      Cemetry Name: {data.cemetry.cemetryName} <br />
+                      Cemetry Time: {data.cemetry.time}
                     </p>
                     <h2 className="uppercase font-semibold mt-2">
                       Minister Information
@@ -336,25 +336,21 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                       <div>
                         <p className="font-medium">
                           <span className="font-semibold"> Candle: </span>
-                          <p>Qty:&nbsp; {data.decor.candle.qty}</p>
-                          <p>Price:&nbsp; {data.decor.candle.price}</p>
+                          {data.decor.candle === true ? 'Yes' : 'No'}
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Photo: </span>
-                          <p>Qty:&nbsp; {data.decor.photo.qty}</p>
-                          <p>Price:&nbsp; {data.decor.photo.price}</p>
+                          {data.decor.photo === true ? 'Yes' : 'No'}
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">
                           <span className="font-semibold"> Banner: </span>
-                          <p>Qty:&nbsp; {data.decor.banner.qty}</p>
-                          <p>Price:&nbsp; {data.decor.banner.price}</p>
+                          {data.decor.banner === true ? 'Yes' : 'No'}
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Glass: </span>
-                          <p>Qty:&nbsp; {data.decor.glass.qty}</p>
-                          <p>Price:&nbsp; {data.decor.glass.price}</p>
+                          {data.decor.glass === true ? 'Yes' : 'No'}
                         </p>
                       </div>
                     </div>

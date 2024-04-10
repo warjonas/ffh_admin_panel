@@ -197,7 +197,7 @@ const MainNavActions = (props: Props) => {
         },
         {
           title: 'Settings',
-          link: '/admin',
+          link: '/admin#coffins',
           break: false,
           type: 'Link',
           func: () => setOpen(true),

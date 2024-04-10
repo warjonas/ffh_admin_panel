@@ -2,23 +2,31 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
+import { Decimal } from '@prisma/client/runtime/library';
 // import { CellAction } from './cell-action';
 
-export type ArrangementColumn = {
+export type InvoiceColumn = {
   id: string;
   deceasedId: string;
   receiptNo: string;
+  type: string;
   name: string;
   idNumber: string;
   memberNo: string;
   dateOfDeath: string;
+  outstanding: number;
+  amountDue: number;
   paidUp: boolean;
 };
 
-export const columns: ColumnDef<ArrangementColumn>[] = [
+export const columns: ColumnDef<InvoiceColumn>[] = [
   {
     accessorKey: 'receiptNo',
     header: 'Invoice No.',
+  },
+  {
+    accessorKey: 'type',
+    header: 'Invoice Type',
   },
   {
     accessorKey: 'name',
@@ -39,20 +47,26 @@ export const columns: ColumnDef<ArrangementColumn>[] = [
     accessorKey: 'paidUp',
     header: 'Is Paid',
     cell: ({ row }) => (
-      <div className="w-1/2 rounded-lg shadow-md">
+      <div className="w-full text-center rounded-lg shadow-md">
         {row.original.paidUp ? (
-          <div className="text-slate-50 p-2 bg-green-700 rounded-lg"> Paid</div>
+          <div className="text-slate-50 p-2 bg-green-700 rounded-lg uppercase">
+            {' '}
+            Paid Up
+          </div>
         ) : (
-          <div className="text-slate-50 p-2 bg-red-800 rounded-lg"> Unpaid</div>
+          <div className="text-slate-50 p-2 bg-red-800 rounded-lg uppercase">
+            {' '}
+            Unpaid
+          </div>
         )}
       </div>
     ),
   },
 
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <CellAction data={row.original} deceasedId={row.original.deceasedId} />
-    ),
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => (
+  //     <CellAction data={row.original} deceasedId={row.original.deceasedId} />
+  //   ),
+  // },
 ];

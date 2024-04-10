@@ -13,9 +13,9 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { cn, formatter } from '@/lib/utils';
-import { Coffin, Tombstone } from '@/types';
+import { Coffin, Grave, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Plus, Trash } from 'lucide-react';
+import { CalendarIcon, Plus, Trash, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -83,10 +83,8 @@ const formSchema = z.object({
     phoneNo: z.string(),
   }),
   crossSize: z.string(),
-  cemetry: z.object({
-    cemetryName: z.string(),
-    time: z.string(),
-  }),
+  graveId: z.string(),
+  graveTime: z.string(),
   doves: z.coerce.number(),
   liveStreaming: z.coerce.number(),
   programs: z.coerce.number(),
@@ -96,13 +94,25 @@ const formSchema = z.object({
 
   storage: z.coerce.number().default(350),
   decor: z.object({
-    candle: z.boolean().default(false),
-    photo: z.boolean().default(false),
-    glass: z.boolean().default(false),
-    banner: z.boolean().default(false),
+    candle: z.object({
+      qty: z.coerce.number(),
+      price: z.coerce.number(),
+    }),
+    photo: z.object({
+      qty: z.coerce.number(),
+      price: z.coerce.number(),
+    }),
+    glass: z.object({
+      qty: z.coerce.number(),
+      price: z.coerce.number(),
+    }),
+    banner: z.object({
+      qty: z.coerce.number(),
+      price: z.coerce.number(),
+    }),
   }),
   tombstoneId: z.string(),
-  coffinid: z.string(),
+  coffinId: z.string(),
   totalDue: z.coerce.number().default(10000),
   outstandingBalance: z.coerce.number(),
   doctor: z.coerce.number(),
@@ -110,6 +120,12 @@ const formSchema = z.object({
   afterHour: z.coerce.number(),
   digger: z.coerce.number(),
   paidUp: z.boolean(),
+  additionalItems: z
+    .object({
+      description: z.string(),
+      amount: z.coerce.number(),
+    })
+    .array(),
 
   amountPaid: z.coerce.number().default(0),
   notes: z.string().max(190).default(''),
@@ -128,6 +144,12 @@ const AddArrangmentModal = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [amountDue, setAmountDue] = useState(0);
   const [storageFee, setStorageFee] = useState(0);
+  const [coffinFee, setCoffinFee] = useState(0);
+  const [tombstoneFee, setTombstoneFee] = useState(0);
+  const [graveFee, setGraveFee] = useState(0);
+
+  const [additionalItems, setAdditionalItems] = useState(0);
+
   const [paymentsMade, setPaymentsMade] = useState(0);
 
   const router = useRouter();
@@ -170,6 +192,16 @@ const AddArrangmentModal = () => {
   );
 
   const {
+    data: graves,
+    error: gravesError,
+    isLoading: gravesLoading,
+  }: { data: Grave[]; error: any; isLoading: any } = useSWR(
+    `/api/grave`,
+    fetcher,
+    { refreshInterval: 1000 }
+  );
+
+  const {
     data: coffins,
     error: coffinsError,
     isLoading: coffinsLoading,
@@ -207,10 +239,8 @@ const AddArrangmentModal = () => {
         phoneNo: '',
       },
       crossSize: '',
-      cemetry: {
-        cemetryName: '',
-        time: '',
-      },
+      graveId: '6616593b149f9c78856cc0d2',
+      graveTime: '',
       digger: 800,
       doves: 0,
       programs: 50,
@@ -221,21 +251,39 @@ const AddArrangmentModal = () => {
       liveStreaming: 0,
       afterHour: 0,
       decor: {
-        candle: false,
-        photo: false,
-        glass: false,
-        banner: false,
+        candle: {
+          qty: 0,
+          price: 0,
+        },
+        photo: {
+          qty: 0,
+          price: 0,
+        },
+        glass: {
+          qty: 0,
+          price: 0,
+        },
+        banner: {
+          qty: 0,
+          price: 0,
+        },
       },
-      tombstoneId: '658436d1de42bdd8d5632f85',
+      tombstoneId: '66158c06a8cfcff52ed32d68',
       totalDue: 0,
       outstandingBalance: 0,
       notes: '',
       doctor: 0,
       cremationDoctor: 0,
-      coffinid: '65d30ab955df5069abb2bd0d',
+      coffinId: '6614467780ae4f6405b2faeb',
       createdBy: 'email',
       updatedBy: '',
       paidUp: false,
+      additionalItems: [
+        {
+          description: '',
+          amount: 0,
+        },
+      ],
     },
   });
 
@@ -258,10 +306,67 @@ const AddArrangmentModal = () => {
     }
   );
 
+  const {
+    fields: additionalFields,
+    append: additionalItemsAppend,
+    prepend: additionalItemsPrepend,
+    remove: additionalItemsRemove,
+    swap: additionalItemsSwap,
+    move: additionalItemsMove,
+    insert: additionalItemsInsert,
+  } = useFieldArray({
+    control,
+    name: 'additionalItems',
+  });
+
+  //Calculates the total for the additional items that are added
+  useEffect(() => {
+    const itemsAmount = additionalFields.reduce((total, item) => {
+      return total + Number(item.amount);
+    }, 0);
+
+    setAdditionalItems(itemsAmount);
+  }, [watch(['additionalItems']), additionalFields]);
+
+  //sets the total due on the form to the amount calculated below
   useEffect(() => {
     setValue('totalDue', amountDue);
   }, [amountDue]);
 
+  //finds price of selected grave and adds it to the ammount due
+  useEffect(() => {
+    if (graves) {
+      let itemsAmount = graves.find(
+        (item) => item.id === form.getValues().graveId
+      );
+
+      itemsAmount && setGraveFee(itemsAmount.price);
+    }
+  }, [watch('graveId')]);
+
+  //finds price of selected coffin and adds it to the ammount due
+  useEffect(() => {
+    if (coffins) {
+      let itemsAmount = coffins.find(
+        (item) => item.id === form.getValues().coffinId
+      );
+
+      itemsAmount && setCoffinFee(itemsAmount.price);
+    }
+  }, [watch('coffinId')]);
+
+  //finds price of selected tombstone and adds it to the ammount due
+  useEffect(() => {
+    if (tombstones) {
+      let itemsAmount = tombstones.find(
+        (item) => item.id === form.getValues().tombstoneId
+      );
+
+      itemsAmount && setTombstoneFee(itemsAmount.price);
+    }
+  }, [watch('tombstoneId')]);
+
+  //Calculates total of all the add-ons and sets it as the amount due
   useEffect(() => {
     const total =
       Number(form.getValues().cremationDoctor) +
@@ -273,7 +378,23 @@ const AddArrangmentModal = () => {
       Number(form.getValues().wreaths) +
       Number(form.getValues().afterHour) +
       Number(form.getValues().car) +
-      Number(form.getValues().digger);
+      Number(form.getValues().digger) +
+      Number(
+        form.getValues().decor.banner.qty * form.getValues().decor.banner.price
+      ) +
+      Number(
+        form.getValues().decor.photo.qty * form.getValues().decor.photo.price
+      ) +
+      Number(
+        form.getValues().decor.glass.qty * form.getValues().decor.glass.price
+      ) +
+      Number(
+        form.getValues().decor.candle.qty * form.getValues().decor.candle.price
+      ) +
+      additionalItems +
+      coffinFee +
+      tombstoneFee +
+      graveFee;
 
     setAmountDue(total);
   }, [
@@ -287,9 +408,20 @@ const AddArrangmentModal = () => {
       'wreaths',
       'doves',
       'afterHour',
+      'decor.glass',
+      'decor.photo',
+      'decor.candle',
+      'decor.banner',
     ]),
     storageFee,
+    additionalItems,
+    amountDue,
+    coffinFee,
+    tombstoneFee,
+    graveFee,
   ]);
+
+  //Calculate the storage fee based on the funeral date selected and the day body was received
 
   useEffect(() => {
     let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
@@ -314,6 +446,8 @@ const AddArrangmentModal = () => {
     }
   }, [deceasedData, deceasedId, watch('dateOfFuneralService')]);
 
+  //submit data to the database
+
   const onSubmit = async (data: ArrangementFormValues) => {
     if (!deceasedId) {
       form.setError('deceased', { message: 'Deceased ID is required' });
@@ -323,12 +457,15 @@ const AddArrangmentModal = () => {
     data.deceased = deceasedId;
     data.totalDue = amountDue;
 
+    //this checks whether payments were made on arrangement before any other changes were made
+
     if (paymentsMade !== 0) {
       data.outstandingBalance = amountDue - paymentsMade;
       data.paidUp = false;
     } else {
       data.outstandingBalance = amountDue;
     }
+
     data.storage = storageFee;
 
     try {
@@ -349,6 +486,7 @@ const AddArrangmentModal = () => {
         }
         await axios.post('/api/arrangement', data);
       }
+      form.reset();
       arrangementModal.onClose();
 
       router.push('/arrangements');
@@ -364,6 +502,7 @@ const AddArrangmentModal = () => {
 
   const onClose = () => {
     arrangementModal.onClose();
+    form.reset();
 
     router.push('/arrangements');
   };
@@ -383,15 +522,18 @@ const AddArrangmentModal = () => {
         );
       }
       setValue('paidUp', initialData.paidUp);
+      setValue('additionalItems', initialData.additionalItems);
 
       setValue('bus', initialData.bus);
       setValue('car', initialData.familyCar);
       setValue('afterHour', initialData.afterHour);
-      if (initialData.cemetry) setValue('cemetry', initialData.cemetry);
+      if (initialData.grave) setValue('graveId', initialData.grave.id);
+      if (initialData.graveTime) setValue('graveTime', initialData.graveTime);
+
       if (initialData.church) setValue('church', initialData.church);
       if (initialData.familyReps)
         setValue('familyReps', initialData.familyReps);
-      if (initialData.coffinId) setValue('coffinid', initialData.coffinId);
+      if (initialData.coffinId) setValue('coffinId', initialData.coffinId);
       setValue('liveStreaming', initialData.liveStreaming);
       setValue('doctor', initialData.doctor);
       if (initialData.programs) setValue('programs', initialData.programs);
@@ -447,6 +589,7 @@ const AddArrangmentModal = () => {
       isOpen={arrangementModal.isOpen}
       onClose={onClose}
     >
+      <hr className="w-full mb-5" />
       <div className="flex flex-col  gap-x-2 mb-5">
         <div className="flex flex-col w-full ">
           <h1 className="text-lg">For the late: </h1>
@@ -705,25 +848,49 @@ const AddArrangmentModal = () => {
                   <h2 className="text-lg mb-2 font-semibold">Cemetry</h2>
                   <FormField
                     control={form.control}
-                    name="cemetry.cemetryName"
+                    name="graveId"
                     render={({ field }) => (
-                      <FormItem className=" w-full">
-                        <FormLabel className="font-semibold">
-                          Cemetry Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
+                      <FormItem>
+                        <FormLabel className="font-semibold">Cemetry</FormLabel>
+                        {gravesLoading ? (
+                          <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status"
+                          >
+                            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                              Loading...
+                            </span>
+                          </div>
+                        ) : (
+                          <Select
                             disabled={loading}
-                            placeholder="Church name"
-                            {...field}
-                          />
-                        </FormControl>
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={field.value}
+                                  placeholder="Select Cemetry"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {graves.map((grave) => (
+                                <SelectItem value={grave.id} key={grave.id}>
+                                  {grave.graveName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="cemetry.time"
+                    name="graveTime"
                     render={({ field }) => (
                       <FormItem className=" w-1/2">
                         <FormLabel className="font-semibold">
@@ -831,7 +998,7 @@ const AddArrangmentModal = () => {
                   <h2 className="text-lg mb-2 font-semibold">Grave Site</h2>
                   <FormField
                     control={form.control}
-                    name="coffinid"
+                    name="coffinId"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-semibold">Coffin</FormLabel>
@@ -862,7 +1029,8 @@ const AddArrangmentModal = () => {
                             <SelectContent>
                               {coffins.map((coffin) => (
                                 <SelectItem value={coffin.id} key={coffin.id}>
-                                  {coffin.coffinName}
+                                  {coffin.coffinName} -{' '}
+                                  {formatter.format(coffin.price)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -974,7 +1142,8 @@ const AddArrangmentModal = () => {
                                     value={tombstone.id}
                                     key={tombstone.id}
                                   >
-                                    {tombstone.type}
+                                    {tombstone.type}({tombstone.tombstoneName})
+                                    - {formatter.format(tombstone.price)}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -987,83 +1156,230 @@ const AddArrangmentModal = () => {
 
                   <div className="flex flex-col gap-y-2">
                     <h2 className="text-lg mb-2 font-semibold">Decor</h2>
-                    <FormField
-                      control={form.control}
-                      name="decor.banner"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={() =>
-                                field.onChange(!field.value)
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Banner</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="decor.candle"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={() =>
-                                field.onChange(!field.value)
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Candle</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="decor.photo"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={() =>
-                                field.onChange(!field.value)
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Photo</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="decor.glass"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={() =>
-                                field.onChange(!field.value)
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Glass</FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex flex-col items-start space-y-0 rounded-md border p-2 w-full">
+                      <FormLabel className="mb-2">Glass</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="decor.glass.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="decor.glass.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-start space-y-0 rounded-md border p-2 w-full">
+                      <FormLabel className="mb-2">Banner</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="decor.banner.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="decor.banner.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-start space-y-0 rounded-md border p-2 w-full">
+                      <FormLabel className="mb-2">Candle</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="decor.candle.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="decor.candle.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-start space-y-0 rounded-md border p-2 w-full">
+                      <FormLabel className="mb-2">Photo</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="decor.photo.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="decor.photo.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-y-2 mt-10">
+                    <div className="flex justify-between">
+                      <h2 className="text-lg mb-2 font-semibold">
+                        Additional Items
+                      </h2>
+
+                      <Plus
+                        className="h-8 w-8"
+                        onClick={() =>
+                          additionalItemsAppend({
+                            description: '',
+                            amount: 0,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-[auto auto 40px] w-full gap-2">
+                      {additionalFields.map((field, index) => (
+                        <div className="col-span-3 grid grid-cols-[auto auto 40px] w-full gap-2 items-center">
+                          <FormItem className={cn('w-full col-start-1')}>
+                            <FormControl>
+                              <Input
+                                key={field.id} // important to include key with field's id
+                                {...register(
+                                  `additionalItems.${index}.description` as const
+                                )}
+                                placeholder="Description"
+                              />
+                            </FormControl>
+                          </FormItem>
+                          <FormItem className={cn('w-full  col-start-2')}>
+                            <FormControl>
+                              <Input
+                                key={field.id} // important to include key with field's id
+                                {...register(
+                                  `additionalItems.${index}.amount` as const
+                                )}
+                                placeholder="Price"
+                              />
+                            </FormControl>
+                          </FormItem>
+                          <X
+                            className="h-5 w-5 col-start-3 justify-self-end bg-red-900 rounded-full text-background "
+                            onClick={() => additionalItemsRemove(index)}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -9,8 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Input } from '../ui/input';
@@ -21,9 +19,6 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import useSWR, { SWRConfiguration } from 'swr';
 import { Deceased } from '@prisma/client';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
-import { DatePickerOptions } from '@/lib/utils';
-
-import Datepicker from 'tailwind-datepicker-react';
 import NextDatePicker from '../ui/custom-datepicker';
 
 const formSchema = z.object({
@@ -116,6 +111,7 @@ const AddDeceasedModal = () => {
       }
 
       toast.success('Deceased Details added!');
+      form.reset();
 
       deceasedModal.onClose();
       router.push(`/deceased`);
@@ -185,14 +181,49 @@ const AddDeceasedModal = () => {
 
   return (
     <Modal
-      title="Add Deceased Details"
+      title="Add New Deceased "
       description="Upload deceased details"
       isOpen={deceasedModal.isOpen}
       onClose={onClose}
     >
+      <hr className="w-full mb-10" />
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-y-5">
+            <div className="flex flex-col md:flex-row w-full gap-x-2">
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem className=" w-full md:w-1/2 xl:1/2">
+                    <FormLabel className="font-semibold">Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Last Names"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="firstNames"
+                render={({ field }) => (
+                  <FormItem className=" w-full md:w-1/2 xl:1/2">
+                    <FormLabel className="font-semibold">First Names</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="First Names"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex md:flex-row flex-col w-full gap-x-2">
               <FormField
                 control={form.control}
@@ -230,22 +261,6 @@ const AddDeceasedModal = () => {
             </div>
             <FormField
               control={form.control}
-              name="dateOfBirth"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of Birth:*</FormLabel>
-                  <div className="relative">
-                    <NextDatePicker
-                      onChange={field.onChange}
-                      value={field.value}
-                      maxDate={new Date()}
-                    />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="dateOfDeath"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
@@ -254,7 +269,7 @@ const AddDeceasedModal = () => {
                     <NextDatePicker
                       onChange={field.onChange}
                       value={field.value}
-                      minDate={form.getValues().dateOfBirth}
+                      minDate={new Date('18 May 1900')}
                       maxDate={new Date()}
                     />
                   </div>
@@ -262,54 +277,6 @@ const AddDeceasedModal = () => {
               )}
             />
 
-            <div className="flex flex-col md:flex-row w-full gap-x-2">
-              <FormField
-                control={form.control}
-                name="firstNames"
-                render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:1/2">
-                    <FormLabel className="font-semibold">First Names</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="First Names"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:1/2">
-                    <FormLabel className="font-semibold">Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="Last Names"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="deathCertificateRecipient"
-              render={({ field }) => (
-                <FormItem className=" flex-1 md:w-1/2 xl:flex-auto">
-                  <FormLabel className="font-semibold">
-                    Death Certificate Recipient
-                  </FormLabel>
-                  <FormControl>
-                    <Input disabled={loading} placeholder="John" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="removalDate"
@@ -320,6 +287,7 @@ const AddDeceasedModal = () => {
                     <NextDatePicker
                       onChange={field.onChange}
                       value={field.value}
+                      minDate={form.getValues().dateOfDeath}
                       maxDate={new Date()}
                     />
                   </div>
@@ -363,6 +331,20 @@ const AddDeceasedModal = () => {
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="deathCertificateRecipient"
+            render={({ field }) => (
+              <FormItem className=" flex-1 md:w-1/2 xl:flex-auto">
+                <FormLabel className="font-semibold">
+                  Death Certificate Recipient
+                </FormLabel>
+                <FormControl>
+                  <Input disabled={loading} placeholder="John" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <div className="pt-6 space-x-2 flex items-center justify-end w-full">
             <Button variant={'default'} type="submit">
               Confirm

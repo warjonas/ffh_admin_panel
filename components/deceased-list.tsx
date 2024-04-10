@@ -14,7 +14,7 @@ import {
   Store as StoreIcon,
 } from 'lucide-react';
 
-import { Deceased } from '@prisma/client';
+import { Deceased } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -65,7 +65,11 @@ const DeceasedList = ({
     [searchParams]
   );
 
-  const formattedItems = items.map((item: Deceased) => ({
+  const filteredItems = items.filter(
+    (item: Deceased) => item.arrangement == null && item.removal == null
+  );
+
+  const formattedItems = filteredItems.map((item: Deceased) => ({
     label: item.firstNames + ' ' + item.lastName,
     value: item.id,
     idNumber: item.idNumber,
@@ -91,7 +95,7 @@ const DeceasedList = ({
           className={cn('w-1/2 p-2 justify-between text-lg', className)}
         >
           {deceasedDetails?.label} - {deceasedDetails?.idNumber}
-          <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />
+          <ChevronsUpDown className="h-4 w-4 ml-2  shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0">

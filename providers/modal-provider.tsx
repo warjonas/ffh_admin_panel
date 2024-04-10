@@ -13,6 +13,9 @@ import RemovalPaymentModal from '@/components/modals/process-Payment-Modal';
 
 import { UpcomingRemovalsModal } from '@/components/modals/upcoming-removals-modal';
 import { useEffect, useState } from 'react';
+import AddCoffinModal from '@/components/modals/add-coffin';
+import AddGraveModal from '@/components/modals/add-grave';
+import AddTombstoneModal from '@/components/modals/add-tombstone';
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -37,6 +40,9 @@ export const ModalProvider = () => {
       <PaymentTypeModal />
       <RemovalPaymentModal />
       <RemovalReceiptModal />
+      <AddCoffinModal />
+      <AddGraveModal />
+      <AddTombstoneModal />
     </>
   );
 };
