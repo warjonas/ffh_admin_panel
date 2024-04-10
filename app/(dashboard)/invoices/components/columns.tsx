@@ -17,6 +17,7 @@ export type InvoiceColumn = {
   outstanding: number;
   amountDue: number;
   paidUp: boolean;
+  created: Date;
 };
 
 export const columns: ColumnDef<InvoiceColumn>[] = [
