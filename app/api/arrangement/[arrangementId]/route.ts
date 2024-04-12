@@ -48,7 +48,7 @@ export async function PATCH(
 
     const {
       familyReps,
-      deceased,
+
       deliveryAddress,
       deliveryTime,
       minister,
@@ -68,12 +68,12 @@ export async function PATCH(
       doctor,
       cremationDoctor,
       liveStreaming,
-      coffinid,
+      coffinId,
       church,
       digger,
       updatedBy,
       paidUp,
-      grave,
+      graveId,
       graveTime,
       afterHour,
     } = body;
@@ -83,14 +83,13 @@ export async function PATCH(
         id: params.arrangementId,
       },
       data: {
-        deceasedId: deceased,
         familyReps,
         deliveryAddress,
         deliveryTime: deliveryTime,
         church,
         grave: {
           connect: {
-            id: grave,
+            id: graveId,
           },
         },
         graveTime,
@@ -110,8 +109,16 @@ export async function PATCH(
         cremationDoctor,
         doctor,
         outstandingBalance,
-        tombstoneId,
-        coffinId: coffinid,
+        tombstone: {
+          connect: {
+            id: tombstoneId,
+          },
+        },
+        coffin: {
+          connect: {
+            id: coffinId,
+          },
+        },
         updatedBy,
         paidUp,
       },

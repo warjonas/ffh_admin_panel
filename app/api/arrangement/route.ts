@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     });
 
     if (!deceasedData) {
-      return new NextResponse('Internal Error', { status: 500 });
+      return new NextResponse('Deceased does not exist.', { status: 500 });
     }
 
     const invoiceNo = await generateId('INV');

@@ -139,6 +139,10 @@ const AddDeceasedModal = () => {
   }, []);
 
   useEffect(() => {
+    if (!id) form.reset();
+  }, [id]);
+
+  useEffect(() => {
     if (deceased) {
       setValue('firstNames', deceased.firstNames);
       setValue('lastName', deceased.lastName);

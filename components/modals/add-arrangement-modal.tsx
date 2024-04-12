@@ -1604,7 +1604,7 @@ const AddArrangmentModal = () => {
             <Button
               type="submit"
               className="w-48 font-semibold"
-              disabled={deceasedId === null}
+              disabled={deceasedId === null || loading}
             >
               {action}
             </Button>
