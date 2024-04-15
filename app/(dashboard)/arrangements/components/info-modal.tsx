@@ -12,6 +12,9 @@ import generatePDF, { Margin, Resolution, usePDF } from 'react-to-pdf';
 import { useReactToPrint } from 'react-to-print';
 
 import { formatter } from '@/lib/utils';
+import AddArrangmentModal from '@/components/modals/add-arrangement-modal';
+import { useArrangementModal } from '@/hooks/use-arrangement-modal';
+import { usePathname, useRouter } from 'next/navigation';
 // import { Arrangement } from '@/types';
 
 interface InfoModalProps {
@@ -20,6 +23,11 @@ interface InfoModalProps {
   onConfirm: () => void;
   loading: boolean;
   id: string;
+}
+
+interface QueryProps {
+  name: string;
+  value: string;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -32,6 +40,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   id,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const arrangementModal = useArrangementModal();
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
@@ -57,6 +69,19 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     content: () => componentRef.current,
     documentTitle: `Funeral Arrangement Sheet - ${data?.deceased?.firstNames} ${data?.deceased?.lastName}`,
   });
+
+  const onUpdate = async () => {
+    // const query: QueryProps[] = [
+    //   { name: 'deceasedId', value: deceasedId },
+    //   { name: 'arrangementId', value: data.id },
+    // ];
+
+    // router.push('/arrangements');
+
+    // router.push(pathname + '?' + createQueryString(query));
+    onClose();
+    arrangementModal.onOpen();
+  };
 
   // const arrangement = await getArrangement(data)
 
@@ -373,7 +398,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             <Button disabled={loading} variant={'outline'} onClick={onClose}>
               Close
             </Button>
-            <Button disabled={loading} variant={'default'} onClick={onConfirm}>
+            <Button disabled={loading} variant={'default'} onClick={onUpdate}>
               <PenBoxIcon /> Edit
             </Button>
           </div>

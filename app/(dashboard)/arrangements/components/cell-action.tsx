@@ -70,11 +70,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
     }
   };
 
-  const onUpdate = async () => {
+  const setQueryParams = () => {
     const query: QueryProps[] = [
       { name: 'deceasedId', value: deceasedId },
       { name: 'arrangementId', value: data.id },
     ];
+
+    return query;
+  };
+
+  const onView = async () => {
+    const query = setQueryParams();
+    router.push(pathname + '?' + createQueryString(query));
+    setOpen(true);
+  };
+
+  const onUpdate = async () => {
+    const query = setQueryParams();
 
     router.push('/arrangements');
 
@@ -94,6 +106,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const onPreview = () => {
     const query: QueryProps[] = [
       { name: 'arrangementId', value: data.id },
+      { name: 'deceasedId', value: deceasedId },
+
       { name: 'preview', value: 'arrangement' },
     ];
 
@@ -124,7 +138,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem onClick={onView}>
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>
