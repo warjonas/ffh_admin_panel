@@ -3,7 +3,7 @@ import React from 'react';
 
 import underContruction from '@/assets/220880-P1KV8M-746.jpg';
 import Heading from '@/components/ui/heading';
-import { CreditCard, DollarSign, LineChart } from 'lucide-react';
+import { CreditCard, DollarSign, LineChart, Star } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -21,6 +21,7 @@ import { format } from 'date-fns';
 import PieChartOverview from '@/components/ui/piechart';
 import { getGraveStats } from '@/actions/getGraveStats';
 import { getPastFunerals } from '@/actions/getPastFunerals';
+import { getPopularCoffin } from '@/actions/getPopularCoffin';
 
 type Props = {};
 
@@ -31,6 +32,7 @@ const Home = async (props: Props) => {
   const upcomingFunerals = await getUpcomingFunerals();
   const pastFunerals = await getPastFunerals();
   const graveStats = await getGraveStats();
+  const popCoffin = await getPopularCoffin();
 
   const graphRevenue = await getGraphRevenue();
 
@@ -41,15 +43,13 @@ const Home = async (props: Props) => {
       <section className="grid gap-4 grid-cols-4 mb-4 h-[20%]">
         <Card className="col-start-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm lg:text-lg font-medium">
-              Total Revenue
-            </CardTitle>{' '}
+            <CardTitle>Total Revenue</CardTitle>{' '}
             <DollarSign className="lg:h-6 h-4 lg:w-6 w-4 text-muted-foreground" />{' '}
           </CardHeader>
           <hr className="w-[90%] mx-6 my-2 justify-self-center self-center" />
 
           <CardContent>
-            <div className="flex flex-col w-full font-bold">
+            <div className="flex flex-col w-full font-semibold">
               <h1 className="text-2xl">{formatter.format(totalRevenue)}</h1>
 
               <span className="text-muted-foreground text-sm">YTD</span>
@@ -59,14 +59,12 @@ const Home = async (props: Props) => {
 
         <Card className="col-start-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm lg:text-lg font-medium">
-              Outstanding Payments
-            </CardTitle>{' '}
+            <CardTitle>Outstanding Payments</CardTitle>{' '}
             <CreditCard className="lg:h-6 h-4 lg:w-6 w-4 text-muted-foreground" />{' '}
           </CardHeader>
           <hr className="w-[90%] mx-6 my-2 justify-self-center self-center" />
           <CardContent>
-            <div className="flex flex-col w-full font-bold">
+            <div className="flex flex-col w-full font-semibold">
               <h1 className="text-2xl"> {formatter.format(outstanding)}</h1>
               <span className="text-muted-foreground text-sm">YTD</span>
             </div>
@@ -75,14 +73,26 @@ const Home = async (props: Props) => {
 
         <Card className="col-start-3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm lg:text-lg font-medium">
-              Funerals To Date
-            </CardTitle>{' '}
+            <CardTitle>Funerals To Date</CardTitle>{' '}
             <LineChart className="lg:h-6 h-4 lg:w-6 w-4 text-muted-foreground" />{' '}
           </CardHeader>
           <hr className="w-[90%] mx-6 my-2 justify-self-center self-center" />
           <CardContent>
-            <div className="text-2xl font-bold">{pastFunerals.length}</div>
+            <div className="text-2xl font-semibold">{pastFunerals.length}</div>
+          </CardContent>
+        </Card>
+        <Card className="col-start-4">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle>Most Popular Coffin</CardTitle>{' '}
+            <Star className="lg:h-6 h-4 lg:w-6 w-4 text-muted-foreground" />{' '}
+          </CardHeader>
+          <hr className="w-[90%] mx-6 my-2 justify-self-center self-center" />
+          <CardContent>
+            <div className="text-2xl font-semibold text-primary">
+              {popCoffin[0].coffinName +
+                ' ' +
+                `(${popCoffin[0].arrangements.length})`}
+            </div>
           </CardContent>
         </Card>
       </section>
@@ -113,13 +123,13 @@ const Home = async (props: Props) => {
                 key={funeral.id}
                 className="justify-between flex flex-row gap-y-5 mb-4 pb-2 border-b"
               >
-                <p className="font-medium text-xl">
+                <p className="font-medium text-lg">
                   {funeral.deceased.firstNames +
                     ' ' +
                     funeral.deceased.lastName}
                 </p>
                 {funeral.dateOfFuneralService && (
-                  <p className="font-medium text-xl">
+                  <p className="font-medium text-lg">
                     {format(
                       new Date(funeral.dateOfFuneralService),
                       'dd/MM/yyyy'
