@@ -85,36 +85,6 @@ export async function PATCH(
       return new NextResponse('Hymns are required', { status: 400 });
     }
 
-    if (!pallbearersGrave) {
-      return new NextResponse('Pallbearers required for grave site', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersInChurch) {
-      return new NextResponse('Pallbearers required for into church', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersOutChurch) {
-      return new NextResponse('Pallbearers required for out of church', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersInHouse) {
-      return new NextResponse('Pallbearers required for into home', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersOutHouse) {
-      return new NextResponse('Pallbearers required for out of home', {
-        status: 400,
-      });
-    }
-
     const funeralProgram = await prismadb.funeralProgram.update({
       where: {
         id: params.programId,

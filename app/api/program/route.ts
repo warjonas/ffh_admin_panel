@@ -51,36 +51,6 @@ export async function POST(req: Request, params: { approved: boolean }) {
       return new NextResponse('Deceased Id is required', { status: 400 });
     }
 
-    if (!pallbearersGrave) {
-      return new NextResponse('Pallbearers required for grave site', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersInChurch) {
-      return new NextResponse('Pallbearers required for into church', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersOutChurch) {
-      return new NextResponse('Pallbearers required for out of church', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersInHouse) {
-      return new NextResponse('Pallbearers required for into home', {
-        status: 400,
-      });
-    }
-
-    if (!pallbearersOutHouse) {
-      return new NextResponse('Pallbearers required for out of home', {
-        status: 400,
-      });
-    }
-
     const checkDeceased = await prismadb.deceased.findFirst({
       where: {
         id: deceasedId,
