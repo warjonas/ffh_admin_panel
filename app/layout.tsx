@@ -29,7 +29,7 @@ export default function RootLayout({
       <AuthProvider>
         <body
           className={cn(
-            'h-screen bg-background libre-sans antialiased flex overflow-hidden',
+            'h-screen bg-background libre-sans antialiased flex overflow-auto',
             libreSans.className
           )}
         >

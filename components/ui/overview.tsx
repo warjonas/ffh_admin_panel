@@ -1,7 +1,14 @@
 'use client';
 import { formatter } from '@/lib/utils';
 import React from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  Cell,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 interface OverviewProps {
   data: any[];
@@ -25,7 +32,11 @@ export const Overview: React.FC<OverviewProps> = ({ data }) => {
           axisLine={false}
           tickFormatter={(value) => `${formatter.format(value)}`}
         />
-        <Bar dataKey={'total'} fill="#0f172a" radius={[4, 4, 0, 0]} />
+        <Bar dataKey={'total'} radius={[4, 4, 0, 0]}>
+          {data.map((entry, index) => (
+            <Cell fill={entry.colour} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
