@@ -2,7 +2,7 @@ import { InvoiceColumn } from '@/app/(dashboard)/invoices/components/columns';
 import prismadb from '@/lib/prismadb';
 import { format } from 'date-fns';
 
-interface GraphData {
+export interface BarGraphData {
   colour: string;
   name: string;
   total: number;
@@ -106,7 +106,7 @@ export const getGraphRevenue = async () => {
     monthlyRevenue[month] = (monthlyRevenue[month] || 0) + revenForOrder;
   }
 
-  const graphData: GraphData[] = [
+  const graphData: BarGraphData[] = [
     { colour: randDarkColor(), name: 'Jan', total: 0 },
     { colour: randDarkColor(), name: 'Feb', total: 0 },
     { colour: randDarkColor(), name: 'Mar', total: 0 },
