@@ -1,4 +1,5 @@
 'use client';
+import { BarGraphData } from '@/actions/getGraphRevenue';
 import { formatter } from '@/lib/utils';
 import React from 'react';
 import {
@@ -11,7 +12,7 @@ import {
 } from 'recharts';
 
 interface OverviewProps {
-  data: any[];
+  data: BarGraphData[];
 }
 
 export const Overview: React.FC<OverviewProps> = ({ data }) => {
@@ -34,7 +35,7 @@ export const Overview: React.FC<OverviewProps> = ({ data }) => {
         />
         <Bar dataKey={'total'} radius={[4, 4, 0, 0]}>
           {data.map((entry, index) => (
-            <Cell fill={entry.colour} />
+            <Cell fill={entry.colour} key={entry.name} />
           ))}
         </Bar>
       </BarChart>
