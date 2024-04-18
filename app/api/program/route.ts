@@ -31,22 +31,6 @@ export async function POST(req: Request, params: { approved: boolean }) {
       });
     }
 
-    if (!atChurch) {
-      return new NextResponse('Officiating minister at church is required', {
-        status: 400,
-      });
-    }
-
-    if (!atHome) {
-      return new NextResponse('Missing information for at home service', {
-        status: 400,
-      });
-    }
-
-    if (!hymn) {
-      return new NextResponse('Hymns are required', { status: 400 });
-    }
-
     if (!deceasedId) {
       return new NextResponse('Deceased Id is required', { status: 400 });
     }
