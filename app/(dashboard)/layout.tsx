@@ -22,7 +22,7 @@ export default async function DashboardLayout({ children }: Props) {
   }
 
   return (
-    <main className="flex flex-col h-[80%] xl:h-full w-full">
+    <main className="flex flex-col h-[80%] xl:h-full w-full overflow-auto relative">
       <Navbar />
       {/* <Sidebar /> */}
       <NextSSRPlugin
