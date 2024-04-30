@@ -1,7 +1,15 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, MoreHorizontal, ScanEye, Trash, View } from 'lucide-react';
+import {
+  Copy,
+  Edit,
+  MoreHorizontal,
+  Receipt,
+  ScanEye,
+  Trash,
+  View,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -23,6 +31,7 @@ import {
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
+import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
 
 interface CellActionProps {
   data: ArrangementColumn;
@@ -43,6 +52,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const arrangementModal = useArrangementModal();
+  const processPaymentModal = useProcessPaymentModal();
 
   const createQueryString = useCallback(
     (queries: QueryProps[]) => {
@@ -103,6 +113,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
     setOpen(false);
   };
 
+  const onClose = () => {
+    setOpen(false);
+    router.back();
+  };
+
+  const onPayment = () => {
+    const query: QueryProps[] = [{ name: 'type', value: 'arrangement' }];
+
+    router.push(pathname + '?' + createQueryString(query));
+
+    processPaymentModal.onOpen();
+  };
+
   const onPreview = () => {
     const query: QueryProps[] = [
       { name: 'arrangementId', value: data.id },
@@ -113,11 +136,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
 
     router.push(pathname + '?' + createQueryString(query));
   };
+
   return (
     <>
       <InfoModal
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={onClose}
         onConfirm={onConfirm}
         loading={loading}
         id={data.id}
@@ -149,6 +173,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuItem onClick={onPreview}>
             <ScanEye className="mr-2 h-4 w-4" />
             Preview
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={onPayment}>
+            <Receipt className="mr-2 h-4 w-4" />
+            Register Payment
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>

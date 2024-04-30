@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 import AddCoffinModal from '@/components/modals/add-coffin';
 import AddGraveModal from '@/components/modals/add-grave';
 import AddTombstoneModal from '@/components/modals/add-tombstone';
+import AddOnModal from '@/components/modals/add-addOn';
+import ViewPaymentsModal from '@/components/modals/view-payments-modal';
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -43,6 +45,8 @@ export const ModalProvider = () => {
       <AddCoffinModal />
       <AddGraveModal />
       <AddTombstoneModal />
+      <AddOnModal />
+      <ViewPaymentsModal />
     </>
   );
 };

@@ -45,6 +45,8 @@ const Invoice = async (props: Props) => {
     },
   });
 
+  const receipts = await prismadb.receipt.findMany({});
+
   const formattedRemovals: InvoiceColumn[] = removals.map((item) => ({
     id: item.id,
     type: 'Removal',
@@ -78,12 +80,8 @@ const Invoice = async (props: Props) => {
   const formattedItems: InvoiceColumn[] =
     formattedArrangements.concat(formattedRemovals);
 
-  const totalPayments = formattedItems.reduce((total, order) => {
-    if (order.paidUp) {
-      return total + order.amountDue;
-    } else {
-      return total;
-    }
+  const totalPayments = receipts.reduce((total, order) => {
+    return total + order.receivedAmount;
   }, 0);
 
   const outstandingBalance = formattedItems.reduce((total, order) => {
@@ -114,6 +112,7 @@ const Invoice = async (props: Props) => {
             amount={totalPayments}
             subtitleLinkText="View payments"
             classes="bg-green-700 hover:bg-green-800"
+            modal="payment"
           />
           <hr />
           <OverviewBox
@@ -121,6 +120,7 @@ const Invoice = async (props: Props) => {
             amount={outstandingBalance}
             subtitleLinkText="View Outstanding"
             classes=" bg-red-800 hover:bg-red-900"
+            modal="outstanding"
           />
         </div>
       </section>

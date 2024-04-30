@@ -13,11 +13,11 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { cn, formatter } from '@/lib/utils';
-import { Coffin, Grave, Tombstone } from '@/types';
+import { AddOn, ArrangementAddOnItem, Coffin, Grave, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, Trash, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
@@ -43,7 +43,7 @@ import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import DeceasedList from '../deceased-list';
 import NextDatePicker from '../ui/custom-datepicker';
-import { init } from 'next/dist/compiled/webpack/webpack';
+import * as ReactSelect from 'react-select';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -57,6 +57,16 @@ const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
   return fee;
 };
 
+const relationships = [
+  'Brother',
+  'Sister',
+  'Father',
+  'Mother',
+  'Uncle',
+  'Aunt',
+  'Other',
+];
+
 const formSchema = z.object({
   deceased: z.string(),
   dateOfFuneralService: z.date(),
@@ -66,6 +76,7 @@ const formSchema = z.object({
       lastName: z.string(),
       relationship: z.string(),
       phoneNo: z.string(),
+      email: z.string(),
     })
     .array(),
   deliveryAddress: z.string(),
@@ -86,12 +97,15 @@ const formSchema = z.object({
   crossSize: z.string(),
   graveId: z.string(),
   graveTime: z.string(),
-  doves: z.coerce.number(),
-  liveStreaming: z.coerce.number(),
+
+  arrangementAddOnItems: z
+    .object({
+      name: z.string().min(1),
+      qty: z.coerce.number().default(0),
+      price: z.coerce.number(),
+    })
+    .array(),
   programs: z.coerce.number(),
-  bus: z.coerce.number(),
-  car: z.coerce.number(),
-  wreaths: z.coerce.number(),
 
   storage: z.coerce.number().default(350),
   decor: z.object({
@@ -116,10 +130,7 @@ const formSchema = z.object({
   coffinId: z.string(),
   totalDue: z.coerce.number().default(10000),
   outstandingBalance: z.coerce.number(),
-  doctor: z.coerce.number(),
-  cremationDoctor: z.coerce.number(),
-  afterHour: z.coerce.number(),
-  digger: z.coerce.number(),
+
   paidUp: z.boolean(),
   additionalItems: z
     .object({
@@ -127,7 +138,7 @@ const formSchema = z.object({
       amount: z.coerce.number(),
     })
     .array(),
-
+  discount: z.coerce.number().default(0),
   amountPaid: z.coerce.number().default(0),
   notes: z.string().max(190).default(''),
   createdBy: z.string(),
@@ -150,6 +161,7 @@ const AddArrangmentModal = () => {
   const [graveFee, setGraveFee] = useState(0);
 
   const [additionalItems, setAdditionalItems] = useState(0);
+  const [addOnTotal, setAddOnTotal] = useState(0);
 
   const [paymentsMade, setPaymentsMade] = useState(0);
 
@@ -178,6 +190,16 @@ const AddArrangmentModal = () => {
     isLoading: deceasedLoading,
   }: { data: Deceased[]; error: any; isLoading: any } = useSWR(
     `/api/deceased`,
+    fetcher,
+    { refreshInterval: 1000 }
+  );
+
+  const {
+    data: addOnData,
+    error: addOnsError,
+    isLoading: addOnsLoading,
+  }: { data: AddOn[]; error: any; isLoading: any } = useSWR(
+    `/api/addOn`,
     fetcher,
     { refreshInterval: 1000 }
   );
@@ -221,8 +243,15 @@ const AddArrangmentModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       familyReps: [
-        { firstName: '', lastName: '', relationship: '', phoneNo: '' },
+        {
+          firstName: '',
+          lastName: '',
+          relationship: '',
+          phoneNo: '',
+          email: '',
+        },
       ],
+
       deceased: '',
       deliveryAddress: '',
       deliveryTime: '',
@@ -242,15 +271,11 @@ const AddArrangmentModal = () => {
       crossSize: '',
       graveId: '6616593b149f9c78856cc0d2',
       graveTime: '',
-      digger: 800,
-      doves: 0,
+
       programs: 50,
-      bus: 0,
-      car: 0,
-      wreaths: 0,
+
       storage: storageFee,
-      liveStreaming: 0,
-      afterHour: 0,
+
       decor: {
         candle: {
           qty: 0,
@@ -273,8 +298,7 @@ const AddArrangmentModal = () => {
       totalDue: 0,
       outstandingBalance: 0,
       notes: '',
-      doctor: 0,
-      cremationDoctor: 0,
+      discount: 0,
       coffinId: '6614467780ae4f6405b2faeb',
       createdBy: 'email',
       updatedBy: '',
@@ -308,6 +332,16 @@ const AddArrangmentModal = () => {
   );
 
   const {
+    fields: addOnFields,
+    append: addOnItemsAppend,
+    remove: addOnItemsRemove,
+    replace: addOnReplace,
+  } = useFieldArray({
+    control,
+    name: 'arrangementAddOnItems',
+  });
+
+  const {
     fields: additionalFields,
     append: additionalItemsAppend,
     prepend: additionalItemsPrepend,
@@ -315,6 +349,7 @@ const AddArrangmentModal = () => {
     swap: additionalItemsSwap,
     move: additionalItemsMove,
     insert: additionalItemsInsert,
+    replace: additionalItemsReplace,
   } = useFieldArray({
     control,
     name: 'additionalItems',
@@ -328,6 +363,17 @@ const AddArrangmentModal = () => {
 
     setAdditionalItems(itemsAmount);
   }, [watch(['additionalItems']), additionalFields]);
+
+  //Calculates the total for the add on items that are added
+  useEffect(() => {
+    const itemsAmount = form
+      .getValues()
+      .arrangementAddOnItems.reduce((total, item) => {
+        return total + Number(item.qty * item.price);
+      }, 0);
+
+    setAddOnTotal(itemsAmount);
+  }, [watch(['arrangementAddOnItems'])]);
 
   //sets the total due on the form to the amount calculated below
   useEffect(() => {
@@ -370,16 +416,7 @@ const AddArrangmentModal = () => {
   //Calculates total of all the add-ons and sets it as the amount due
   useEffect(() => {
     const total =
-      Number(form.getValues().cremationDoctor) +
-      Number(form.getValues().doctor) +
-      Number(form.getValues().bus) +
       storageFee +
-      Number(form.getValues().liveStreaming) +
-      Number(form.getValues().doves) +
-      Number(form.getValues().wreaths) +
-      Number(form.getValues().afterHour) +
-      Number(form.getValues().car) +
-      Number(form.getValues().digger) +
       Number(
         form.getValues().decor.banner.qty * form.getValues().decor.banner.price
       ) +
@@ -395,24 +432,17 @@ const AddArrangmentModal = () => {
       additionalItems +
       coffinFee +
       tombstoneFee +
-      graveFee;
+      graveFee +
+      addOnTotal;
 
-    setAmountDue(total);
+    setAmountDue(total - form.getValues().discount);
   }, [
     watch([
-      'cremationDoctor',
-      'doctor',
-      'storage',
-      'liveStreaming',
-      'car',
-      'bus',
-      'wreaths',
-      'doves',
-      'afterHour',
       'decor.glass',
       'decor.photo',
       'decor.candle',
       'decor.banner',
+      'discount',
     ]),
     storageFee,
     additionalItems,
@@ -420,6 +450,7 @@ const AddArrangmentModal = () => {
     coffinFee,
     tombstoneFee,
     graveFee,
+    addOnTotal,
   ]);
 
   //Calculate the storage fee based on the funeral date selected and the day body was received
@@ -524,10 +555,10 @@ const AddArrangmentModal = () => {
       }
       setValue('paidUp', initialData.paidUp);
       setValue('additionalItems', initialData.additionalItems);
+      setValue('discount', initialData.discount);
 
-      setValue('bus', initialData.bus);
-      setValue('car', initialData.familyCar);
-      setValue('afterHour', initialData.afterHour);
+      setValue('arrangementAddOnItems', initialData.arrangementAddOnItems);
+
       if (initialData.grave) setValue('graveId', initialData.grave.id);
       if (initialData.graveTime) setValue('graveTime', initialData.graveTime);
 
@@ -535,19 +566,16 @@ const AddArrangmentModal = () => {
       if (initialData.familyReps)
         setValue('familyReps', initialData.familyReps);
       if (initialData.coffinId) setValue('coffinId', initialData.coffinId);
-      setValue('liveStreaming', initialData.liveStreaming);
-      setValue('doctor', initialData.doctor);
+      if (initialData.coffinId)
+        setValue('tombstoneId', initialData.tombstone.id);
+
       if (initialData.programs) setValue('programs', initialData.programs);
       if (initialData.minister) setValue('minister', initialData.minister);
-      setValue('wreaths', initialData.wreaths);
 
-      setValue('totalDue', initialData.totalDue);
-      setValue('doves', initialData.doves);
       setValue('notes', initialData.notes);
 
       if (initialData.storage) setValue('storage', initialData.storage);
 
-      setValue('cremationDoctor', initialData.cremationDoctor);
       if (initialData.crossSize) setValue('crossSize', initialData.crossSize);
       if (initialData.decor) setValue('decor', initialData.decor);
 
@@ -558,6 +586,22 @@ const AddArrangmentModal = () => {
       );
     }
   }, [deceasedId, initialData]);
+
+  useEffect(() => {
+    if (!deceasedId && !initialData && addOnData) {
+      const addOnsArray: ArrangementAddOnItem[] = addOnData.map((addon) => ({
+        name: addon.name,
+        price: addon.price,
+        qty: 0,
+      }));
+
+      addOnReplace(addOnsArray);
+    }
+
+    if (deceasedId && initialData) {
+      addOnReplace(initialData.arrangementAddOnItems);
+    }
+  }, [initialData, addOnData, deceasedId]);
 
   if (!isMounted) {
     return null;
@@ -668,17 +712,19 @@ const AddArrangmentModal = () => {
                     firstName: '',
                     relationship: '',
                     phoneNo: '',
+                    email: '',
                   })
                 }
               />
             </div>
 
             <hr className="w-full my-4" />
-            <div className="grid grid-cols-5 w-full gap-2">
+            <div className="grid grid-cols-[auto, auto, auto, auto,auto, 40px] w-full gap-2">
               <h2 className="col-start-1 font-semibold">Surname</h2>
-              <h2 className="col-start-2 font-semibold">Name</h2>
+              <h2 className="col-start-2 font-semibold">First Name</h2>
               <h2 className="col-start-3 font-semibold">Relationship</h2>
               <h2 className="col-start-4 font-semibold">Phone No.</h2>
+              <h2 className="col-start-5 font-semibold">Email</h2>
               {fields.map((field, index) => (
                 <>
                   <FormItem className={cn('w-full  col-start-1')}>
@@ -699,6 +745,7 @@ const AddArrangmentModal = () => {
                       />
                     </FormControl>
                   </FormItem>
+
                   <FormItem className={cn('w-full  col-start-3')}>
                     <FormControl>
                       <Input
@@ -706,7 +753,7 @@ const AddArrangmentModal = () => {
                         {...register(
                           `familyReps.${index}.relationship` as const
                         )}
-                        placeholder="First Name"
+                        placeholder="Brother"
                       />
                     </FormControl>
                   </FormItem>
@@ -719,8 +766,17 @@ const AddArrangmentModal = () => {
                       />
                     </FormControl>
                   </FormItem>
-                  <Trash
-                    className="h-8 w-8 col-start-5 justify-self-end "
+                  <FormItem className={cn('w-full  col-start-5')}>
+                    <FormControl>
+                      <Input
+                        key={field.id} // important to include key with field's id
+                        {...register(`familyReps.${index}.email` as const)}
+                        placeholder="Email"
+                      />
+                    </FormControl>
+                  </FormItem>
+                  <X
+                    className="h-6 w-6 col-start-6 justify-self-end text-background rounded-full shadow-sm bg-red-800"
                     onClick={() => remove(index)}
                   />
                 </>
@@ -943,12 +999,12 @@ const AddArrangmentModal = () => {
                       render={({ field }) => (
                         <FormItem className="w-1/2">
                           <FormLabel className="font-semibold">
-                            Last Name
+                            Surname
                           </FormLabel>
                           <FormControl>
                             <Input
                               disabled={loading}
-                              placeholder="Last Name"
+                              placeholder="Surname"
                               {...field}
                             />
                           </FormControl>
@@ -1423,173 +1479,55 @@ const AddArrangmentModal = () => {
               )}
             />
             <div className="flex flex-col gap-y-2">
-              <FormField
-                control={form.control}
-                name="doves"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Doves
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="wreaths"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Wreaths
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="liveStreaming"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Live Streaming
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              {addOnFields?.map((field, index) => (
+                <div
+                  className="grid grid-cols-3 w-full gap-2 items-center"
+                  key={field.id}
+                >
+                  <FormLabel className="col-start-1">{field.name}</FormLabel>
 
-              <FormField
-                control={form.control}
-                name="bus"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Bus{' '}
-                    </FormLabel>
+                  <FormItem className={cn('w-full  col-start-2')}>
                     <FormControl>
                       <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
+                        key={field.id} // important to include key with field's id
+                        {...register(
+                          `arrangementAddOnItems.${index}.qty` as const
+                        )}
+                        placeholder="qty"
                       />
                     </FormControl>
                   </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="car"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Car
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="doctor"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Doctor
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="afterHour"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      After hours{' '}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cremationDoctor"
-                render={({ field }) => (
-                  <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                    <FormLabel className="font-semibold w-32 text-left">
-                      Cremation Doctor{' '}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder="0"
-                        {...field}
-                        className="w-1/4"
-                        type="number"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+
+                  <FormLabel className="col-start-3">
+                    @ {formatter.format(field.price)}/each
+                  </FormLabel>
+                </div>
+              ))}
             </div>
           </section>
 
           <section className="flex flex-col mt-10 w-full  text-right">
             <h1 className="text-xl font-semibold">Summary</h1>
             <hr className="w-full my-4" />
+            <FormField
+              control={form.control}
+              name="discount"
+              render={({ field }) => (
+                <FormItem className=" mb-5 flex items-baseline gap-x-2 justify-end">
+                  <h2 className="text-xl mr-2">
+                    Discount: <span className="font-semibold">R</span>{' '}
+                  </h2>
+                  <FormControl>
+                    <Input
+                      placeholder="400"
+                      {...field}
+                      className="w-40"
+                      type="number"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>
               <h1 className="text-xl font-semibold text-end">

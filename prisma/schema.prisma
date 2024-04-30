@@ -44,14 +44,10 @@ model Arrangement{
   deliveryTime        String?
   church              Church?
   minister            Minister?  
-  digger              Int
+  arrangementAddOnItems              ArrangementAddOnItem[]
   crossSize           String?
-  doves               Int
-  liveStreaming       Int
-  programs            Int?
-  familyCar           Int
-  bus                 Int
-  storage         Int?
+  storage             Int
+  
   decor               Decor?
   totalDue        Int
   outstandingBalance          Int   @default(0)
@@ -60,19 +56,14 @@ model Arrangement{
   updatedBy           String? @default("")
   updated             DateTime? @updatedAt()
   notes               String @default("")
-  afterHour                 Int
-  wreaths             Int
-  doctor                 Int
-  cremationDoctor                 Int
   paidUp              Boolean
   receipts            Receipt[]
   additionalItems     AdditionalItems[]
   graveTime           String
   flagDelete          Boolean @default(false)
-
-
-
-
+  graveNo             String?
+  discount            Int
+  
   graveId             String @db.ObjectId
   grave               Grave @relation(fields: [graveId], references: [id])
   deceasedId          String @db.ObjectId @unique
@@ -166,6 +157,12 @@ model Receipt{
 
 }
 
+model AddOns{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  price               Int
+}
+
 
 
 model Tombstone{
@@ -190,6 +187,12 @@ model Grave{
     price               Int
     arrangements        Arrangement[]
 
+}
+
+type ArrangementAddOnItem{
+  name      String
+  qty       Int
+  price     Int
 }
 
 type Pallbearer{
@@ -221,15 +224,15 @@ type AtChurch{
 }
 
 type Decor{
-  candle              DecorItem
-  photo               DecorItem
-  glass               DecorItem
-  banner              DecorItem
+  candle              Item
+  photo               Item
+  glass               Item
+  banner              Item
 
 
 }
 
-type DecorItem{
+type Item{
   qty               Int
   price             Int
 }
@@ -249,10 +252,11 @@ type Minister{
 }
 
 type FamilyRep{
-  firstName       String
-  lastName        String
-  relationship    String
-  phoneNo         String
+  firstName       String?
+  lastName        String?
+  relationship    String?
+  phoneNo         String?
+  email           String?
 }
 
 type Address{

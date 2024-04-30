@@ -64,10 +64,10 @@ export const columns: ColumnDef<InvoiceColumn>[] = [
     ),
   },
 
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => (
-  //     <CellAction data={row.original} deceasedId={row.original.deceasedId} />
-  //   ),
-  // },
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <CellAction data={row.original} deceasedId={row.original.deceasedId} />
+    ),
+  },
 ];

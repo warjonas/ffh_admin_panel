@@ -57,6 +57,8 @@ export const Overview: React.FC<OverviewProps> = ({ data }) => {
         />
 
         <Tooltip
+          animationEasing="ease-in-out"
+          animationDuration={300}
           content={({ payload, active }) => (
             <CustomTooltip payload={payload} active={active} />
           )}
@@ -67,7 +69,7 @@ export const Overview: React.FC<OverviewProps> = ({ data }) => {
             <Cell
               fill={entry.colour}
               key={entry.name}
-              className="relative"
+              className="relative duat"
             ></Cell>
           ))}
         </Bar>

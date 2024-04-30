@@ -233,21 +233,23 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 <h2 className="bg-blue-200 p-1 mb-1 text-center font font-semibold border-b uppercase border-black">
                   Details of Family Representatives
                 </h2>
-                <div className="grid grid-cols-4">
+                <div className="grid grid-cols-5">
                   <p className="col-start-1">First Name</p>
                   <p className="col-start-2">Last Name</p>
                   <p className="col-start-3">Relationship</p>
-                  <p className="col-start-4">Phone No.</p>
-                  <hr className="w-full my-1 col-span-4" />
+                  <p className="col-start-4">Email</p>
+                  <p className="col-start-5">Phone No.</p>
+                  <hr className="w-full my-1 col-span-5" />
                   {data?.familyReps.map((rep) => (
                     <div
                       key={rep.phoneNo}
-                      className="grid grid-cols-4 col-span-4"
+                      className="grid grid-cols-5 col-span-5"
                     >
                       <p className="col-start-1">{rep.firstName}</p>
                       <p className="col-start-2">{rep.lastName}</p>
                       <p className="col-start-3">{rep.relationship}</p>
-                      <p className="col-start-4">{rep.phoneNo}</p>
+                      <p className="col-start-4">{rep.email}</p>
+                      <p className="col-start-5">{rep.phoneNo}</p>
                     </div>
                   ))}
                 </div>
@@ -288,64 +290,21 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </div>
 
                   <div className="ml-2 w-1/2">
+                    {data.arrangementAddOnItems.map((addOn) => (
+                      <p className="font-medium">
+                        <span className="font-semibold"> {addOn.name}: </span>
+                        {addOn.qty}
+                      </p>
+                    ))}
+
                     <p className="font-medium">
                       <span className="font-semibold"> Coffin name: </span>
                       {data.coffin.coffinName}
                     </p>
-                    <p className="font-medium">
-                      <span className="font-semibold"> Digger: </span>
-                      {data.digger ? formatter.format(data.digger) : 'N/A'}
-                    </p>
 
-                    <p className="font-medium">
-                      <span className="font-semibold"> Cross size: </span>
-                      {data.crossSize}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold"> Wreaths: </span>
-                      {data.wreaths ? formatter.format(data.wreaths) : 'N/A'}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold"> Doves: </span>
-                      {data.doves ? formatter.format(data.doves) : 'N/A'}
-                    </p>
-
-                    <p className="font-medium">
-                      <span className="font-semibold"> Live Streaming: </span>
-                      {data.liveStreaming
-                        ? formatter.format(data.liveStreaming)
-                        : 'N/A'}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold">
-                        {' '}
-                        Amount of Programs:{' '}
-                      </span>
-                      {data.programs}
-                    </p>
-
-                    <p className="font-medium">
-                      <span className="font-semibold"> Family Car: </span>
-                      {data.familyCar
-                        ? formatter.format(data.familyCar)
-                        : 'N/A'}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold"> Bus from Home: </span>
-                      {data.bus ? formatter.format(data.bus) : 'N/A'}
-                    </p>
                     <p className="font-medium">
                       <span className="font-semibold"> Tombstone: </span>
-                      {data.tombstone.type}
-                    </p>
-                    <p className="font-medium">
-                      <span className="font-semibold">
-                        {' '}
-                        Name of Granite Tombstone:{' '}
-                      </span>
-                      {data.tombstone.tombstoneName !== ''
-                        ? data.tombstone.tombstoneName
-                        : 'Not Applicable.'}
+                      {data.tombstone.type} - {data.tombstone.tombstoneName}
                     </p>
 
                     <p className="font-medium">
@@ -358,26 +317,24 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     <div className="flex flex-row gap-x-10">
                       <div>
                         <p className="font-medium">
-                          <span className="font-semibold"> Candle: </span>
-                          <p>Qty:&nbsp; {data.decor.candle.qty}</p>
-                          <p>Price:&nbsp; {data.decor.candle.price}</p>
+                          <span className="font-semibold">
+                            No. of Candles:{' '}
+                          </span>
+                          <p>{data.decor.candle.qty}</p>
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Photo: </span>
-                          <p>Qty:&nbsp; {data.decor.photo.qty}</p>
-                          <p>Price:&nbsp; {data.decor.photo.price}</p>
+                          <p>{data.decor.photo.qty}</p>
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">
                           <span className="font-semibold"> Banner: </span>
-                          <p>Qty:&nbsp; {data.decor.banner.qty}</p>
-                          <p>Price:&nbsp; {data.decor.banner.price}</p>
+                          <p>{data.decor.banner.qty}</p>
                         </p>
                         <p className="font-medium">
                           <span className="font-semibold"> Glass: </span>
-                          <p>Qty:&nbsp; {data.decor.glass.qty}</p>
-                          <p>Price:&nbsp; {data.decor.glass.price}</p>
+                          <p>{data.decor.glass.qty}</p>
                         </p>
                       </div>
                     </div>
@@ -385,7 +342,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </div>
                 </div>
               </div>
-              <h1 className="text-xl font-semibold mt-10 pr-5 text-right">
+
+              <h1 className="text-xl font-semibold pr-5 text-right">
                 Total Payable: {formatter.format(data?.totalDue)}
               </h1>
               <h1 className="text-xl font-semibold text-right pr-5">

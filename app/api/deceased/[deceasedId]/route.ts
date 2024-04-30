@@ -21,7 +21,12 @@ export async function GET(
         id: params.deceasedId,
       },
       include: {
-        arrangement: true,
+        arrangement: {
+          include: {
+            tombstone: true,
+            coffin: true,
+          },
+        },
         funeralProgram: true,
       },
     });

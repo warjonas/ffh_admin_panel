@@ -185,12 +185,17 @@ const AddDeceasedModal = () => {
 
   return (
     <Modal
-      title="Add New Deceased "
-      description="Upload deceased details"
+      title="Upload Deceased Person"
+      description="Complete all required information"
       isOpen={deceasedModal.isOpen}
       onClose={onClose}
     >
-      <hr className="w-full mb-10" />
+      <hr className="w-full my-2" />
+      <h2 className="text-lg font-semibold w-full text-center p-2 bg-blue-200">
+        Deceased Person Details
+      </h2>
+      <hr className="w-full mb-5 mt-2" />
+
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-y-5">
@@ -291,7 +296,7 @@ const AddDeceasedModal = () => {
                     <NextDatePicker
                       onChange={field.onChange}
                       value={field.value}
-                      minDate={form.getValues().dateOfDeath}
+                      minDate={new Date('18 May 1900')}
                       maxDate={new Date()}
                     />
                   </div>
@@ -300,8 +305,8 @@ const AddDeceasedModal = () => {
             />
           </div>
 
-          <h2 className="text-lg font-semibold mt-5">
-            Removal Address Details:
+          <h2 className="text-lg font-semibold mt-5 w-full text-center p-2 bg-blue-200">
+            Removal Address Details
           </h2>
           <hr className="w-full my-2" />
 

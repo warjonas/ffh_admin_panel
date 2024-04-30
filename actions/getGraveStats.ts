@@ -29,6 +29,7 @@ function randDarkColor() {
 
 export const getGraveStats = async () => {
   const graves = await prismadb.grave.findMany({
+    take: 4,
     include: {
       arrangements: true,
     },

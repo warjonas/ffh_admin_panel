@@ -91,14 +91,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
     setOpen(false);
   };
 
-  const onPreview = () => {
-    const query: QueryProps[] = [
-      { name: 'arrangementId', value: data.id },
-      { name: 'preview', value: 'arrangement' },
-    ];
-
-    router.push(pathname + '?' + createQueryString(query));
-  };
   return (
     <>
       <InfoModal
@@ -106,7 +98,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
-        id={data.id}
+        id={deceasedId}
       />
       <AlertModal
         isOpen={alertOpen}
@@ -131,10 +123,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuItem onClick={() => onUpdate()}>
             <Edit className="mr-2 h-4 w-4" />
             Update
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onPreview}>
-            <ScanEye className="mr-2 h-4 w-4" />
-            Preview
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>

@@ -34,7 +34,7 @@ const Arrangements = async (props: Props) => {
       receiptNo: item.invoiceNo,
       memberNo: item.deceased.ffhMemberNo,
       name: item.deceased.firstNames + ' ' + item.deceased.lastName,
-      dateOfDeath: format(item.deceased.dateOfDeath, 'MM/dd/yyyy'),
+      dateOfDeath: format(item.deceased.dateOfDeath, 'dd/MM/yyyy'),
       paidUp: item.paidUp,
       idNumber: item.deceased.idNumber,
     })
@@ -52,10 +52,10 @@ const Arrangements = async (props: Props) => {
         </div>
       </section>
       <section className="flex flex-row h-full mt-5 mb-5">
-        <div className="w-2/3 h-full">
+        <div className="w-3/4 xl:w-2/3 h-full">
           <ArrangementClient data={formattedArrangements} />
         </div>
-        <div className="w-1/3 px-5">
+        <div className="w-1/4 xl:w-1/3 px-5">
           <DataPreview heading="Funeral Arrangement Preview" />
         </div>
       </section>

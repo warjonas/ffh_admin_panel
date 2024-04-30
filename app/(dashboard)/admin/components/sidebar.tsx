@@ -59,6 +59,16 @@ const Sidebar = (props: Props) => {
         Grave Sites
       </Link>
       <Link
+        href="#addOns"
+        className={`rounded ${
+          hash === 'addOns'
+            ? 'bg-secondary-foreground text-background shadow'
+            : 'hover:bg-slate-200'
+        } p-3 font-semibold transition-all ease-in-out duration-300`}
+      >
+        Add ons
+      </Link>
+      <Link
         href="#users"
         className={`rounded ${
           hash === 'users'

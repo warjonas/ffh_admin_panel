@@ -6,6 +6,7 @@ import Coffins from './coffins';
 import Graves from './graves';
 import Tombstones from './tombstones';
 import Users from './users';
+import AddOns from './addOns';
 
 type Props = {};
 
@@ -39,6 +40,8 @@ const SidebarViews = (props: Props) => {
       return <Coffins />;
     case 'graves':
       return <Graves />;
+    case 'addOns':
+      return <AddOns />;
     default:
       return <div>Please choose an option</div>;
   }
