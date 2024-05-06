@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { useAddOnModal } from '@/hooks/use-deceased-modal';
 import { formatter } from '@/lib/utils';
 import { AddOn, Coffin } from '@/types';
-import { Pencil, X } from 'lucide-react';
+import axios from 'axios';
+import { Pen, Pencil, X } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
 import useSWR, { SWRConfiguration } from 'swr';
 
 type Props = {};
@@ -55,6 +57,27 @@ const AddOns = (props: Props) => {
     config
   );
 
+  const OnEdit = (id: string) => {
+    const queries: QueryProps[] = [{ name: 'addOnId', value: id }];
+    const queryString = createQueryString(queries);
+    router.push(pathname + '?' + queryString + '#addOns');
+
+    addOnModal.onOpen();
+  };
+
+  const OnDelete = async (id: string) => {
+    try {
+      setLoading(true);
+      await axios.delete(`/api/addOn/${id}`);
+      router.refresh();
+      toast.success('Add On has been removed');
+    } catch (error) {
+      toast.error('Internal Error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="w-full flex flex-row">
       {/* list of coffins */}
@@ -80,7 +103,16 @@ const AddOns = (props: Props) => {
               >
                 <h2 className="font-medium col-start-1">{add.name}</h2>
                 <h2 className="col-start-2">{formatter.format(add.price)}</h2>
-                <div className="flex flex-row gap-x-2 col-start-3 justify-end "></div>
+                <div className="flex flex-row gap-x-2 col-start-3 justify-end ">
+                  <Pencil
+                    className="h-6 w-6 p-1 rounded-full text-background bg-blue-900"
+                    onClick={() => OnEdit(add.id)}
+                  />
+                  <X
+                    className="h-6 w-6 p-1 rounded-full text-background bg-red-900"
+                    onClick={() => OnDelete(add.id)}
+                  />
+                </div>
               </div>
             ))}
           </div>

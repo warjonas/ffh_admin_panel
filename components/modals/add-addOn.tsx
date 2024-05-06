@@ -88,7 +88,7 @@ const AddOnModal = () => {
       toast.success(toastMessage);
       form.reset();
 
-      router.push('/admin#addOns');
+      router.back();
       router.refresh();
     } catch (error) {
       console.log(error);
@@ -131,7 +131,7 @@ const AddOnModal = () => {
     return null;
   }
 
-  if (isLoading && !error) {
+  if (isLoading) {
     return (
       <Modal
         title={`Loading`}
@@ -150,50 +150,55 @@ const AddOnModal = () => {
       </Modal>
     );
   }
-  return (
-    <Modal
-      title={heading}
-      description={subtitle}
-      isOpen={modal.isOpen}
-      onClose={onClose}
-    >
-      <Form {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-y-3"
-        >
-          <FormField
-            control={form.control}
-            name="addOnName"
-            render={({ field }) => (
-              <FormItem className=" w-full md:w-1/2 xl:w-1/2">
-                <FormLabel className="font-semibold">Name of Add-on</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. Wreaths" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem className=" w-full md:w-1/2 xl:w-1/2">
-                <FormLabel className="font-semibold">Price</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. 4500" {...field} type="number" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
 
-          <Button variant="default" type="submit" disabled={loading}>
-            Submit
-          </Button>
-        </form>
-      </Form>
-    </Modal>
-  );
+  if (!isLoading) {
+    return (
+      <Modal
+        title={heading}
+        description={subtitle}
+        isOpen={modal.isOpen}
+        onClose={onClose}
+      >
+        <Form {...form}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-y-3"
+          >
+            <FormField
+              control={form.control}
+              name="addOnName"
+              render={({ field }) => (
+                <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                  <FormLabel className="font-semibold">
+                    Name of Add-on
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. Wreaths" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                  <FormLabel className="font-semibold">Price</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. 4500" {...field} type="number" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button variant="default" type="submit" disabled={loading}>
+              Submit
+            </Button>
+          </form>
+        </Form>
+      </Modal>
+    );
+  }
 };
 
 export default AddOnModal;

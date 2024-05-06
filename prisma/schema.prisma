@@ -59,6 +59,8 @@ model Arrangement{
   paidUp              Boolean
   receipts            Receipt[]
   additionalItems     AdditionalItems[]
+  digger              Item
+  bus                 Item
   graveTime           String
   flagDelete          Boolean @default(false)
   graveNo             String?
@@ -76,6 +78,8 @@ model Arrangement{
 
 
 }
+
+
 
 
 type AdditionalItems{

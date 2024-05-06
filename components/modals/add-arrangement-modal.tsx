@@ -79,6 +79,14 @@ const formSchema = z.object({
       email: z.string(),
     })
     .array(),
+  digger: z.object({
+    qty: z.coerce.number(),
+    price: z.coerce.number(),
+  }),
+  bus: z.object({
+    qty: z.coerce.number(),
+    price: z.coerce.number(),
+  }),
   deliveryAddress: z.string(),
   deliveryTime: z.string(),
   church: z.object({
@@ -97,7 +105,7 @@ const formSchema = z.object({
   crossSize: z.string(),
   graveId: z.string(),
   graveTime: z.string(),
-
+  graveNo: z.string(),
   arrangementAddOnItems: z
     .object({
       name: z.string().min(1),
@@ -271,7 +279,15 @@ const AddArrangmentModal = () => {
       crossSize: '',
       graveId: '6616593b149f9c78856cc0d2',
       graveTime: '',
-
+      graveNo: '',
+      bus: {
+        qty: 0,
+        price: 0,
+      },
+      digger: {
+        qty: 0,
+        price: 0,
+      },
       programs: 50,
 
       storage: storageFee,
@@ -417,6 +433,8 @@ const AddArrangmentModal = () => {
   useEffect(() => {
     const total =
       storageFee +
+      Number(form.getValues().bus.qty * form.getValues().bus.price) +
+      Number(form.getValues().digger.qty * form.getValues().digger.price) +
       Number(
         form.getValues().decor.banner.qty * form.getValues().decor.banner.price
       ) +
@@ -443,6 +461,8 @@ const AddArrangmentModal = () => {
       'decor.candle',
       'decor.banner',
       'discount',
+      'bus',
+      'digger',
     ]),
     storageFee,
     additionalItems,
@@ -556,6 +576,9 @@ const AddArrangmentModal = () => {
       setValue('paidUp', initialData.paidUp);
       setValue('additionalItems', initialData.additionalItems);
       setValue('discount', initialData.discount);
+      setValue('bus', initialData.bus);
+      setValue('graveNo', initialData.graveNo);
+      setValue('digger', initialData.digger);
 
       setValue('arrangementAddOnItems', initialData.arrangementAddOnItems);
 
@@ -830,6 +853,7 @@ const AddArrangmentModal = () => {
                     )}
                   />
                 </div>
+                <hr className="w-full my-3" />
 
                 <div className="flex flex-col w-full gap-y-2">
                   <h2 className="text-lg mb-2 font-semibold">Church</h2>
@@ -906,8 +930,9 @@ const AddArrangmentModal = () => {
                     />
                   </div>
                 </div>
+                <hr className="w-full my-5" />
 
-                <div className="flex flex-col w-full gap-y-2 mt-5">
+                <div className="flex flex-col w-full gap-y-2 ">
                   <h2 className="text-lg mb-2 font-semibold">Cemetry</h2>
                   <FormField
                     control={form.control}
@@ -969,8 +994,31 @@ const AddArrangmentModal = () => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="graveNo"
+                    disabled
+                    render={({ field }) => (
+                      <FormItem className=" mb-5 flex flex-col items-baseline gap-x-2">
+                        <FormLabel className="font-semibold">
+                          Grave No
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            placeholder="4"
+                            {...field}
+                            className="w-20"
+                            type="number"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <div className="flex flex-col gap-y-2 mt-10">
+                <hr className="w-full my-5" />
+
+                <div className="flex flex-col gap-y-2 mt-2">
                   <h2 className="text-lg mb-2 font-semibold">
                     Minister Information
                   </h2>
@@ -1141,30 +1189,97 @@ const AddArrangmentModal = () => {
                     />
                   </div>
                 </div>
-
+                <hr className="w-full" />
                 <div className="flex flex-col w-full gap-y-2">
                   <div className="flex flex-col w-full gap-y-2">
                     <h2 className="text-lg  font-semibold">Extras</h2>
-                    <FormField
-                      control={form.control}
-                      name="programs"
-                      render={({ field }) => (
-                        <FormItem className="space-y-3 gap-x-2 mb-2 flex text-center items-baseline">
-                          <FormLabel className="font-semibold">
-                            Programs
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              placeholder="50 or 100"
-                              {...field}
-                              className="w-1/4"
-                              type="number"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    <div className="p-2 border rounded-md">
+                      <FormLabel className="mb-2">Digger</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="digger.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="digger.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Unit Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-2 border rounded-md">
+                      <FormLabel className="mb-2">Bus</FormLabel>
+                      <div className="flex flex-row w-full">
+                        <FormField
+                          control={form.control}
+                          name="bus.qty"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 w-full items-center">
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="qty"
+                                  {...field}
+                                  className="w-1/2"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="bus.price"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row gap-x-2 items-center w-full">
+                              <FormLabel>Unit Price</FormLabel>
+
+                              <FormControl>
+                                <Input
+                                  disabled={loading}
+                                  placeholder="price"
+                                  {...field}
+                                  className="w-2/3"
+                                  type="number"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    <hr className="w-full my-2" />
+
                     <FormField
                       control={form.control}
                       name="tombstoneId"
@@ -1216,6 +1331,7 @@ const AddArrangmentModal = () => {
                       )}
                     />
                   </div>
+                  <hr className="w-full my-3" />
 
                   <div className="flex flex-col gap-y-2">
                     <h2 className="text-lg mb-2 font-semibold">Decor</h2>
@@ -1542,7 +1658,11 @@ const AddArrangmentModal = () => {
             <Button
               type="submit"
               className="w-48 font-semibold"
-              disabled={deceasedId === null || loading}
+              disabled={
+                deceasedId === null ||
+                loading ||
+                form.getValues().dateOfFuneralService == null
+              }
             >
               {action}
             </Button>

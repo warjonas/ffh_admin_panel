@@ -33,6 +33,8 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
+      bus,
+      digger,
       familyReps,
       deceased,
       deliveryAddress,
@@ -106,7 +108,8 @@ export async function POST(req: Request) {
         decor,
         crossSize,
         arrangementAddOnItems,
-
+        bus,
+        digger,
         graveNo,
         discount,
         totalDue,

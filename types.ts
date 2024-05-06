@@ -85,8 +85,10 @@ export interface Arrangement {
   paidUp: boolean;
   coffinId: string;
   coffin: Coffin;
-  graveNo?: string;
+  graveNo: string;
   additionalItems: AdditionalItems[];
+  digger: DecorItem;
+  bus: DecorItem;
 }
 
 export interface AddOn {

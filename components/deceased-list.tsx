@@ -81,6 +81,7 @@ const DeceasedList = ({
 
   const onDeceasedSelect = (id: string) => {
     router.push(pathname + '?' + createQueryString('deceasedId', id));
+    setOpen(false);
   };
 
   return (
@@ -92,7 +93,10 @@ const DeceasedList = ({
           role="combobox"
           aria-expanded={open}
           aria-label="Select Store"
-          className={cn('w-1/2 p-2 justify-between text-lg', className)}
+          className={cn(
+            'min-w-[50%] w-fit p-2 justify-between text-lg',
+            className
+          )}
         >
           {deceasedDetails?.label} - {deceasedDetails?.idNumber}
           <ChevronsUpDown className="h-4 w-4 ml-2  shrink-0 opacity-50" />

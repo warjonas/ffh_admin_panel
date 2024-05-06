@@ -37,10 +37,10 @@ const Home = async (props: Props) => {
   const graphRevenue = await getGraphRevenue();
 
   return (
-    <section className="p-5 w-full h-full flex-col justify-between gap-y-4">
+    <section className="p-5 w-full h-full flex-col justify-between xl:gap-y-4">
       <Heading title="Dashboard" subtitle="Overview of business performance" />
 
-      <section className="grid gap-4 grid-cols-4 mb-4 h-[20%]">
+      <section className="grid gap-4 grid-cols-4 mb-4 h-[10%] xl:h-[20%]">
         <Card className="col-start-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle>Total Revenue</CardTitle>{' '}
@@ -96,7 +96,7 @@ const Home = async (props: Props) => {
           </CardContent>
         </Card>
       </section>
-      <section className="grid grid-cols-4 gap-4 h-auto">
+      <section className="grid grid-cols-4 gap-4 h-auto mt-8">
         <Card className="col-span-2 flex flex-col">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
