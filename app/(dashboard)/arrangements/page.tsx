@@ -5,9 +5,8 @@ import { ArrangementClient } from './components/client';
 import prismadb from '@/lib/prismadb';
 import { ArrangementColumn } from './components/columns';
 import { format } from 'date-fns';
-import RemovalPreview from '../../../components/data-preview';
 import DataPreview from '../../../components/data-preview';
-import Loading from '../loading';
+import Loading from '../Loading';
 
 type Props = {};
 

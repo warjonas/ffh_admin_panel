@@ -8,7 +8,7 @@ import { ourFileRouter } from '../api/uploadthing/core';
 import Navbar from '@/components/navbar';
 import Image from 'next/image';
 import { ModalProvider } from '@/providers/modal-provider';
-import Loading from './loading';
+import Loading from './Loading';
 
 interface Props {
   children: React.ReactNode;

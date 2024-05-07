@@ -9,7 +9,7 @@ import Heading from '@/components/ui/heading';
 import { InvoiceClient } from './components/client';
 import { formatter } from '@/lib/utils';
 import OverviewBox from './components/overview-box';
-import Loading from '../loading';
+import Loading from '../Loading';
 
 type Props = {};
 

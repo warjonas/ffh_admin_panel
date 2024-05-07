@@ -22,7 +22,7 @@ const Loading = (props: Props) => {
             fill="currentFill"
           />
         </svg>
-        <span className="text-lg">Loading...</span>
+        <span className="text-lg">Loading....</span>
       </div>
     </div>
   );

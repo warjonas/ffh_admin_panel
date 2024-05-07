@@ -1,7 +1,7 @@
 import HeaderOptions from '@/components/ui/header-options';
 import Heading from '@/components/ui/heading';
 import prismadb from '@/lib/prismadb';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BodyRemovalColumn } from './components/columns';
 import { format } from 'date-fns';
 import { formatter } from '@/lib/utils';
@@ -9,6 +9,7 @@ import { BodyRemovalClient } from './components/client';
 import { Receipt } from 'lucide-react';
 import RemovalPreview from '../../../components/data-preview';
 import DataPreview from '../../../components/data-preview';
+import Loading from '../Loading';
 
 const Removals = async () => {
   const bodyRemovals = await prismadb.removal.findMany({
@@ -39,23 +40,25 @@ const Removals = async () => {
 
   return (
     <section className="p-5 w-full h-full">
-      <Heading
-        title="Body Removals"
-        subtitle="Schedule and Update body removals"
-      />
-      <section>
-        <div className="flex justify-between">
-          <HeaderOptions title="Schedule removal" link="removal" />
-        </div>
-      </section>
-      <section className="flex flex-row h-full mt-5 mb-5">
-        <div className="w-2/3 h-full">
-          <BodyRemovalClient data={formattedRemovals} />
-        </div>
-        <div className="w-1/3 px-5">
-          <DataPreview heading="Deceased Removal Preview" />
-        </div>
-      </section>
+      <Suspense fallback={<Loading />}>
+        <Heading
+          title="Body Removals"
+          subtitle="Schedule and Update body removals"
+        />
+        <section>
+          <div className="flex justify-between">
+            <HeaderOptions title="Schedule removal" link="removal" />
+          </div>
+        </section>
+        <section className="flex flex-row h-full mt-5 mb-5">
+          <div className="w-2/3 h-full">
+            <BodyRemovalClient data={formattedRemovals} />
+          </div>
+          <div className="w-1/3 px-5">
+            <DataPreview heading="Deceased Removal Preview" />
+          </div>
+        </section>
+      </Suspense>
     </section>
   );
 };

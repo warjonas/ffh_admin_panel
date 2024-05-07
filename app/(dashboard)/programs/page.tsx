@@ -5,7 +5,7 @@ import { FuneralClient } from './components/client';
 import prismadb from '@/lib/prismadb';
 import { FuneralProgramColumn } from './components/columns';
 import { format } from 'date-fns';
-import Loading from '../loading';
+import Loading from '../Loading';
 
 type Props = {};
 
