@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       scheduledBy,
       deathRegistration,
       dateRequested,
+      storageDays,
     } = body;
 
     if (!byUndertaker) {
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
             id: deceasedId,
           },
         },
+        storageDays,
         byUndertaker,
         doctorsFees,
         storageFee,

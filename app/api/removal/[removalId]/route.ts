@@ -81,6 +81,7 @@ export async function PATCH(
       byUndertaker,
       doctorsFees,
       storageFee,
+      storageDays,
       copyFee,
       copies,
       graveFee,
@@ -142,6 +143,7 @@ export async function PATCH(
         id: params.removalId,
       },
       data: {
+        storageDays,
         deceasedId,
         byUndertaker,
         doctorsFees,
