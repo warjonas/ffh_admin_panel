@@ -291,7 +291,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
                   <div className="ml-2 w-1/2">
                     {data.arrangementAddOnItems.map((addOn) => (
-                      <p className="font-medium">
+                      <p className="font-medium" key={addOn.name}>
                         <span className="font-semibold"> {addOn.name}: </span>
                         {addOn.qty}
                       </p>

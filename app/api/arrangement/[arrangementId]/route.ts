@@ -69,6 +69,9 @@ export async function PATCH(
       graveId,
       graveTime,
       afterHour,
+      storageDays,
+      digger,
+      bus,
     } = body;
 
     const arrangement = await prismadb.arrangement.update({
@@ -87,13 +90,15 @@ export async function PATCH(
         },
         graveTime,
         minister,
-
+        digger,
+        bus,
         crossSize,
         arrangementAddOnItems,
         discount,
         decor,
         totalDue,
         storage,
+        storageDays,
         notes,
         outstandingBalance,
         tombstone: {

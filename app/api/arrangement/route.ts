@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       graveNo,
       discount,
       storage,
+      storageDays,
       decor,
       tombstoneId,
       totalDue,
@@ -114,6 +115,7 @@ export async function POST(req: Request) {
         discount,
         totalDue,
         storage,
+        storageDays,
         notes,
         tombstone: {
           connect: {

@@ -29,6 +29,15 @@ const calculate_days = (date1: Date, date2: Date) => {
 
   let days = Math.round(timeDifference / (1000 * 3600 * 24));
 
+  console.log(days);
+  if (days == 0) {
+    return days + 1;
+  }
+
+  if (days == 1) {
+    return days + 2;
+  }
+
   return days;
 };
 
@@ -210,10 +219,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     Storage
                   </td>
                   <td className="text-center border-solid border-2 p-1">
-                    {calculate_days(
-                      new Date(data.removalDate),
-                      new Date(data.arrangement.dateOfFuneralService)
-                    )}
+                    {data.arrangement.storageDays}
                   </td>
                   <td className="border-solid border-2 p-1">
                     {formatter.format(350)}
@@ -222,6 +228,47 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     {formatter.format(data.arrangement.storage)}
                   </td>
                 </tr>
+                {data.arrangement.digger.price ? (
+                  <tr>
+                    <td className="text-left border-solid border-2 p-1">
+                      Digger
+                    </td>
+                    <td className="text-center border-solid border-2 p-1">
+                      {data.arrangement.digger.qty}
+                    </td>
+                    <td className="border-solid border-2 p-1">
+                      {formatter.format(data.arrangement.digger.price)}
+                    </td>
+                    <td className="border-solid border-2 p-1">
+                      {formatter.format(
+                        data.arrangement.digger.price *
+                          data.arrangement.digger.qty
+                      )}
+                    </td>
+                  </tr>
+                ) : (
+                  <></>
+                )}
+
+                {data.arrangement.bus.price ? (
+                  <tr>
+                    <td className="text-left border-solid border-2 p-1">Bus</td>
+                    <td className="text-center border-solid border-2 p-1">
+                      {data.arrangement.bus.qty}
+                    </td>
+                    <td className="border-solid border-2 p-1">
+                      {formatter.format(data.arrangement.bus.price)}
+                    </td>
+                    <td className="border-solid border-2 p-1">
+                      {formatter.format(
+                        data.arrangement.bus.price * data.arrangement.bus.qty
+                      )}
+                    </td>
+                  </tr>
+                ) : (
+                  <></>
+                )}
+
                 <tr>
                   <td className="text-left border-solid border-2 p-1">
                     Tombstone -{' '}

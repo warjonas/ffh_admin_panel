@@ -43,15 +43,19 @@ import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import DeceasedList from '../deceased-list';
 import NextDatePicker from '../ui/custom-datepicker';
-import * as ReactSelect from 'react-select';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
+const calculate_storageDays = (date1: Date, date2: Date) => {
   let timeDifference = date2.getTime() - date1.getTime();
 
   let days = Math.round(timeDifference / (1000 * 3600 * 24));
 
+  return days + 1;
+};
+
+const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
+  let days = calculate_storageDays(date1, date2);
   let fee = storageFee * days;
 
   return fee;
@@ -113,9 +117,9 @@ const formSchema = z.object({
       price: z.coerce.number(),
     })
     .array(),
-  programs: z.coerce.number(),
 
   storage: z.coerce.number().default(350),
+  storageDays: z.coerce.number(),
   decor: z.object({
     candle: z.object({
       qty: z.coerce.number(),
@@ -136,7 +140,7 @@ const formSchema = z.object({
   }),
   tombstoneId: z.string(),
   coffinId: z.string(),
-  totalDue: z.coerce.number().default(10000),
+  totalDue: z.coerce.number().default(350),
   outstandingBalance: z.coerce.number(),
 
   paidUp: z.boolean(),
@@ -163,7 +167,7 @@ const AddArrangmentModal = () => {
   const arrangementId = searchParams.get('arrangementId');
   const [isMounted, setIsMounted] = useState(false);
   const [amountDue, setAmountDue] = useState(0);
-  const [storageFee, setStorageFee] = useState(0);
+  const [storageFee, setStorageFee] = useState(350);
   const [coffinFee, setCoffinFee] = useState(0);
   const [tombstoneFee, setTombstoneFee] = useState(0);
   const [graveFee, setGraveFee] = useState(0);
@@ -276,7 +280,7 @@ const AddArrangmentModal = () => {
         lastName: '',
         phoneNo: '',
       },
-      crossSize: '',
+      crossSize: 'none',
       graveId: '6616593b149f9c78856cc0d2',
       graveTime: '',
       graveNo: '',
@@ -288,9 +292,9 @@ const AddArrangmentModal = () => {
         qty: 0,
         price: 0,
       },
-      programs: 50,
 
       storage: storageFee,
+      storageDays: 0,
 
       decor: {
         candle: {
@@ -382,13 +386,15 @@ const AddArrangmentModal = () => {
 
   //Calculates the total for the add on items that are added
   useEffect(() => {
-    const itemsAmount = form
-      .getValues()
-      .arrangementAddOnItems.reduce((total, item) => {
-        return total + Number(item.qty * item.price);
-      }, 0);
+    if (isMounted) {
+      const itemsAmount = form
+        .getValues()
+        .arrangementAddOnItems.reduce((total, item) => {
+          return total + Number(item.qty * item.price);
+        }, 0);
 
-    setAddOnTotal(itemsAmount);
+      setAddOnTotal(itemsAmount);
+    }
   }, [watch(['arrangementAddOnItems'])]);
 
   //sets the total due on the form to the amount calculated below
@@ -506,6 +512,8 @@ const AddArrangmentModal = () => {
       throw error;
     }
 
+    let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
+
     data.deceased = deceasedId;
     data.totalDue = amountDue;
 
@@ -519,6 +527,13 @@ const AddArrangmentModal = () => {
     }
 
     data.storage = storageFee;
+
+    if (deceasedDate) {
+      data.storageDays = calculate_storageDays(
+        new Date(deceasedDate.removalDate),
+        new Date(form.getValues().dateOfFuneralService)
+      );
+    }
 
     try {
       setLoading(true);
@@ -541,7 +556,7 @@ const AddArrangmentModal = () => {
       form.reset();
       arrangementModal.onClose();
 
-      router.push('/arrangements');
+      router.back();
       router.refresh();
       toast.success(toastMessage);
     } catch (error) {
@@ -592,12 +607,13 @@ const AddArrangmentModal = () => {
       if (initialData.coffinId)
         setValue('tombstoneId', initialData.tombstone.id);
 
-      if (initialData.programs) setValue('programs', initialData.programs);
       if (initialData.minister) setValue('minister', initialData.minister);
 
       setValue('notes', initialData.notes);
 
       if (initialData.storage) setValue('storage', initialData.storage);
+      if (initialData.storageDays)
+        setValue('storageDays', initialData.storageDays);
 
       if (initialData.crossSize) setValue('crossSize', initialData.crossSize);
       if (initialData.decor) setValue('decor', initialData.decor);
@@ -997,20 +1013,13 @@ const AddArrangmentModal = () => {
                   <FormField
                     control={form.control}
                     name="graveNo"
-                    disabled
                     render={({ field }) => (
-                      <FormItem className=" mb-5 flex flex-col items-baseline gap-x-2">
+                      <FormItem className=" w-1/2 mb-5 flex flex-col items-baseline gap-x-2">
                         <FormLabel className="font-semibold">
                           Grave No
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            disabled={loading}
-                            placeholder="4"
-                            {...field}
-                            className="w-20"
-                            type="number"
-                          />
+                          <Input placeholder="Grave No" {...field} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -1180,6 +1189,14 @@ const AddArrangmentModal = () => {
                                 </FormControl>
                                 <FormLabel className="font-normal">
                                   Big
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="none" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  None
                                 </FormLabel>
                               </FormItem>
                             </RadioGroup>

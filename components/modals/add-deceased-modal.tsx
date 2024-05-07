@@ -285,6 +285,23 @@ const AddDeceasedModal = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date of Birth:*</FormLabel>
+                  <div className="relative">
+                    <NextDatePicker
+                      onChange={field.onChange}
+                      value={field.value}
+                      minDate={new Date('18 May 1800')}
+                      maxDate={new Date()}
+                    />
+                  </div>
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
