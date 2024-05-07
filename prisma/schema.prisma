@@ -47,7 +47,7 @@ model Arrangement{
   arrangementAddOnItems              ArrangementAddOnItem[]
   crossSize           String?
   storage             Int
-  
+  storageDays         Int
   decor               Decor?
   totalDue        Int
   outstandingBalance          Int   @default(0)
@@ -121,6 +121,7 @@ model Removal{
   deathRegistration   Int
   doctorsFees         Int
   storageFee            Int
+  storageDays          Int
   graveFee            Int
   gravediggerCost     Int
   copies              Int

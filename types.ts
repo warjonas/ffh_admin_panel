@@ -72,6 +72,7 @@ export interface Arrangement {
   arrangementAddOnItems: ArrangementAddOnItem[];
   programs: number;
   storage: number;
+  storageDays: number;
   totalDue: number;
   decor: Decor;
   notes: string;
