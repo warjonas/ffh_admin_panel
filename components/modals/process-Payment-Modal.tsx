@@ -2,7 +2,7 @@
 
 import { Modal } from '@/components/ui/modal';
 import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
-import { Arrangement, Removal, RemovalReceipt } from '@/types';
+import { Arrangement, Removal } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import useSWR, { SWRConfiguration } from 'swr';

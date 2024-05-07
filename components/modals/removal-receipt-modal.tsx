@@ -20,7 +20,7 @@ import {
   useDeceasedInfoModal,
   useDeceasedModal,
 } from '@/hooks/use-deceased-modal';
-import { Removal, RemovalReceipt } from '@/types';
+import { Removal, Receipt } from '@/types';
 import { useRemovalReceiptModal } from '@/hooks/use-removal-modal';
 
 // import { Arrangement } from '@/types';
@@ -55,7 +55,7 @@ const RemovalReceiptModal = () => {
     data,
     error,
     isLoading,
-  }: { data: RemovalReceipt; error: any; isLoading: any } = useSWR(
+  }: { data: Receipt; error: any; isLoading: any } = useSWR(
     receiptNo ? `/api/receipt/${receiptNo}` : null,
     fetcher,
     config
