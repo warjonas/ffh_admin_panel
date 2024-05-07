@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import underContruction from '@/assets/220880-P1KV8M-746.jpg';
 import prismadb from '@/lib/prismadb';
@@ -9,6 +9,7 @@ import Heading from '@/components/ui/heading';
 import { InvoiceClient } from './components/client';
 import { formatter } from '@/lib/utils';
 import OverviewBox from './components/overview-box';
+import Loading from '../loading';
 
 type Props = {};
 
@@ -94,36 +95,38 @@ const Invoice = async (props: Props) => {
 
   return (
     <section className="p-5 w-full h-full ">
-      <Heading title="Invoices" subtitle="Review of all invoices" />
+      <Suspense fallback={<Loading />}>
+        <Heading title="Invoices" subtitle="Review of all invoices" />
 
-      <section className="flex flex-row justify-between gap-5 h-full mt-5 mb-5">
-        <div className="w-2/3 h-full">
-          <InvoiceClient data={formattedArrangements} />
-        </div>
-
-        <div className="w-1/4 px-5 flex flex-col gap-8 h-fit border  rounded-md shadow-md p-4 mt-5 mr-10">
-          <div>
-            <h1 className="text-2xl font-medium">Financial Overview</h1>
-            <hr className="w-full mt-2" />
+        <section className="flex flex-row justify-between gap-5 h-full mt-5 mb-5">
+          <div className="w-2/3 h-full">
+            <InvoiceClient data={formattedArrangements} />
           </div>
 
-          <OverviewBox
-            title="Total Payments"
-            amount={totalPayments}
-            subtitleLinkText="View payments"
-            classes="bg-green-700 hover:bg-green-800"
-            modal="payment"
-          />
-          <hr />
-          <OverviewBox
-            title="Outstanding Payments"
-            amount={outstandingBalance}
-            subtitleLinkText="View Outstanding"
-            classes=" bg-red-800 hover:bg-red-900"
-            modal="outstanding"
-          />
-        </div>
-      </section>
+          <div className="w-1/4 px-5 flex flex-col gap-8 h-fit border  rounded-md shadow-md p-4 mt-5 mr-10">
+            <div>
+              <h1 className="text-2xl font-medium">Financial Overview</h1>
+              <hr className="w-full mt-2" />
+            </div>
+
+            <OverviewBox
+              title="Total Payments"
+              amount={totalPayments}
+              subtitleLinkText="View payments"
+              classes="bg-green-700 hover:bg-green-800"
+              modal="payment"
+            />
+            <hr />
+            <OverviewBox
+              title="Outstanding Payments"
+              amount={outstandingBalance}
+              subtitleLinkText="View Outstanding"
+              classes=" bg-red-800 hover:bg-red-900"
+              modal="outstanding"
+            />
+          </div>
+        </section>
+      </Suspense>
     </section>
   );
 };

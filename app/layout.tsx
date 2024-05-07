@@ -7,6 +7,7 @@ import { ToasterProvider } from '@/providers/toastProvider';
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
 import { extractRouterConfig } from 'uploadthing/server';
 import { ourFileRouter } from './api/uploadthing/core';
+import Image from 'next/image';
 
 const libreSans = Montserrat({
   weight: ['300', '400', '500', '600'],
@@ -29,13 +30,22 @@ export default function RootLayout({
       <AuthProvider>
         <body
           className={cn(
-            'h-screen bg-background libre-sans antialiased flex overflow-auto',
+            'h-screen bg-background libre-sans antialiased flex overflow-auto flex-col',
             libreSans.className
           )}
         >
           <ToasterProvider />
 
           {children}
+          <footer className="w-full flex justify-end p-2">
+            <Image
+              src="https://i.ibb.co/G9z3n0M/Logo-color-alt.png"
+              height={1080}
+              width={1920}
+              alt="logo"
+              className="h-10 w-48"
+            />
+          </footer>
         </body>
       </AuthProvider>
     </html>

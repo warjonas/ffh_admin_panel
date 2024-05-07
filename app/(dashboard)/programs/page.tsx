@@ -1,10 +1,11 @@
 import Heading from '@/components/ui/heading';
-import React from 'react';
+import React, { Suspense } from 'react';
 import HeaderOptions from '@/components/ui/header-options';
 import { FuneralClient } from './components/client';
 import prismadb from '@/lib/prismadb';
 import { FuneralProgramColumn } from './components/columns';
 import { format } from 'date-fns';
+import Loading from '../loading';
 
 type Props = {};
 
@@ -46,18 +47,20 @@ const Programs = async (props: Props) => {
 
   return (
     <section className="p-5 w-full h-full">
-      <Heading
-        title="Funeral Progams"
-        subtitle="Manage programs for upcoming funerals"
-      />
-      {/* <section>
+      <Suspense fallback={<Loading />}>
+        <Heading
+          title="Funeral Progams"
+          subtitle="Manage programs for upcoming funerals"
+        />
+        {/* <section>
         <div className="flex justify-between">
           <HeaderOptions title="New Funeral Program" link="deceased" />
         </div>
       </section> */}
-      <section>
-        <FuneralClient data={formattedPrograms} />
-      </section>
+        <section>
+          <FuneralClient data={formattedPrograms} />
+        </section>
+      </Suspense>
     </section>
   );
 };

@@ -1,5 +1,5 @@
 import Heading from '@/components/ui/heading';
-import React from 'react';
+import React, { Suspense } from 'react';
 import HeaderOptions from '@/components/ui/header-options';
 import { ArrangementClient } from './components/client';
 import prismadb from '@/lib/prismadb';
@@ -7,6 +7,7 @@ import { ArrangementColumn } from './components/columns';
 import { format } from 'date-fns';
 import RemovalPreview from '../../../components/data-preview';
 import DataPreview from '../../../components/data-preview';
+import Loading from '../loading';
 
 type Props = {};
 
@@ -42,23 +43,25 @@ const Arrangements = async (props: Props) => {
 
   return (
     <section className="p-5 w-full h-full">
-      <Heading
-        title="Arrangements"
-        subtitle="Create and manage funeral arrangements"
-      />
-      <section>
-        <div className="flex justify-between">
-          <HeaderOptions title="New Arrangement" link="arrangement" />
-        </div>
-      </section>
-      <section className="flex flex-row h-full mt-5 mb-5">
-        <div className="w-3/4 xl:w-2/3 h-full">
-          <ArrangementClient data={formattedArrangements} />
-        </div>
-        <div className="w-1/4 xl:w-1/3 px-5">
-          <DataPreview heading="Funeral Arrangement Preview" />
-        </div>
-      </section>
+      <Suspense fallback={<Loading />}>
+        <Heading
+          title="Arrangements"
+          subtitle="Create and manage funeral arrangements"
+        />
+        <section>
+          <div className="flex justify-between">
+            <HeaderOptions title="New Arrangement" link="arrangement" />
+          </div>
+        </section>
+        <section className="flex flex-row h-full mt-5 mb-5">
+          <div className="w-3/4 xl:w-2/3 h-full">
+            <ArrangementClient data={formattedArrangements} />
+          </div>
+          <div className="w-1/4 xl:w-1/3 px-5">
+            <DataPreview heading="Funeral Arrangement Preview" />
+          </div>
+        </section>
+      </Suspense>
     </section>
   );
 };

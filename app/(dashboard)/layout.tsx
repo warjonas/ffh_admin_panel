@@ -8,7 +8,7 @@ import { ourFileRouter } from '../api/uploadthing/core';
 import Navbar from '@/components/navbar';
 import Image from 'next/image';
 import { ModalProvider } from '@/providers/modal-provider';
-import Loading from './Loading';
+import Loading from './loading';
 
 interface Props {
   children: React.ReactNode;
@@ -36,15 +36,6 @@ export default async function DashboardLayout({ children }: Props) {
       />
       <ModalProvider />
       <Suspense fallback={<Loading />}>{children}</Suspense>
-      <footer className="w-full flex justify-end p-2">
-        <Image
-          src="https://i.ibb.co/G9z3n0M/Logo-color-alt.png"
-          height={1080}
-          width={1920}
-          alt="logo"
-          className="h-10 w-48"
-        />
-      </footer>
     </main>
   );
 }
