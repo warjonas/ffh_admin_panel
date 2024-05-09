@@ -48,6 +48,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    autoResetPageIndex: false,
     state: {
       columnFilters,
       sorting,

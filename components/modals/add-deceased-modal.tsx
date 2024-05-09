@@ -8,11 +8,8 @@ import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import { Input } from '../ui/input';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -113,6 +110,9 @@ const AddDeceasedModal = () => {
   });
 
   const onSubmit = async (data: DeceasedFormValues) => {
+    let message;
+    let result;
+
     setLoading(true);
 
     try {
@@ -122,14 +122,21 @@ const AddDeceasedModal = () => {
             data.updatedBy = user.name;
           }
         }
-        await axios.patch(`/api/deceased/${deceased.id}`, data);
+        result = await axios.patch(`/api/deceased/${deceased.id}`, data);
+
+        message = result.statusText;
       } else {
         if (!error || !userLoading) {
           if (user?.name) {
             data.createdBy = user.name;
           }
         }
-        await axios.post('/api/deceased', data);
+        result = await axios.post('/api/deceased', data);
+        message = result.statusText;
+      }
+
+      if (result.status != 500) {
+        toast.error(message);
       }
 
       toast.success('Deceased Details added!');
@@ -138,9 +145,8 @@ const AddDeceasedModal = () => {
       deceasedModal.onClose();
       router.push(`/deceased`);
       router.refresh();
-    } catch (error) {
-      console.log(error);
-      toast.error('Something went wrong!');
+    } catch (error: any) {
+      toast.error(error.response.data);
     } finally {
       setLoading(false);
     }
@@ -194,26 +200,6 @@ const AddDeceasedModal = () => {
     return null;
   }
 
-  if (isLoading && !dataError) {
-    return (
-      <Modal
-        title={`Loading`}
-        description=""
-        isOpen={deceasedModal.isOpen}
-        onClose={deceasedModal.onClose}
-      >
-        <div
-          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-          role="status"
-        >
-          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-            Loading...
-          </span>
-        </div>
-      </Modal>
-    );
-  }
-
   return (
     <Modal
       title="Upload Deceased Person"
@@ -234,8 +220,13 @@ const AddDeceasedModal = () => {
               <FormField
                 control={form.control}
                 name="lastName"
+                disabled={isLoading}
                 render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:1/2">
+                  <FormItem
+                    className={`${
+                      isLoading && 'animate-pulse'
+                    } w-full md:w-1/2 xl:1/2`}
+                  >
                     <FormLabel className="font-semibold">Last Name</FormLabel>
                     <FormControl>
                       <Input
@@ -250,8 +241,13 @@ const AddDeceasedModal = () => {
               <FormField
                 control={form.control}
                 name="firstNames"
+                disabled={isLoading}
                 render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:1/2">
+                  <FormItem
+                    className={`${
+                      isLoading && 'animate-pulse'
+                    } w-full md:w-1/2 xl:1/2`}
+                  >
                     <FormLabel className="font-semibold">First Names</FormLabel>
                     <FormControl>
                       <Input
@@ -268,8 +264,13 @@ const AddDeceasedModal = () => {
               <FormField
                 control={form.control}
                 name="ffhMemberNo"
+                disabled={isLoading}
                 render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                  <FormItem
+                    className={`${
+                      isLoading && 'animate-pulse'
+                    } w-full md:w-1/2 xl:1/2`}
+                  >
                     <FormLabel className="font-semibold">
                       FFH Member No.
                     </FormLabel>
@@ -282,8 +283,13 @@ const AddDeceasedModal = () => {
               <FormField
                 control={form.control}
                 name="idNumber"
+                disabled={isLoading}
                 render={({ field }) => (
-                  <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                  <FormItem
+                    className={`${
+                      isLoading && 'animate-pulse'
+                    } w-full md:w-1/2 xl:1/2`}
+                  >
                     <FormLabel className="font-semibold">ID Number</FormLabel>
                     <FormControl>
                       <Input
@@ -302,8 +308,11 @@ const AddDeceasedModal = () => {
             <FormField
               control={form.control}
               name="dateOfDeath"
+              disabled={isLoading}
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem
+                  className={`${isLoading && 'animate-pulse'} "flex flex-col"`}
+                >
                   <FormLabel>Date of Death:*</FormLabel>
                   <div className="relative">
                     <NextDatePicker
@@ -319,8 +328,11 @@ const AddDeceasedModal = () => {
             <FormField
               control={form.control}
               name="dateOfBirth"
+              disabled={isLoading}
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem
+                  className={`${isLoading && 'animate-pulse'} "flex flex-col"`}
+                >
                   <FormLabel>Date of Birth:*</FormLabel>
                   <div className="relative">
                     <NextDatePicker
@@ -337,8 +349,11 @@ const AddDeceasedModal = () => {
             <FormField
               control={form.control}
               name="removalDate"
+              disabled={isLoading}
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem
+                  className={`${isLoading && 'animate-pulse'} "flex flex-col"`}
+                >
                   <FormLabel>Date of Removal:*</FormLabel>
                   <div className="relative">
                     <NextDatePicker
@@ -362,8 +377,13 @@ const AddDeceasedModal = () => {
             <FormField
               control={form.control}
               name="removalFrom.street"
+              disabled={isLoading}
               render={({ field }) => (
-                <FormItem className=" flex-1 md:w-1/2 xl:flex-auto">
+                <FormItem
+                  className={`${
+                    isLoading && 'animate-pulse'
+                  } flex-1 md:w-1/2 xl:flex-auto`}
+                >
                   <FormLabel className="font-semibold">Street Name</FormLabel>
                   <FormControl>
                     <Input
@@ -378,8 +398,13 @@ const AddDeceasedModal = () => {
             <FormField
               control={form.control}
               name="removalFrom.city"
+              disabled={isLoading}
               render={({ field }) => (
-                <FormItem className=" w-full md:w-1/2 xl:flex-shrink">
+                <FormItem
+                  className={`${
+                    isLoading && 'animate-pulse'
+                  } w-full md:w-1/2 xl:flex-shrink`}
+                >
                   <FormLabel className="font-semibold">City</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="City" {...field} />
@@ -391,8 +416,13 @@ const AddDeceasedModal = () => {
           <FormField
             control={form.control}
             name="deathCertificateRecipient"
+            disabled={isLoading}
             render={({ field }) => (
-              <FormItem className=" flex-1 md:w-1/2 xl:flex-auto">
+              <FormItem
+                className={`${
+                  isLoading && 'animate-pulse'
+                } flex-1 md:w-1/2 xl:flex-auto`}
+              >
                 <FormLabel className="font-semibold">
                   Death Certificate Recipient
                 </FormLabel>
@@ -403,7 +433,7 @@ const AddDeceasedModal = () => {
             )}
           />
           <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-            <Button variant={'default'} type="submit">
+            <Button variant={'default'} type="submit" disabled={isLoading}>
               Confirm
             </Button>
           </div>
