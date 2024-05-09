@@ -6,6 +6,8 @@ import { ObjectId } from 'bson';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
+  let errorMessage;
+
   try {
     const deceased = await prismadb.deceased.findMany({
       where: {
@@ -20,6 +22,7 @@ export async function GET(req: Request) {
     return NextResponse.json(deceased);
   } catch (error) {
     console.log('DECEASED_GET', error);
+
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
@@ -46,6 +49,18 @@ export async function POST(req: Request) {
       createdBy,
       deathCertificateRecipient,
     } = body;
+
+    const checkIdNumber = await prismadb.deceased.findFirst({
+      where: {
+        idNumber,
+      },
+    });
+
+    if (checkIdNumber) {
+      return new NextResponse('Deceased already exists with ID Number', {
+        status: 400,
+      });
+    }
 
     if (!dateOfBirth) {
       return new NextResponse('Date of Birth is required', {
