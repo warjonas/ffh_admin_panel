@@ -47,7 +47,9 @@ const getDateOfBirth = (idNumber: string) => {
 
   const dateOfBirth = new Date();
 
-  if (Number(getYear) < 30) {
+  const currentYear = new Date().getFullYear().toString().substring(2, 4);
+
+  if (Number(getYear) <= Number(currentYear)) {
     dateOfBirth.setFullYear(Number(getYear) + 2000);
   } else {
     dateOfBirth.setFullYear(Number(getYear) + 1900);

@@ -1664,7 +1664,9 @@ const AddArrangmentModal = () => {
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>
               <h1 className="text-xl font-semibold text-end">
-                {formatter.format(amountDue)}{' '}
+                {form.getValues().dateOfFuneralService
+                  ? formatter.format(amountDue)
+                  : 'Please specify date of funeral'}{' '}
               </h1>
             </div>
 
