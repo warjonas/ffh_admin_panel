@@ -559,9 +559,8 @@ const AddArrangmentModal = () => {
       router.back();
       router.refresh();
       toast.success(toastMessage);
-    } catch (error) {
-      console.log(error);
-      toast.error('Something went wrong');
+    } catch (error: any) {
+      toast.error(error.response.data);
     } finally {
       setLoading(false);
     }
