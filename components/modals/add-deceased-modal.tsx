@@ -40,6 +40,26 @@ const formSchema = z.object({
   updatedBy: z.string(),
 });
 
+const getDateOfBirth = (idNumber: string) => {
+  const getYear = idNumber.substring(0, 2);
+  const getMonth = idNumber.substring(2, 4);
+  const getDate = idNumber.substring(4, 6);
+
+  const dateOfBirth = new Date();
+
+  if (Number(getYear) < 30) {
+    dateOfBirth.setFullYear(Number(getYear) + 2000);
+  } else {
+    dateOfBirth.setFullYear(Number(getYear) + 1900);
+  }
+
+  dateOfBirth.setMonth(Number(getMonth) - 1);
+
+  dateOfBirth.setDate(Number(getDate));
+
+  return dateOfBirth;
+};
+
 type DeceasedFormValues = z.infer<typeof formSchema>;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -158,6 +178,15 @@ const AddDeceasedModal = () => {
       setValue('removalDate', new Date(deceased.removalDate));
     }
   }, [deceased]);
+
+  //Auto fill date of birth based on ID Number
+  useEffect(() => {
+    if (form.getValues().idNumber) {
+      const dateOfBirth = getDateOfBirth(form.getValues().idNumber);
+
+      form.setValue('dateOfBirth', dateOfBirth);
+    }
+  }, [form.getValues().idNumber]);
 
   if (!isMounted) {
     return null;
