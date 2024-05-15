@@ -616,7 +616,7 @@ const AddArrangmentModal = () => {
       form.reset();
       arrangementModal.onClose();
 
-      router.back();
+      router.push('/arrangements');
       router.refresh();
       toast.success(toastMessage);
     } catch (error: any) {
@@ -631,7 +631,7 @@ const AddArrangmentModal = () => {
     setAmountDue(0);
     form.reset();
 
-    router.push('/arrangements');
+    router.back();
   };
 
   useEffect(() => {

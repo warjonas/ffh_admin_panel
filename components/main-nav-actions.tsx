@@ -51,8 +51,8 @@ const MainNavActions = (props: Props) => {
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
   const paymentType = usePaymentTypeModal();
-  const paymentsModal = useViewPaymentsModal();
   const outstandingModal = useOutstandingPaymentsModal();
+  const allPayments = useViewPaymentsModal();
 
   const actions = [
     {
@@ -163,7 +163,7 @@ const MainNavActions = (props: Props) => {
           link: '/invoices',
           break: false,
           type: 'Function',
-          func: paymentsModal.onOpen,
+          func: allPayments.onOpen,
         },
         {
           title: 'Outstanding Payments',
@@ -235,15 +235,16 @@ const MainNavActions = (props: Props) => {
               <DropdownMenuGroup>
                 {action.items?.map((item) => (
                   <div key={item.title}>
-                    <DropdownMenuItem
-                      onClick={
-                        item.type === 'Function'
-                          ? item.func
-                          : () => router.push(item.link)
-                      }
-                    >
-                      {item.title}
-                    </DropdownMenuItem>
+                    {item.type === 'Function' ? (
+                      <DropdownMenuItem onClick={item.func}>
+                        {item.title}
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem>
+                        <Link href={item.link}>{item.title}</Link>
+                      </DropdownMenuItem>
+                    )}
+
                     {item.break && <DropdownMenuSeparator />}
                   </div>
                 ))}
