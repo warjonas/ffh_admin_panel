@@ -26,7 +26,10 @@ import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import AddDeceasedModal from './modals/add-deceased-modal';
 import { Deceased } from '@prisma/client';
-import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import {
+  useDeceasedModal,
+  useViewPaymentsModal,
+} from '@/hooks/use-deceased-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import {
   useRemovalModal,
@@ -47,6 +50,7 @@ const MainNavActions = (props: Props) => {
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
   const paymentType = usePaymentTypeModal();
+  const allPayments = useViewPaymentsModal();
 
   const actions = [
     {
@@ -157,7 +161,7 @@ const MainNavActions = (props: Props) => {
           link: '/invoices',
           break: false,
           type: 'Function',
-          func: () => setOpen(true),
+          func: allPayments.onOpen,
         },
         {
           title: 'Outstanding Payments',
@@ -222,15 +226,16 @@ const MainNavActions = (props: Props) => {
               <DropdownMenuGroup>
                 {action.items?.map((item) => (
                   <div key={item.title}>
-                    <DropdownMenuItem
-                      onClick={
-                        item.type === 'Function'
-                          ? item.func
-                          : () => router.push(item.link)
-                      }
-                    >
-                      {item.title}
-                    </DropdownMenuItem>
+                    {item.type === 'Function' ? (
+                      <DropdownMenuItem onClick={item.func}>
+                        {item.title}
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem>
+                        <Link href={item.link}>{item.title}</Link>
+                      </DropdownMenuItem>
+                    )}
+
                     {item.break && <DropdownMenuSeparator />}
                   </div>
                 ))}

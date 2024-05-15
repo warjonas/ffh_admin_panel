@@ -296,7 +296,6 @@ const AddDeceasedModal = () => {
                         disabled={loading}
                         placeholder="ID Number"
                         {...field}
-                        type="number"
                         minLength={13}
                         maxLength={13}
                       />
