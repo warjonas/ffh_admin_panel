@@ -35,6 +35,7 @@ import { Deceased } from '@prisma/client';
 import {
   useDeceasedInfoModal,
   useDeceasedModal,
+  useRegisterDeathModal,
 } from '@/hooks/use-deceased-modal';
 import { useRemovalModal } from '@/hooks/use-removal-modal';
 
@@ -47,6 +48,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const deceasedModal = useDeceasedModal();
   const infoModal = useDeceasedInfoModal();
   const removalModal = useRemovalModal();
+  const registrationModal = useRegisterDeathModal();
 
   const [loading, setLoading] = useState(false);
   const params = useParams();
@@ -95,6 +97,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     infoModal.onOpen();
   };
+  const onRegistration = async () => {
+    router.push(pathname + '?' + createQueryString('deceasedId', data.id));
+
+    registrationModal.onOpen();
+  };
 
   const generateLink = async () => {
     navigator.clipboard.writeText(process.env.NEXT_PUBLIC_LINK_URL + data.id);
@@ -133,10 +140,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Trash className="mr-2 h-4 w-4" />
             Delete
           </DropdownMenuItem>
-          {/* <DropdownMenuItem onClick={() => onRemoval()}>
+          <DropdownMenuItem onClick={() => onRegistration()}>
             <Car className="mr-2 h-4 w-4" />
-            Request Removal Estimate
-          </DropdownMenuItem> */}
+            Register Death
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => generateLink()}>
             <Link className="mr-2 h-4 w-4" />
             Copy Program Link
