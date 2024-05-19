@@ -11,7 +11,7 @@ export interface Deceased {
   deathCertificateRecipient: string;
   dateOfFuneralService: Date;
   updatedBy: string;
-  arrangement?: Arrangement;
+  arrangement: Arrangement;
   removal: Removal;
 }
 
