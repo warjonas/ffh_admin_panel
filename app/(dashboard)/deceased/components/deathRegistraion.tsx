@@ -5,7 +5,7 @@ import { Modal } from '@/components/ui/modal';
 import { Deceased } from '@/types';
 import { PrinterIcon } from 'lucide-react';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import useSWR, { SWRConfiguration } from 'swr';
 import Logo from '@/assets/Logo.png';
@@ -69,6 +69,15 @@ const DeathRegistration = () => {
     documentTitle: `Registration of Death - ${data?.firstNames} ${data?.lastName}`,
   });
 
+  useEffect(() => {
+    setIsMounted(true);
+    console.log('DeathRegistration', isMounted);
+  }, []);
+
+  if (isMounted == false) {
+    return null;
+  }
+
   if (error) {
     return (
       <Modal
@@ -108,7 +117,7 @@ const DeathRegistration = () => {
       isOpen={registrationModal.isOpen}
       onClose={onClose}
     >
-      {data && (
+      {data && isMounted == true && (
         <>
           <Button onClick={handlePrint}>
             {' '}
@@ -212,9 +221,15 @@ const DeathRegistration = () => {
                     Date of Burial
                   </p>
                   <p className="col-start-2">
-                    {format(
-                      new Date(data.arrangement.dateOfFuneralService),
-                      'dd/MM/yyyy'
+                    {data.arrangement ? (
+                      format(
+                        new Date(data?.arrangement.dateOfFuneralService),
+                        'dd/MM/yyyy'
+                      )
+                    ) : (
+                      <p className="col-start-2">
+                        ____________________________________
+                      </p>
                     )}
                   </p>
 
@@ -227,7 +242,13 @@ const DeathRegistration = () => {
                     Cemetry Name
                   </p>
                   <p className="col-start-2">
-                    {data?.arrangement?.grave.graveName}
+                    {data.arrangement ? (
+                      data?.arrangement?.grave.graveName
+                    ) : (
+                      <p className="col-start-2">
+                        ____________________________________
+                      </p>
+                    )}
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">SEX</p>
