@@ -26,7 +26,11 @@ import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import AddDeceasedModal from './modals/add-deceased-modal';
 import { Deceased } from '@prisma/client';
-import { useDeceasedModal } from '@/hooks/use-deceased-modal';
+import {
+  useDeceasedModal,
+  useOutstandingPaymentsModal,
+  useViewPaymentsModal,
+} from '@/hooks/use-deceased-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import {
   useRemovalModal,
@@ -47,6 +51,8 @@ const MainNavActions = (props: Props) => {
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
   const paymentType = usePaymentTypeModal();
+  const paymentsModal = useViewPaymentsModal();
+  const outstandingModal = useOutstandingPaymentsModal();
 
   const actions = [
     {
@@ -157,14 +163,14 @@ const MainNavActions = (props: Props) => {
           link: '/invoices',
           break: false,
           type: 'Function',
-          func: () => setOpen(true),
+          func: paymentsModal.onOpen,
         },
         {
           title: 'Outstanding Payments',
           link: '/invoices',
           break: false,
-          type: 'Link',
-          func: () => setOpen(true),
+          type: 'Function',
+          func: outstandingModal.onOpen,
         },
         {
           title: 'New Payment',
@@ -181,8 +187,8 @@ const MainNavActions = (props: Props) => {
       link: '/admin',
       items: [
         {
-          title: 'Pricing',
-          link: '/admin/pricing',
+          title: 'Statistics',
+          link: '/admin/stats',
           break: false,
           type: 'Link',
           func: () => setOpen(true),

@@ -180,9 +180,11 @@ const ProcessPaymentModal = () => {
       </div>
 
       {!individualRemovalisLoading ? (
-        <PaymentForm onSubmit={onSubmit} />
+        <PaymentForm onSubmit={onSubmit} loading={loading} />
       ) : (
-        !individualArrangementisLoading && <PaymentForm onSubmit={onSubmit} />
+        !individualArrangementisLoading && (
+          <PaymentForm onSubmit={onSubmit} loading={loading} />
+        )
       )}
     </Modal>
   );
