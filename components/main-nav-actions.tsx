@@ -28,10 +28,7 @@ import AddDeceasedModal from './modals/add-deceased-modal';
 import { Deceased } from '@prisma/client';
 import {
   useDeceasedModal,
-<<<<<<< HEAD
-=======
   useOutstandingPaymentsModal,
->>>>>>> Development
   useViewPaymentsModal,
 } from '@/hooks/use-deceased-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
@@ -54,12 +51,8 @@ const MainNavActions = (props: Props) => {
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
   const paymentType = usePaymentTypeModal();
-<<<<<<< HEAD
-  const allPayments = useViewPaymentsModal();
-=======
   const paymentsModal = useViewPaymentsModal();
   const outstandingModal = useOutstandingPaymentsModal();
->>>>>>> Development
 
   const actions = [
     {
@@ -170,11 +163,8 @@ const MainNavActions = (props: Props) => {
           link: '/invoices',
           break: false,
           type: 'Function',
-<<<<<<< HEAD
-          func: allPayments.onOpen,
-=======
+
           func: paymentsModal.onOpen,
->>>>>>> Development
         },
         {
           title: 'Outstanding Payments',
