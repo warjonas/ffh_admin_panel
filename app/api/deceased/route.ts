@@ -14,7 +14,13 @@ export async function GET(req: Request) {
         flagDelete: false,
       },
       include: {
-        arrangement: true,
+        arrangement: {
+          include: {
+            grave: true,
+            tombstone: true,
+            coffin: true,
+          },
+        },
         removal: true,
       },
     });

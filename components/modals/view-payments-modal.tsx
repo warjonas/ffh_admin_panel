@@ -54,6 +54,7 @@ const ViewPaymentsModal = (props: Props) => {
 
   const config: SWRConfiguration = {
     revalidateOnMount: true,
+    refreshInterval: 1000,
   };
 
   const {

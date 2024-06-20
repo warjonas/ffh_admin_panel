@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { cn, formatter } from '@/lib/utils';
 import { AddOn, ArrangementAddOnItem, Coffin, Grave, Tombstone } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Plus, Trash, X } from 'lucide-react';
+import { CalendarIcon, Plus, RefreshCcw, Trash, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -43,6 +43,12 @@ import { Modal } from '../ui/modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import DeceasedList from '../deceased-list';
 import NextDatePicker from '../ui/custom-datepicker';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -436,7 +442,50 @@ const AddArrangmentModal = () => {
   }, [watch('tombstoneId')]);
 
   //Calculates total of all the add-ons and sets it as the amount due
-  useEffect(() => {
+  // useEffect(() => {
+  //   const total =
+  //     storageFee +
+  //     Number(form.getValues().bus.qty * form.getValues().bus.price) +
+  //     Number(form.getValues().digger.qty * form.getValues().digger.price) +
+  //     Number(
+  //       form.getValues().decor.banner.qty * form.getValues().decor.banner.price
+  //     ) +
+  //     Number(
+  //       form.getValues().decor.photo.qty * form.getValues().decor.photo.price
+  //     ) +
+  //     Number(
+  //       form.getValues().decor.glass.qty * form.getValues().decor.glass.price
+  //     ) +
+  //     Number(
+  //       form.getValues().decor.candle.qty * form.getValues().decor.candle.price
+  //     ) +
+  //     additionalItems +
+  //     coffinFee +
+  //     tombstoneFee +
+  //     graveFee +
+  //     addOnTotal;
+
+  //   setAmountDue(total - form.getValues().discount);
+  // }, [
+  //   watch([
+  //     'decor.glass',
+  //     'decor.photo',
+  //     'decor.candle',
+  //     'decor.banner',
+  //     'discount',
+  //     'bus',
+  //     'digger',
+  //   ]),
+  //   storageFee,
+  //   additionalItems,
+  //   amountDue,
+  //   coffinFee,
+  //   tombstoneFee,
+  //   graveFee,
+  //   addOnTotal,
+  // ]);
+
+  const calculateTotal = () => {
     const total =
       storageFee +
       Number(form.getValues().bus.qty * form.getValues().bus.price) +
@@ -460,24 +509,7 @@ const AddArrangmentModal = () => {
       addOnTotal;
 
     setAmountDue(total - form.getValues().discount);
-  }, [
-    watch([
-      'decor.glass',
-      'decor.photo',
-      'decor.candle',
-      'decor.banner',
-      'discount',
-      'bus',
-      'digger',
-    ]),
-    storageFee,
-    additionalItems,
-    amountDue,
-    coffinFee,
-    tombstoneFee,
-    graveFee,
-    addOnTotal,
-  ]);
+  };
 
   //Calculate the storage fee based on the funeral date selected and the day body was received
 
@@ -504,6 +536,10 @@ const AddArrangmentModal = () => {
     }
   }, [deceasedData, deceasedId, watch('dateOfFuneralService')]);
 
+  useEffect(() => {
+    calculateTotal();
+  }, [watch('discount')]);
+
   //submit data to the database
 
   const onSubmit = async (data: ArrangementFormValues) => {
@@ -513,6 +549,8 @@ const AddArrangmentModal = () => {
     }
 
     let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
+
+    calculateTotal;
 
     data.deceased = deceasedId;
     data.totalDue = amountDue;
@@ -568,6 +606,7 @@ const AddArrangmentModal = () => {
 
   const onClose = () => {
     arrangementModal.onClose();
+    setAmountDue(0);
     form.reset();
 
     router.back();
@@ -1663,9 +1702,35 @@ const AddArrangmentModal = () => {
             <div className="w-full flex flex-row justify-end items-center">
               <h2 className="text-xl mr-2">Total Payable: </h2>
               <h1 className="text-xl font-semibold text-end">
-                {form.getValues().dateOfFuneralService
-                  ? formatter.format(amountDue)
-                  : 'Please specify date of funeral'}{' '}
+                {form.getValues().dateOfFuneralService ? (
+                  amountDue !== 0 ? (
+                    <div className="flex flex-row gap-2 items-center">
+                      {formatter.format(amountDue)}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <RefreshCcw
+                              className="h-5 w-5 hover:cursor-pointer"
+                              onClick={calculateTotal}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent side="left">
+                            <p>Update Total</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  ) : (
+                    <button
+                      className=" text-sm text-background bg-primary p-1 hover:cursor-pointer rounded-sm shadow-md"
+                      onClick={calculateTotal}
+                    >
+                      Calculate Total
+                    </button>
+                  )
+                ) : (
+                  'Please specify date of funeral'
+                )}{' '}
               </h1>
             </div>
 
@@ -1679,7 +1744,8 @@ const AddArrangmentModal = () => {
               disabled={
                 deceasedId === null ||
                 loading ||
-                form.getValues().dateOfFuneralService == null
+                form.getValues().dateOfFuneralService == null ||
+                amountDue == 0
               }
             >
               {action}

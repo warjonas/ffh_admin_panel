@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import useSWR, { SWRConfiguration } from 'swr';
-import { Deceased } from '@prisma/client';
+import { Deceased } from '@/types';
 import { useDeceasedModal } from '@/hooks/use-deceased-modal';
 import NextDatePicker from '../ui/custom-datepicker';
 
@@ -31,6 +31,7 @@ const formSchema = z.object({
     street: z.string().min(1),
     city: z.string().min(1),
   }),
+  removalTime: z.string(),
   deathCertificateRecipient: z.string().min(1),
 
   createdBy: z.string(),
@@ -103,6 +104,7 @@ const AddDeceasedModal = () => {
         street: '',
         city: '',
       },
+      removalTime: '',
       deathCertificateRecipient: '',
       createdBy: 'email',
       updatedBy: '',
@@ -182,6 +184,7 @@ const AddDeceasedModal = () => {
       setValue('removalFrom.city', deceased.removalFrom.city);
 
       setValue('removalFrom.street', deceased.removalFrom.street);
+      setValue('removalTime', deceased.removalTime);
 
       setValue('removalDate', new Date(deceased.removalDate));
     }
@@ -407,6 +410,23 @@ const AddDeceasedModal = () => {
                   <FormLabel className="font-semibold">City</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="City" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="removalTime"
+              disabled={isLoading}
+              render={({ field }) => (
+                <FormItem
+                  className={`${
+                    isLoading && 'animate-pulse'
+                  } w-full md:w-1/2 xl:flex-shrink`}
+                >
+                  <FormLabel className="font-semibold">Removal Time</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="11am" {...field} />
                   </FormControl>
                 </FormItem>
               )}

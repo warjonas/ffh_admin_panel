@@ -32,16 +32,16 @@ const Deceased = async (props: Props) => {
 
   return (
     <section className="p-5 w-full h-full">
+      <Heading
+        title="Deceased Details"
+        subtitle="Create and manage Deceased Details  "
+      />
+      <section>
+        <div className="flex justify-between">
+          <HeaderOptions title="New Deceased details" link="deceased" />
+        </div>
+      </section>
       <Suspense fallback={<Loading />}>
-        <Heading
-          title="Deceased Details"
-          subtitle="Create and manage Deceased Details  "
-        />
-        <section>
-          <div className="flex justify-between">
-            <HeaderOptions title="New Deceased details" link="deceased" />
-          </div>
-        </section>
         <section>
           <DeceasedClient data={formattedDeceased} />
         </section>

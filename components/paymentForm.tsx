@@ -12,6 +12,7 @@ import useSWR, { SWRConfiguration } from 'swr';
 
 interface PaymentFormProps {
   onSubmit: (data: PaymentFormValues) => void;
+  loading: boolean;
 }
 
 const formSchema = z.object({
@@ -27,7 +28,7 @@ type PaymentFormValues = z.infer<typeof formSchema>;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const PaymentForm = ({ onSubmit }: PaymentFormProps) => {
+const PaymentForm = ({ onSubmit, loading }: PaymentFormProps) => {
   const [outstandingBalance, setOutstandingBalance] = useState(0);
 
   const searchParams = useSearchParams();
@@ -150,7 +151,7 @@ const PaymentForm = ({ onSubmit }: PaymentFormProps) => {
             )}
           />
 
-          <Button variant="default" type="submit">
+          <Button variant="default" type="submit" disabled={loading}>
             Confirm Payment
           </Button>
         </form>
