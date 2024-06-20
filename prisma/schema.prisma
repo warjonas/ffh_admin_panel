@@ -21,6 +21,8 @@ model Deceased{
   dateOfDeath                 DateTime
   removalDate                 DateTime
   removalFrom                 Address
+  removalTime                 String?
+
   deathCertificateRecipient   String
   createdBy                   String
   updatedBy           String? @default("")
@@ -219,6 +221,7 @@ type HymnField{
 
 type AtHome{
   officiatingMinister   String
+  startTime             String
 }
 
 type AtChurch{
@@ -226,6 +229,8 @@ type AtChurch{
   orbituary             String
   voteOfThanks          String
   otherItems            String
+  startTime             String
+  endTime               String
 }
 
 type Decor{

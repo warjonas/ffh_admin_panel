@@ -8,6 +8,8 @@ export interface Deceased {
   dateOfDeath: Date;
   removalDate: Date;
   removalFrom: Address;
+  removalTime: string;
+
   deathCertificateRecipient: string;
   dateOfFuneralService: Date;
   updatedBy: string;
