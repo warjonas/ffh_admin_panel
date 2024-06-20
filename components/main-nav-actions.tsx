@@ -51,8 +51,8 @@ const MainNavActions = (props: Props) => {
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
   const paymentType = usePaymentTypeModal();
+  const paymentsModal = useViewPaymentsModal();
   const outstandingModal = useOutstandingPaymentsModal();
-  const allPayments = useViewPaymentsModal();
 
   const actions = [
     {
@@ -163,7 +163,8 @@ const MainNavActions = (props: Props) => {
           link: '/invoices',
           break: false,
           type: 'Function',
-          func: allPayments.onOpen,
+
+          func: paymentsModal.onOpen,
         },
         {
           title: 'Outstanding Payments',
