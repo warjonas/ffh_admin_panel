@@ -225,7 +225,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   </span>
                 </p>
                 <p className="font-semibold">
-                  Removal Time: <span className="font-normal">11am</span>{' '}
+                  Removal Time:{' '}
+                  <span className="font-normal">
+                    {data.deceased?.removalTime}
+                  </span>{' '}
                 </p>
               </div>
 

@@ -98,8 +98,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const onUpdate = async () => {
     const query = setQueryParams();
 
-    router.push('/arrangements');
-
     router.push(pathname + '?' + createQueryString(query));
     arrangementModal.onOpen();
   };
@@ -119,7 +117,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   };
 
   const onPayment = () => {
-    const query: QueryProps[] = [{ name: 'type', value: 'arrangement' }];
+    const query: QueryProps[] = [
+      { name: 'type', value: 'arrangement' },
+      { name: 'arrangementId', value: `${data.id}` },
+    ];
 
     router.push(pathname + '?' + createQueryString(query));
 

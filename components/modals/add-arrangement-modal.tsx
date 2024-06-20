@@ -536,6 +536,10 @@ const AddArrangmentModal = () => {
     }
   }, [deceasedData, deceasedId, watch('dateOfFuneralService')]);
 
+  useEffect(() => {
+    calculateTotal();
+  }, [watch('discount')]);
+
   //submit data to the database
 
   const onSubmit = async (data: ArrangementFormValues) => {
@@ -546,7 +550,7 @@ const AddArrangmentModal = () => {
 
     let deceasedDate = deceasedData?.find((c) => c.id === deceasedId);
 
-    calculateTotal();
+    calculateTotal;
 
     data.deceased = deceasedId;
     data.totalDue = amountDue;
@@ -1741,7 +1745,8 @@ const AddArrangmentModal = () => {
               disabled={
                 deceasedId === null ||
                 loading ||
-                form.getValues().dateOfFuneralService == null
+                form.getValues().dateOfFuneralService == null ||
+                amountDue == 0
               }
             >
               {action}
