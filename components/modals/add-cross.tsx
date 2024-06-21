@@ -81,6 +81,7 @@ const AddCrossModal = () => {
       addCrossModal.onClose();
 
       toast.success(toastMessage);
+      form.reset();
 
       router.push('/admin#cross');
     } catch (error) {
