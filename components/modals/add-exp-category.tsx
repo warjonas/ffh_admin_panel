@@ -58,8 +58,8 @@ const AddExpCategoryModal = () => {
     data,
     error,
     isLoading,
-  }: { data: ExpCategory; error: any; isLoading: any } = useSWR(
-    expCatId ? `/api/category/${expCatId}` : null,
+  }: { data: ExpCategory[]; error: any; isLoading: any } = useSWR(
+    expCatId ? `/api/category` : null,
     fetcher,
     {
       refreshInterval: 800,
@@ -110,7 +110,11 @@ const AddExpCategoryModal = () => {
 
   useEffect(() => {
     if (data) {
-      setValue('name', data.name);
+      const category = data.find((cat) => cat.id == expCatId);
+
+      if (category) {
+        setValue('name', category.name);
+      }
     }
   }, [expCatId]);
 

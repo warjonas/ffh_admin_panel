@@ -43,7 +43,7 @@ const AddSubCategoryModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      expCatId: '',
+      expCatId: expCatId ? expCatId : '',
     },
   });
 

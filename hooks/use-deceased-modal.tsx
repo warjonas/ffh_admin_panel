@@ -24,6 +24,12 @@ export const useCoffinModal = create<useModalStore>((set) => ({
   onClose: () => set({ isOpen: false }),
 }));
 
+export const useCrossModal = create<useModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));
+
 export const useGraveModal = create<useModalStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
@@ -37,6 +43,24 @@ export const useTombstoneModal = create<useModalStore>((set) => ({
 }));
 
 export const useAddOnModal = create<useModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));
+
+export const useExpCategoryModal = create<useModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));
+
+export const useSubCategoryListModal = create<useModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));
+
+export const useAddSubCategoryModal = create<useModalStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),
