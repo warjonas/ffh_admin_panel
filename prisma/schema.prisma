@@ -221,7 +221,7 @@ type HymnField{
 
 type AtHome{
   officiatingMinister   String
-  startTime             String
+  startTime             String?
 }
 
 type AtChurch{
@@ -229,8 +229,8 @@ type AtChurch{
   orbituary             String
   voteOfThanks          String
   otherItems            String
-  startTime             String
-  endTime               String
+  startTime             String?
+  endTime               String?
 }
 
 type Decor{
