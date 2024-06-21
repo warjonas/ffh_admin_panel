@@ -13,7 +13,14 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { cn, formatter } from '@/lib/utils';
-import { AddOn, ArrangementAddOnItem, Coffin, Grave, Tombstone } from '@/types';
+import {
+  AddOn,
+  ArrangementAddOnItem,
+  Coffin,
+  CrossSize,
+  Grave,
+  Tombstone,
+} from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, Plus, RefreshCcw, Trash, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -67,16 +74,6 @@ const calculate_storageFee = (date1: Date, date2: Date, storageFee: any) => {
   return fee;
 };
 
-const relationships = [
-  'Brother',
-  'Sister',
-  'Father',
-  'Mother',
-  'Uncle',
-  'Aunt',
-  'Other',
-];
-
 const formSchema = z.object({
   deceased: z.string(),
   dateOfFuneralService: z.date(),
@@ -113,6 +110,7 @@ const formSchema = z.object({
     phoneNo: z.string(),
   }),
   crossSize: z.string(),
+  crossSizeId: z.string(),
   graveId: z.string(),
   graveTime: z.string(),
   graveNo: z.string(),
@@ -177,6 +175,7 @@ const AddArrangmentModal = () => {
   const [coffinFee, setCoffinFee] = useState(0);
   const [tombstoneFee, setTombstoneFee] = useState(0);
   const [graveFee, setGraveFee] = useState(0);
+  const [crossFee, setCrossFee] = useState(0);
 
   const [additionalItems, setAdditionalItems] = useState(0);
   const [addOnTotal, setAddOnTotal] = useState(0);
@@ -252,6 +251,16 @@ const AddArrangmentModal = () => {
     { refreshInterval: 1000 }
   );
 
+  const {
+    data: crosses,
+    error: crossesError,
+    isLoading: crossesLoading,
+  }: { data: CrossSize[]; error: any; isLoading: any } = useSWR(
+    `/api/cross`,
+    fetcher,
+    { refreshInterval: 1000 }
+  );
+
   const toastMessage = initialData
     ? 'Changes successfully applied.'
     : 'Funeral Arrangement created successfully';
@@ -286,7 +295,8 @@ const AddArrangmentModal = () => {
         lastName: '',
         phoneNo: '',
       },
-      crossSize: 'none',
+      crossSize: 'deprecated',
+      crossSizeId: '6674a59457d812d09c7f7aff',
       graveId: '6616593b149f9c78856cc0d2',
       graveTime: '',
       graveNo: '',
@@ -430,6 +440,17 @@ const AddArrangmentModal = () => {
     }
   }, [watch('coffinId')]);
 
+  //finds price of selected cross size and adds it to the ammount due
+  useEffect(() => {
+    if (crosses) {
+      let itemsAmount = crosses.find(
+        (item) => item.id === form.getValues().crossSizeId
+      );
+
+      itemsAmount && setCrossFee(itemsAmount.price);
+    }
+  }, [watch('crossSizeId')]);
+
   //finds price of selected tombstone and adds it to the ammount due
   useEffect(() => {
     if (tombstones) {
@@ -504,6 +525,7 @@ const AddArrangmentModal = () => {
       ) +
       additionalItems +
       coffinFee +
+      crossFee +
       tombstoneFee +
       graveFee +
       addOnTotal;
@@ -538,7 +560,7 @@ const AddArrangmentModal = () => {
 
   useEffect(() => {
     calculateTotal();
-  }, [watch('discount')]);
+  }, [watch('discount'), coffinFee, tombstoneFee, crossFee, storageFee]);
 
   //submit data to the database
 
@@ -633,6 +655,7 @@ const AddArrangmentModal = () => {
       setValue('bus', initialData.bus);
       setValue('graveNo', initialData.graveNo);
       setValue('digger', initialData.digger);
+      setValue('crossSizeId', initialData.crossSizeId.id);
 
       setValue('arrangementAddOnItems', initialData.arrangementAddOnItems);
 
@@ -1199,51 +1222,51 @@ const AddArrangmentModal = () => {
                     )}
                   />
 
-                  <div className="flex flex-col gap-y-4 mt-2">
-                    <FormField
-                      control={form.control}
-                      name="crossSize"
-                      render={({ field }) => (
-                        <FormItem className="space-y-3">
-                          <FormLabel className="font-semibold">
-                            Cross Size
-                          </FormLabel>
-                          <FormControl>
-                            <RadioGroup
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                              className="flex flex-col space-y-1"
-                            >
-                              <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="small" />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  Small
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="big" />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  Big
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="none" />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  None
-                                </FormLabel>
-                              </FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="crossSizeId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold">
+                          Cross Size
+                        </FormLabel>
+                        {coffinsLoading ? (
+                          <div
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status"
+                          >
+                            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                              Loading...
+                            </span>
+                          </div>
+                        ) : (
+                          <Select
+                            disabled={loading}
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={field.value}
+                                  placeholder="Select Cross Size"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {crosses.map((crosses) => (
+                                <SelectItem value={crosses.id} key={crosses.id}>
+                                  {crosses.size} -{' '}
+                                  {formatter.format(crosses.price)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <hr className="w-full" />
                 <div className="flex flex-col w-full gap-y-2">

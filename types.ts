@@ -71,6 +71,7 @@ export interface Arrangement {
   minister: Minister;
   createdBy: string;
   crossSize: string;
+  crossSizeId: CrossSize;
   arrangementAddOnItems: ArrangementAddOnItem[];
   programs: number;
   storage: number;
@@ -119,7 +120,7 @@ export interface Grave {
   price: number;
 }
 
-export interface CrossSizes {
+export interface CrossSize {
   id: string;
   size: string;
   price: number;
