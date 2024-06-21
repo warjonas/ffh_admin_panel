@@ -13,7 +13,6 @@ import {
 } from '@/hooks/use-deceased-modal';
 import { Button } from '../ui/button';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { getSubCategories } from '@/actions/getSubCategories';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

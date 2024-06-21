@@ -13,7 +13,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { CrossSizes, ExpCategory } from '@/types';
+import { ExpCategory } from '@/types';
 
 const formSchema = z.object({
   name: z.string().min(1),
