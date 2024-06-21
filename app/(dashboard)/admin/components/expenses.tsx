@@ -16,7 +16,7 @@ import {
   useSubCategoryListModal,
 } from '@/hooks/use-deceased-modal';
 import { formatter } from '@/lib/utils';
-import { Coffin, CrossSizes, ExpCategory } from '@/types';
+import { Coffin, CrossSize, ExpCategory } from '@/types';
 import axios from 'axios';
 import { Edit, Link, ListTree, MoreHorizontal, Pencil, X } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
