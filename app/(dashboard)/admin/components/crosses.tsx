@@ -4,7 +4,7 @@ import { AlertModal } from '@/components/modals/alert-modal';
 import { Button } from '@/components/ui/button';
 import { useCoffinModal, useCrossModal } from '@/hooks/use-deceased-modal';
 import { formatter } from '@/lib/utils';
-import { Coffin, CrossSizes } from '@/types';
+import { Coffin, CrossSize } from '@/types';
 import axios from 'axios';
 import { Pencil, X } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -53,7 +53,7 @@ const Crosses = (props: Props) => {
     data,
     error,
     isLoading,
-  }: { data: CrossSizes[]; error: any; isLoading: any } = useSWR(
+  }: { data: CrossSize[]; error: any; isLoading: any } = useSWR(
     `/api/cross`,
     fetcher,
     config
