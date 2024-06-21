@@ -13,7 +13,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { CrossSizes } from '@/types';
+import { CrossSize } from '@/types';
 
 const formSchema = z.object({
   size: z.string().min(1),
@@ -60,7 +60,7 @@ const AddCrossModal = () => {
     data,
     error,
     isLoading,
-  }: { data: CrossSizes; error: any; isLoading: any } = useSWR(
+  }: { data: CrossSize; error: any; isLoading: any } = useSWR(
     crossId ? `/api/cross/${crossId}` : null,
     fetcher,
     {
