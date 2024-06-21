@@ -46,6 +46,7 @@ const Crosses = (props: Props) => {
     revalidateOnFocus: true,
     revalidateIfStale: true,
     revalidateOnMount: true,
+    refreshInterval: 800,
   };
 
   const {
@@ -68,9 +69,9 @@ const Crosses = (props: Props) => {
   const onDelete = async (id: string) => {
     try {
       setLoading(true);
-      await axios.delete(`/api/coffin/${id}`);
+      await axios.delete(`/api/cross/${id}`);
       router.refresh();
-      toast.success('Coffin has been deleted');
+      toast.success('Cross has been deleted');
     } catch (error) {
       toast.error('Internal Error');
     } finally {
