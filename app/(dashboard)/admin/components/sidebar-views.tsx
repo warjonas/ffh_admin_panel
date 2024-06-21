@@ -7,6 +7,8 @@ import Graves from './graves';
 import Tombstones from './tombstones';
 import Users from './users';
 import AddOns from './addOns';
+import Crosses from './crosses';
+import ExpenseCategories from './expenses';
 
 type Props = {};
 
@@ -40,6 +42,10 @@ const SidebarViews = (props: Props) => {
       return <Coffins />;
     case 'graves':
       return <Graves />;
+    case 'cross':
+      return <Crosses />;
+    case 'expenses':
+      return <ExpenseCategories />;
     case 'addOns':
       return <AddOns />;
     default:

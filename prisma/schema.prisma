@@ -68,6 +68,10 @@ model Arrangement{
   graveNo             String?
   discount            Int
   
+
+  crossId             String? @db.ObjectId
+  cross               CrossSize? @relation( fields: [crossId], references: [id])
+  
   graveId             String @db.ObjectId
   grave               Grave @relation(fields: [graveId], references: [id])
   deceasedId          String @db.ObjectId @unique
@@ -188,12 +192,50 @@ model Coffin{
 
 }
 
+model CrossSize{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  size                String
+  price               Int
+  arrangements        Arrangement[]
+
+}
+
 model Grave{
     id                  String @id @default(auto()) @map("_id") @db.ObjectId
     graveName           String
     price               Int
     arrangements        Arrangement[]
 
+}
+
+model Expense{
+    id                  String @id @default(auto()) @map("_id") @db.ObjectId
+    description         String    
+    cost                Int
+    createdOn           DateTime @default(now())
+
+    categoryId          String @db.ObjectId
+    category            ExpCategory @relation(fields: [categoryId], references: [id])
+
+
+}
+
+model ExpCategory{
+    id                  String @id @default(auto()) @map("_id") @db.ObjectId
+    name                String
+
+    expenses            Expense[]
+    subCategories       SubExpCategory[]
+
+
+}
+
+model SubExpCategory{
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+
+  expCategoryId          String @db.ObjectId
+  expCategory           ExpCategory @relation(fields: [expCategoryId], references: [id])
 }
 
 type ArrangementAddOnItem{
