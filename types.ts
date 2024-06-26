@@ -71,7 +71,8 @@ export interface Arrangement {
   minister: Minister;
   createdBy: string;
   crossSize: string;
-  crossSizeId: CrossSize;
+  crossId: string;
+  cross: CrossSize;
   arrangementAddOnItems: ArrangementAddOnItem[];
   programs: number;
   storage: number;
@@ -124,6 +125,7 @@ export interface CrossSize {
   id: string;
   size: string;
   price: number;
+  arrangements: Arrangement[];
 }
 
 export interface User {
@@ -145,7 +147,7 @@ export interface Expense {
   description: string;
   cost: number;
   createdOn: Date;
-
+  receiptUrl: string;
   categoryId: string;
   category: ExpCategory;
 }

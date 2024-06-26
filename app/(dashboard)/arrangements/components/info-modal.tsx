@@ -312,9 +312,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
                     <p className="font-medium">
                       <span className="font-semibold"> cross Size: </span>
-                      {data.crossSize == 'deprecated'
-                        ? data?.crossSizeId.size
-                        : data.crossSize}
+                      {data.cross ? data?.cross.size : data.crossSize}
                     </p>
 
                     <p className="font-medium">

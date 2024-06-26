@@ -656,9 +656,7 @@ const AddArrangmentModal = () => {
       setValue('graveNo', initialData.graveNo);
       setValue('digger', initialData.digger);
 
-      if (initialData.crossSizeId) {
-        setValue('crossSizeId', initialData.crossSizeId.id);
-      }
+      setValue('crossSizeId', initialData.cross.id);
 
       setValue('arrangementAddOnItems', initialData.arrangementAddOnItems);
 
