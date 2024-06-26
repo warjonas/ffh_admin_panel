@@ -23,25 +23,53 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const { graveName, price } = body;
+  const { description, cost, subCat, category } = body;
 
-  if (!graveName) {
-    return new NextResponse('Grave name is required', {
+  if (!description) {
+    return new NextResponse('Expense description is required', {
+      status: 400,
+    });
+  }
+
+  if (!cost) {
+    return new NextResponse('Expense cost is required', {
+      status: 400,
+    });
+  }
+
+  if (!subCat) {
+    return new NextResponse('Sub Category is required', {
+      status: 400,
+    });
+  }
+
+  if (!category) {
+    return new NextResponse('Category is required', {
       status: 400,
     });
   }
 
   try {
-    const grave = await prismadb.grave.create({
+    const expense = await prismadb.expense.create({
       data: {
-        graveName,
-        price,
+        description,
+        cost,
+        category: {
+          connect: {
+            id: category,
+          },
+        },
+        subCategory: {
+          connect: {
+            id: subCat,
+          },
+        },
       },
     });
 
-    return NextResponse.json(grave);
+    return NextResponse.json(expense);
   } catch (error) {
-    console.log('GRAVE_POST');
+    console.log('EXPENSE_POST');
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

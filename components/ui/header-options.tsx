@@ -11,13 +11,14 @@ import React from 'react';
 type Props = {
   title: string;
   onClick?: () => void;
-  link: 'deceased' | 'arrangement' | 'removal';
+  link: 'deceased' | 'arrangement' | 'removal' | 'expense';
 };
 
 const HeaderOptions = ({ title, onClick, link }: Props) => {
   const arrangementModal = useArrangementModal();
   const deceasedModal = useDeceasedModal();
   const removalModal = useRemovalModal();
+  const router = useRouter();
 
   const onSubmit = () => {
     switch (link) {
@@ -29,6 +30,8 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
         break;
       case 'removal':
         removalModal.onOpen();
+      case 'expense':
+        router.push('/finance/new');
         break;
     }
   };

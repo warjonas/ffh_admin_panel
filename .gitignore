@@ -36,3 +36,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 prisma/seed.ts
+package-lock.json
+actions/getSubCategories.ts
+app/(dashboard)/admin/site/page.tsx
+app/api/expense/route.ts
+components/details.tsx
+components/main-nav-actions.tsx
+components/navbar.tsx
+components/modals/add-coffin.tsx
+components/modals/add-cross.tsx
+components/modals/add-sub-category-modal.tsx
+components/ui/header-options.tsx
+components/ui/image-upload.tsx
+prisma/schema.prisma

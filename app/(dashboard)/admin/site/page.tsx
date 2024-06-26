@@ -20,7 +20,7 @@ const Site = (props: Props) => {
           <h1 className="text-lg font-medium">
             Upload new Images to Display in gallery
           </h1>
-          <ImageUpload />
+          <ImageUpload preset="geq05da0" />
         </section>
 
         <hr className="w-full border-t mb-4" />

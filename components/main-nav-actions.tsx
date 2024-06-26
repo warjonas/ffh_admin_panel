@@ -193,6 +193,13 @@ const MainNavActions = (props: Props) => {
           type: 'Link',
           func: () => setOpen(true),
         },
+        {
+          title: 'Expenses',
+          link: '/finance',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
 
         {
           title: 'Manage Fortuin Website',

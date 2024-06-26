@@ -213,6 +213,11 @@ model Expense{
     description         String    
     cost                Int
     createdOn           DateTime @default(now())
+    flagged             Boolean @default(false)
+    receiptUrl          String?
+
+    subCatId            String @db.ObjectId
+    subCategory         SubExpCategory @relation(fields: [subCatId], references: [id])
 
     categoryId          String @db.ObjectId
     category            ExpCategory @relation(fields: [categoryId], references: [id])
@@ -234,6 +239,7 @@ model SubExpCategory{
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
 
+  expenses            Expense[]
   expCategoryId          String @db.ObjectId
   expCategory           ExpCategory @relation(fields: [expCategoryId], references: [id])
 }

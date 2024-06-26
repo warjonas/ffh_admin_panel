@@ -1,15 +1,17 @@
 'use client';
 
 import { getRole } from '@/actions/getRole';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { UserProfile, useUser } from '@auth0/nextjs-auth0/client';
 import React from 'react';
-import useSWR from 'swr';
 
-type Props = {};
+interface DetailProps {
+  userDetails?: UserProfile;
+  role?: string;
+}
 
 const fetcher = (email: string) => getRole(email).then((res) => res);
 
-const Details = (props: Props) => {
+const Details: React.FC<DetailProps> = ({ userDetails, role }) => {
   const { user, error, isLoading } = useUser();
 
   if (isLoading) return <div>Loading...</div>;
