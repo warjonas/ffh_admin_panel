@@ -12,7 +12,14 @@ export async function GET(req: Request) {
           flagDelete: false,
         },
       },
-      include: { deceased: true },
+      include: {
+        deceased: true,
+        cross: true,
+        tombstone: true,
+        coffin: true,
+        grave: true,
+        receipts: true,
+      },
     });
 
     return NextResponse.json(arrangement);
@@ -35,6 +42,7 @@ export async function POST(req: Request) {
     const {
       bus,
       digger,
+      crossSizeId,
       familyReps,
       deceased,
       deliveryAddress,
@@ -99,6 +107,11 @@ export async function POST(req: Request) {
         deliveryAddress,
         deliveryTime,
         church,
+        cross: {
+          connect: {
+            id: crossSizeId,
+          },
+        },
         grave: {
           connect: {
             id: graveId,

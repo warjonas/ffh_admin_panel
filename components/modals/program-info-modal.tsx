@@ -189,11 +189,20 @@ export const InfoModal = () => {
                     {data?.atHome?.officiatingMinister}
                   </span>
                 </p>
+                <p className="font-semibold">
+                  Start Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atHome?.startTime
+                      ? data?.atHome?.startTime
+                      : 'Not Provided.'}
+                  </span>
+                </p>
               </div>
               <hr className="w-full my-5 border-secondary-foreground " />
               <div className="flex flex-col gap-y-2">
                 <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Service at Home
+                  Service at Church
                 </h1>
                 <p className="font-semibold">
                   Officiating Minister:{' '}
@@ -223,6 +232,24 @@ export const InfoModal = () => {
                     {data?.atChurch?.otherItems}
                   </span>
                 </p>
+                <p className="font-semibold">
+                  Start Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atChurch?.startTime
+                      ? data?.atChurch?.startTime
+                      : 'Not Provided'}
+                  </span>
+                </p>
+                <p className="font-semibold">
+                  End Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atChurch?.endTime
+                      ? data?.atChurch?.endTime
+                      : 'Not Provided'}
+                  </span>
+                </p>
               </div>
               <hr className="w-full my-5 border-secondary-foreground " />
               <div>
@@ -233,7 +260,9 @@ export const InfoModal = () => {
                   Name of Hymn Book:
                   <span className="font-normal">
                     {' '}
-                    {data?.hymn?.nameOfHymnBook}
+                    {data?.hymn?.nameOfHymnBook
+                      ? data?.hymn?.nameOfHymnBook
+                      : 'Not Provided'}
                   </span>
                 </p>
                 <div className="grid grid-cols-3 w-full">
@@ -256,7 +285,11 @@ export const InfoModal = () => {
                 <h1 className="font-semibold text-center text-lg underline bg-blue-200">
                   Any other information
                 </h1>
-                <p>{data?.otherInformation}</p>
+                <p className="py-2 text-center">
+                  {data?.otherInformation
+                    ? data?.otherInformation
+                    : 'Not provided'}
+                </p>
               </div>
               <hr className="w-full my-5 border-secondary-foreground" />
 
@@ -269,21 +302,25 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Into House
                     </h2>
-                    {data?.pallbearersInHouse.map((house, index) => (
-                      <p key={index + house.lastName}>
-                        {house.firstName} {house.lastName}
-                      </p>
-                    ))}
+                    {data?.pallbearersInHouse
+                      ? data?.pallbearersInHouse.map((house, index) => (
+                          <p key={index + house.lastName}>
+                            {house.firstName} {house.lastName}
+                          </p>
+                        ))
+                      : 'Not Provided'}
                   </div>
                   <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
                     <h2 className="text-center font-semibold underline">
                       Out of House
                     </h2>
-                    {data?.pallbearersOutHouse.map((house, index) => (
-                      <p key={index + house.lastName}>
-                        {house.firstName} {house.lastName}
-                      </p>
-                    ))}
+                    {data?.pallbearersOutHouse
+                      ? data?.pallbearersOutHouse.map((house, index) => (
+                          <p key={index + house.lastName}>
+                            {house.firstName} {house.lastName}
+                          </p>
+                        ))
+                      : 'Not Provided'}
                   </div>
                 </div>
                 <hr className="w-1/2 self-center my-5 border-secondary-foreground" />
@@ -293,21 +330,25 @@ export const InfoModal = () => {
                     <h2 className="text-center font-semibold underline">
                       Into Church
                     </h2>
-                    {data?.pallbearersInChurch.map((church, index) => (
-                      <p key={index + church.lastName}>
-                        {church.firstName} {church.lastName}
-                      </p>
-                    ))}
+                    {data?.pallbearersInChurch.length
+                      ? data?.pallbearersInChurch.map((church, index) => (
+                          <p key={index + church.lastName}>
+                            {church.firstName} {church.lastName}
+                          </p>
+                        ))
+                      : 'Not Provided'}
                   </div>
                   <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
                     <h2 className="text-center font-semibold underline">
                       Out of Church
                     </h2>
-                    {data?.pallbearersOutChurch.map((church, index) => (
-                      <p key={index + church.lastName}>
-                        {church.firstName} {church.lastName}
-                      </p>
-                    ))}
+                    {data?.pallbearersOutChurch
+                      ? data?.pallbearersOutChurch.map((church, index) => (
+                          <p key={index + church.lastName}>
+                            {church.firstName} {church.lastName}
+                          </p>
+                        ))
+                      : 'Not Provided'}
                   </div>
                 </div>
 
@@ -316,11 +357,15 @@ export const InfoModal = () => {
                   <h2 className="text-center font-semibold underline">
                     To the Grave
                   </h2>
-                  {data?.pallbearersGrave.map((grave, index) => (
-                    <p key={index + grave.lastName}>
-                      {grave.firstName} {grave.lastName}
-                    </p>
-                  ))}
+                  {data?.pallbearersGrave.length ? (
+                    data?.pallbearersGrave.map((grave, index) => (
+                      <p key={index + grave.lastName}>
+                        {grave.firstName} {grave.lastName}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-black">Not Provided</p>
+                  )}
                 </div>
               </div>
             </section>

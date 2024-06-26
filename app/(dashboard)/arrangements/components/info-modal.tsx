@@ -311,6 +311,11 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     </p>
 
                     <p className="font-medium">
+                      <span className="font-semibold"> cross Size: </span>
+                      {data.cross ? data?.cross.size : data.crossSize}
+                    </p>
+
+                    <p className="font-medium">
                       <span className="font-semibold"> Storage: </span>
                       {formatter.format(data?.storage)}
                     </p>

@@ -20,6 +20,10 @@ import AddOnModal from '@/components/modals/add-addOn';
 import ViewPaymentsModal from '@/components/modals/view-payments-modal';
 import DeathRegistration from '@/app/(dashboard)/deceased/components/deathRegistraion';
 import OutstandingPaymentsModal from '@/components/modals/outstanding-payments-modal';
+import AddCrossModal from '@/components/modals/add-cross';
+import AddExpCategoryModal from '@/components/modals/add-exp-category';
+import AddSubCategoryModal from '@/components/modals/add-sub-category-modal';
+import { SubCategoryListModal } from '@/components/modals/sub-category-list-modal';
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -46,7 +50,11 @@ export const ModalProvider = () => {
       <RemovalReceiptModal />
       <AddCoffinModal />
       <AddGraveModal />
+      <AddCrossModal />
       <AddTombstoneModal />
+      <AddExpCategoryModal />
+      <AddSubCategoryModal />
+      <SubCategoryListModal />
       <AddOnModal />
       <ViewPaymentsModal />
       <DeathRegistration />

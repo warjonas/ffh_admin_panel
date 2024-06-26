@@ -185,11 +185,20 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                     {data?.atHome?.officiatingMinister}
                   </span>
                 </p>
+                <p className="font-semibold">
+                  Start Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atHome?.startTime
+                      ? data?.atHome?.startTime
+                      : 'Not Provided.'}
+                  </span>
+                </p>
               </div>
               <hr className="w-full my-5 border-secondary-foreground " />
               <div className="flex flex-col gap-y-2">
                 <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Service at Home
+                  Service at Church
                 </h1>
                 <p className="font-semibold">
                   Officiating Minister:{' '}
@@ -217,6 +226,24 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   <span className="font-normal">
                     {' '}
                     {data?.atChurch?.otherItems}
+                  </span>
+                </p>
+                <p className="font-semibold">
+                  Start Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atChurch?.startTime
+                      ? data?.atChurch?.startTime
+                      : 'Not Provided'}
+                  </span>
+                </p>
+                <p className="font-semibold">
+                  End Time:{' '}
+                  <span className="font-normal">
+                    {' '}
+                    {data?.atChurch?.endTime
+                      ? data?.atChurch?.endTime
+                      : 'Not Provided'}
                   </span>
                 </p>
               </div>

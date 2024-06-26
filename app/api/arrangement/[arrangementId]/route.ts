@@ -25,6 +25,7 @@ export async function GET(
         deceased: true,
         receipts: true,
         grave: true,
+        cross: true,
       },
     });
 
@@ -48,7 +49,7 @@ export async function PATCH(
 
     const {
       familyReps,
-
+      crossSizeId,
       deliveryAddress,
       deliveryTime,
       minister,
@@ -101,6 +102,11 @@ export async function PATCH(
         storageDays,
         notes,
         outstandingBalance,
+        cross: {
+          connect: {
+            id: crossSizeId,
+          },
+        },
         tombstone: {
           connect: {
             id: tombstoneId,

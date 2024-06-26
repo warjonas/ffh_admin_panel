@@ -71,6 +71,8 @@ export interface Arrangement {
   minister: Minister;
   createdBy: string;
   crossSize: string;
+  crossId: string;
+  cross: CrossSize;
   arrangementAddOnItems: ArrangementAddOnItem[];
   programs: number;
   storage: number;
@@ -119,6 +121,13 @@ export interface Grave {
   price: number;
 }
 
+export interface CrossSize {
+  id: string;
+  size: string;
+  price: number;
+  arrangements: Arrangement[];
+}
+
 export interface User {
   full_name: string;
   email: string;
@@ -131,6 +140,36 @@ export interface ArrangementAddOnItem {
   name: string;
   qty: number;
   price: number;
+}
+
+export interface Expense {
+  id: string;
+  description: string;
+  cost: number;
+  createdOn: Date;
+  receiptUrl: string;
+  categoryId: string;
+  category: ExpCategory;
+}
+
+export interface ExpCategory {
+  id: string;
+  name: string;
+  expenses: Expense[];
+  subCategories: SubExpCategory[];
+}
+
+export interface SubExpCategory {
+  id: string;
+  name: string;
+
+  expCategoryId: string;
+  expCategory: ExpCategory;
+}
+
+export interface QueryProps {
+  name: string;
+  value: string;
 }
 
 interface AdditionalItems {
