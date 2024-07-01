@@ -83,7 +83,7 @@ const ExpenseView = ({ data, tableData }: ExpenseViewProps) => {
               <h1 className="text-2xl">
                 {mostRecLoading
                   ? 'Loading...'
-                  : mostRec[0].description +
+                  : mostRec[0]?.description +
                     ' - ' +
                     formatter.format(mostRec[0].cost)}
               </h1>
