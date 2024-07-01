@@ -3,13 +3,24 @@ import Heading from '@/components/ui/heading';
 import React, { Suspense } from 'react';
 import Loading from '../Loading';
 import { ExpenseClient } from './components/client';
-import { getExpenses } from '@/actions/getExpenses';
+import { getExpenseTypes } from '@/actions/getExpenseTypes';
 import { ExpenseColumn } from './components/columns';
+import { getExpenses } from '@/actions/getExpenses';
+import { getCategories } from '@/actions/getExpenseCategories';
+import { getSubCategories } from '@/actions/getSubCategories';
 
-type Props = {};
+interface ExpenseViewProps {
+  searchParams: {
+    categoryId: string;
+    subCatId: string;
+  };
+}
 
-const Finance = async (props: Props) => {
-  const expenses = await getExpenses();
+const Finance = async ({ searchParams }: ExpenseViewProps) => {
+  const expenses = await getExpenses({
+    categoryId: searchParams.categoryId,
+    subCatId: searchParams.subCatId,
+  });
 
   const formattedExpenses: ExpenseColumn[] = expenses.map((item) => ({
     id: item.id,
@@ -20,10 +31,14 @@ const Finance = async (props: Props) => {
     created: new Date(item.createdOn),
   }));
 
+  const categories = await getCategories();
+
+  const subCategories = await getSubCategories(searchParams.categoryId);
+
   return (
     <section className="p-5 w-full h-full">
       <Suspense fallback={<Loading />}>
-        <Heading title="Finances" subtitle="Add and Track Expenses" />
+        <Heading title="Expenses" subtitle="Add and Track Expenses" />
         <section>
           <div className="flex justify-between">
             <HeaderOptions title="New Expense" link="expense" />
@@ -31,8 +46,12 @@ const Finance = async (props: Props) => {
         </section>
 
         <section className="flex flex-row h-full mt-5 mb-5">
-          <div className="w-3/4 xl:w-2/3 h-full">
-            <ExpenseClient data={formattedExpenses} />
+          <div className="w-3/4  h-full">
+            <ExpenseClient
+              data={formattedExpenses}
+              categories={categories}
+              subCategories={subCategories}
+            />
           </div>
         </section>
       </Suspense>

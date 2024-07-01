@@ -38,7 +38,7 @@ const formSchema = z.object({
   category: z.string().min(1),
   subCat: z.string().min(1),
   cost: z.coerce.number(),
-  receiptUrl: z.string().min(1),
+  receiptUrl: z.string(),
 });
 
 type ExpenseFormValues = z.infer<typeof formSchema>;
@@ -74,6 +74,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       router.back();
 
       toast.success('Expense added successfully');
+      router.refresh();
       setIsLoading(false);
     }
 
@@ -220,7 +221,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 <ImageUpload
                   value={field.value ? [field.value] : []}
                   disabled={isLoading}
-                  onChange={(url: string) => field.onChange(url)}
+                  onChange={(url) => field.onChange(url)}
                   onRemove={() => field.onChange('')}
                   preset="qsoym9s1"
                 />

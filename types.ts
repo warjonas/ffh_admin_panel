@@ -1,3 +1,58 @@
+export interface TableData {
+  id: string;
+  category: string;
+  month: [
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    },
+    {
+      name: string;
+      total: number;
+    }
+  ];
+}
+
 export interface Deceased {
   id: string;
   ffhMemberNo: string;

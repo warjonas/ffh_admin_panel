@@ -8,7 +8,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 
 interface ImageUploadProps {
   disabled?: boolean;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
   onRemove?: (value: string) => void;
   value?: string[];
   preset: string;
@@ -30,6 +30,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   if (!isMounted) {
     return null;
   }
+
+  const onUpload = (result: any) => {
+    onChange(result.info.secure_url);
+  };
 
   return (
     <div className="w-full flex ">
@@ -55,14 +59,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </div>
         ))}
       </div>
-      <CldUploadWidget uploadPreset={preset}>
+      <CldUploadWidget onUpload={onUpload} uploadPreset={preset}>
         {({ open }) => {
           const onClick = () => {
             open();
           };
 
           return (
-            <Button type="button" variant={'secondary'} onClick={onClick}>
+            <Button
+              disabled={disabled}
+              type="button"
+              variant={'secondary'}
+              onClick={onClick}
+            >
               <ImagePlusIcon className="h-4 w-4 mr-2" />
               Upload
             </Button>

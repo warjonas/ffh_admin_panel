@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['i.ibb.co'],
+    remotePatterns: [
+      { hostname: 'i.ibb.co' },
+      { hostname: 'res.cloudinary.com' },
+    ],
   },
 };
 

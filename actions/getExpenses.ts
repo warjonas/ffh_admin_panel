@@ -1,13 +1,28 @@
 import prismadb from '@/lib/prismadb';
-import { ExpCategory } from '@/types';
+import { Expense } from '@/types';
+import { ExpCategory, SubExpCategory } from '@prisma/client';
 
-export const getExpenses = async () => {
-  const categories = await prismadb.expense.findMany({
+interface Query {
+  categoryId?: string;
+  subCatId?: string;
+}
+
+export const getExpenses = async (query?: Query) => {
+  const expenses = await prismadb.expense.findMany({
+    where: {
+      category: {
+        id: query?.categoryId,
+      },
+      subCategory: {
+        id: query?.subCatId,
+      },
+    },
+
     include: {
       category: true,
       subCategory: true,
     },
   });
 
-  return categories;
+  return expenses;
 };
