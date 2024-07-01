@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from '../cell-action';
 // import { CellAction } from './cell-action';
 
 export type SalesColumn = {
@@ -46,13 +45,6 @@ export const columns: ColumnDef<SalesColumn>[] = [
           <div className="text-slate-50 p-2 bg-red-800 rounded-lg"> Unpaid</div>
         )}
       </div>
-    ),
-  },
-
-  {
-    id: 'actions',
-    cell: ({ row }) => (
-      <CellAction data={row.original} deceasedId={row.original.deceasedId} />
     ),
   },
 ];
