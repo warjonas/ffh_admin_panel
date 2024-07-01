@@ -7,7 +7,6 @@ import SalesView from './sales-view';
 import OtherView from './other-view';
 import { Expense } from '@prisma/client';
 import { ExpenseColumns } from './columns/expense-columns';
-import { TableData } from '@/app/api/stats/expByCat/route';
 
 interface SidebarViewProps {
   expenseData: Expense[];

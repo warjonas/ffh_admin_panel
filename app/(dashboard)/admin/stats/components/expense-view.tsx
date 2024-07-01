@@ -8,7 +8,6 @@ import { DollarSign } from 'lucide-react';
 import React from 'react';
 import useSWR from 'swr';
 import { ExpenseColumns } from './columns/expense-columns';
-import { TableData } from '@/app/api/stats/expByCat/route';
 import { ExpenseClient } from './clients/expense-client';
 
 interface ExpenseViewProps {
