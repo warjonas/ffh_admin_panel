@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from '../cell-action';
 import { formatter } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
