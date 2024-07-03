@@ -141,7 +141,9 @@ export const SubCategoryListModal = () => {
               );
             })
           ) : (
-            <p className="my-5 text-center">No Data Available.</p>
+            <p className="my-5 text-center">
+              {isLoading ? 'Loading ...' : 'No Data Available.'}
+            </p>
           )}
         </div>
       </section>

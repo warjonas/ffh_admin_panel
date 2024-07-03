@@ -4,15 +4,6 @@ import React, { useState } from 'react';
 import { ExpenseColumns, columns } from '../columns/expense-columns';
 import { DataTable } from '@/components/ui/data-table';
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { SalesColumn } from '../columns/sales-columns';
 import { TableData } from '@/types';

@@ -9,12 +9,15 @@ import { TableData } from '@/types';
 
 interface ClientProps {
   data: TableData[];
+
+  categoryId: string;
 }
 
-export const Client: React.FC<ClientProps> = ({ data }) => {
+export const Client: React.FC<ClientProps> = ({ data, categoryId }) => {
   const formattedData: Columns[] = data.map((item, i) => ({
     id: item.id,
     category: item.category,
+    categoryId: categoryId,
     Jan: item.month[0].total,
     Feb: item.month[1].total,
     Mar: item.month[2].total,

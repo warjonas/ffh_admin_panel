@@ -31,7 +31,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { expCatId: string } }
+  { params }: { params: { categoryId: string } }
 ) {
   try {
     const session = await getSession();
@@ -50,11 +50,9 @@ export async function PATCH(
       });
     }
 
-    console.log('cat id', params.expCatId);
-
     const expCategory = await prismadb.expCategory.update({
       where: {
-        id: params.expCatId,
+        id: params.categoryId,
       },
       data: {
         name,

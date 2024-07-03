@@ -9,7 +9,7 @@ import Link from 'next/link';
 export type Columns = {
   id: string;
   category: string;
-
+  categoryId: string;
   Jan: number;
   Feb: number;
   Mar: number;
@@ -30,7 +30,9 @@ export const columns: ColumnDef<Columns>[] = [
     header: 'Category',
     cell: ({ row }) => (
       <div>
-        <Link href={`/admin/stats/${row.original.id}`}>
+        <Link
+          href={`/admin/stats/${row.original.categoryId}/${row.original.id}`}
+        >
           {row.original.category}
         </Link>
       </div>

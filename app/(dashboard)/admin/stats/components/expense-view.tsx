@@ -94,7 +94,7 @@ const ExpenseView = ({ data, tableData }: ExpenseViewProps) => {
         </Card>
       </section>
       <section className="flex flex-row h-full mt-5 mb-5">
-        <div className="w-3/4  h-full">
+        <div className="w-full  h-full">
           <ExpenseClient data={tableData} />
         </div>
       </section>
