@@ -21,6 +21,8 @@ export default async function DashboardLayout({ children }: Props) {
     redirect('/api/auth/login');
   }
 
+  // console.log('session', session);
+
   return (
     <main className="flex flex-col h-[80%] xl:h-full w-full overflow-auto relative">
       <Navbar />

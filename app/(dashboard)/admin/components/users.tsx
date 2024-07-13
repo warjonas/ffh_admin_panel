@@ -66,7 +66,7 @@ const Users = (props: Props) => {
         ) : (
           <div className="flex flex-col gap-5 w-full">
             {data ? (
-              data.map((user: any) => (
+              data?.map((user: any) => (
                 <div
                   className=" grid grid-cols-6 flex-row w-full justify-between  border-b pb-2 gap-y-2 items-center"
                   key={user.email}
@@ -86,13 +86,15 @@ const Users = (props: Props) => {
                   <h2 className="font-medium col-start-5">
                     Role: <br />
                     <span className="font-normal">
-                      {user.app_metadata.user_role}
+                      {user?.app_metadata?.user_role}
                     </span>
                   </h2>
                   <h2 className="font-medium col-start-6">
                     Last logged In: <br />
                     <span className="font-normal">
-                      {format(new Date(user.last_login), 'dd/MM/yyyy')}
+                      {user.last_login
+                        ? format(new Date(user.last_login), 'dd/MM/yyyy')
+                        : 'None'}
                     </span>
                   </h2>
                   <X className="h-6 w-6 bg-red-900 text-background rounded-full col-start-7 justify-center ml-20 mr-20 hover:cursor-pointer" />

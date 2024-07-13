@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart,
   Car,
@@ -37,6 +37,7 @@ import {
   useUpcomingRemovalsModal,
 } from '@/hooks/use-removal-modal';
 import { usePaymentTypeModal } from '@/hooks/use-payment-modal';
+import { useRole } from '@/hooks/use-role-store';
 
 type Props = {};
 
@@ -45,6 +46,7 @@ const MainNavActions = (props: Props) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [role, setRole] = useState('');
 
   const deceasedModal = useDeceasedModal();
   const arrangementModal = useArrangementModal();
@@ -53,12 +55,14 @@ const MainNavActions = (props: Props) => {
   const paymentType = usePaymentTypeModal();
   const paymentsModal = useViewPaymentsModal();
   const outstandingModal = useOutstandingPaymentsModal();
+  const roleStore = useRole();
 
   const actions = [
     {
       name: 'Dashboard',
       icon: <LayoutDashboard />,
       link: '/',
+      permision: 'Administrator',
       active: pathname === `/`,
       items: [
         {
@@ -73,7 +77,7 @@ const MainNavActions = (props: Props) => {
     {
       name: 'Funeral Services',
       icon: <ScrollText />,
-
+      permision: 'General',
       items: [
         {
           title: 'Add Deceased Details',
@@ -116,7 +120,7 @@ const MainNavActions = (props: Props) => {
     {
       name: 'Removals',
       icon: <Car />,
-
+      permision: 'General',
       items: [
         {
           title: 'All Removals',
@@ -150,6 +154,7 @@ const MainNavActions = (props: Props) => {
       name: 'Financial Services',
       icon: <Receipt />,
       link: '/invoices',
+      permision: 'Administrator',
       items: [
         {
           title: 'Invoices',
@@ -185,6 +190,7 @@ const MainNavActions = (props: Props) => {
       name: 'Admin Utilities',
       icon: <BarChart />,
       link: '/admin',
+      permision: 'Administrator',
       items: [
         {
           title: 'Statistics',
@@ -222,35 +228,70 @@ const MainNavActions = (props: Props) => {
   return (
     <>
       <ul className="flex gap-x-2">
-        {actions.map((action) => (
-          <DropdownMenu key={action.name}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-1">
-                {action.icon} {action.name}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>{action.name}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                {action.items?.map((item) => (
-                  <div key={item.title}>
-                    <DropdownMenuItem
-                      onClick={
-                        item.type === 'Function'
-                          ? item.func
-                          : () => router.push(item.link)
-                      }
-                    >
-                      {item.title}
-                    </DropdownMenuItem>
-                    {item.break && <DropdownMenuSeparator />}
-                  </div>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ))}
+        {actions.map((action) =>
+          roleStore.userRole == 'Administrator' &&
+          (action.permision == 'Administrator' ||
+            action.permision == 'General') ? (
+            <DropdownMenu key={action.name}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-1">
+                  {action.icon} {action.name}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>{action.name}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  {action.items?.map((item) => (
+                    <div key={item.title}>
+                      <DropdownMenuItem
+                        onClick={
+                          item.type === 'Function'
+                            ? item.func
+                            : () => router.push(item.link)
+                        }
+                      >
+                        {item.title}
+                      </DropdownMenuItem>
+                      {item.break && <DropdownMenuSeparator />}
+                    </div>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            roleStore.userRole == 'General' &&
+            action.permision == 'General' && (
+              <DropdownMenu key={action.name}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-1">
+                    {action.icon} {action.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>{action.name}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    {action.items?.map((item) => (
+                      <div key={item.title}>
+                        <DropdownMenuItem
+                          onClick={
+                            item.type === 'Function'
+                              ? item.func
+                              : () => router.push(item.link)
+                          }
+                        >
+                          {item.title}
+                        </DropdownMenuItem>
+                        {item.break && <DropdownMenuSeparator />}
+                      </div>
+                    ))}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )
+          )
+        )}
       </ul>
     </>
   );

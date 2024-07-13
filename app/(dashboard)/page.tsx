@@ -23,6 +23,8 @@ import { getGraveStats } from '@/actions/getGraveStats';
 import { getPastFunerals } from '@/actions/getPastFunerals';
 import { getPopularCoffin } from '@/actions/getPopularCoffin';
 import Loading from './Loading';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
 
 type Props = {};
 
@@ -39,7 +41,10 @@ const Home = async (props: Props) => {
 
   return (
     <section className="p-5 w-full h-full flex-col justify-between xl:gap-y-4">
-      <Heading title="Dashboard" subtitle="Overview of business performance" />
+      <Heading
+        title="Dashboard"
+        subtitle={`Overview of business performance `}
+      />
 
       <Suspense fallback={<Loading />}>
         <section className="grid gap-4 grid-cols-4 mb-4 h-[10%] xl:h-[20%]">

@@ -5,10 +5,11 @@ import Heading from '@/components/ui/heading';
 import Sidebar from './components/sidebar';
 import SidebarViews from './components/sidebar-views';
 import Loading from '../Loading';
+import { getRole } from '@/actions/getRole';
 
 type Props = {};
 
-const Admin = (props: Props) => {
+const Admin = async (props: Props) => {
   return (
     <section className="p-5 w-full h-full flex flex-col">
       <Suspense fallback={<Loading />}>

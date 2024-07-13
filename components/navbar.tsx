@@ -5,13 +5,14 @@ import MainNavActions from './main-nav-actions';
 import Details from './details';
 import { getSession } from '@auth0/nextjs-auth0';
 import { getRole } from '@/actions/getRole';
+import axios from 'axios';
 
 type Props = {};
 
 const Navbar = async (props: Props) => {
   // const data = await getSession();
 
-  // const role = await getRole('data?.user.');
+  // const res = await getRole();
 
   return (
     <nav className="h-14 p-2 shadow-md bg-background flex justify-between sticky top-0">

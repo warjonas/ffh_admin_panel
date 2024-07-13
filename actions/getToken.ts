@@ -17,5 +17,5 @@ export const GetToken = async () => {
       }
     );
 
-  return data;
+  return data.access_token;
 };
