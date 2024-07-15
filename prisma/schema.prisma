@@ -244,6 +244,36 @@ model SubExpCategory{
   expCategory           ExpCategory @relation(fields: [expCategoryId], references: [id])
 }
 
+model Vehicle{
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  registration          String
+  colour                 String
+  addedOn               DateTime
+  available             Boolean @default(true)
+
+  logs                  VehicleLog[]
+  
+}
+
+
+model VehicleLog{
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  driver                String  
+  checkedOut            Checked
+  checkedIn             Checked?
+
+  vehicleId            String @db.ObjectId
+  vehicle              Vehicle @relation(fields: [vehicleId], references: [id])
+}
+
+
+type Checked{
+  time                DateTime
+  odometerReading     Int
+  // odometerPicture     String
+
+}
+
 type ArrangementAddOnItem{
   name      String
   qty       Int

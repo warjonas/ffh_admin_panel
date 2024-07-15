@@ -20,9 +20,8 @@ const Navbar = async (props: Props) => {
         <MainNavActions />
       </section>
       <section className="flex gap-2">
-        <Suspense fallback={<div>Loading ...</div>}>
-          <Details />
-        </Suspense>
+        <Details />
+
         <a href="/api/auth/logout">
           <Button
             variant={'outline'}

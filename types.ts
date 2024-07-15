@@ -227,6 +227,32 @@ export interface QueryProps {
   value: string;
 }
 
+export interface Vehicle {
+  id: string;
+  registration: string;
+  colour: string;
+  addedOn: Date;
+  available: Boolean;
+
+  logs: VehicleLog[];
+}
+
+export interface VehicleLog {
+  id: string;
+  driver: string;
+  checkedOut: Checked;
+  checkedIn: Checked;
+
+  vehicleId: string;
+  vehicle: Vehicle;
+}
+
+interface Checked {
+  time: Date;
+  odometerReading: number;
+  // odometerPicture     String
+}
+
 interface AdditionalItems {
   description: string;
   amount: number;
