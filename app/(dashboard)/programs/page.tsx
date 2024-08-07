@@ -23,6 +23,9 @@ const Programs = async (props: Props) => {
         },
       },
     },
+    orderBy: {
+      created: 'desc',
+    },
   });
 
   const formattedPrograms: FuneralProgramColumn[] = funeralPrograms.map(
