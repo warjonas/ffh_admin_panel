@@ -37,16 +37,21 @@ const Details: React.FC<DetailProps> = ({ userDetails }) => {
     }
   }, [role]);
 
-  if (isLoading) return <div>Loading...</div>;
-
   if (error) return <div>{error.message}</div>;
 
   return (
     <div className=" hidden lg:flex items-center justify-center h-full">
       <h1 className="font-semibold  mr-2">Signed In as:</h1>
-      <h2>
-        {user?.name} - ({userRole}){' '}
-      </h2>
+
+      {isLoading ? (
+        <div className="w-48 justify-center animate-pulse items-center">
+          Loading...
+        </div>
+      ) : (
+        <h2>
+          {user?.name} - ({userRole ? userRole : 'Loading'}){' '}
+        </h2>
+      )}
     </div>
   );
 };

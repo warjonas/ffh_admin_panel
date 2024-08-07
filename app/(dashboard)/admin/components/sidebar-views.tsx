@@ -9,6 +9,7 @@ import Users from './users';
 import AddOns from './addOns';
 import Crosses from './crosses';
 import ExpenseCategories from './expenses';
+import Vehicles from './vehicles';
 
 type Props = {};
 
@@ -48,6 +49,8 @@ const SidebarViews = (props: Props) => {
       return <ExpenseCategories />;
     case 'addOns':
       return <AddOns />;
+    case 'vehicles':
+      return <Vehicles />;
     default:
       return <div>Please choose an option</div>;
   }

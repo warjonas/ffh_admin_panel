@@ -6,6 +6,12 @@ interface useModalStore {
   onClose: () => void;
 }
 
+export const useVehicleModal = create<useModalStore>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));
+
 export const useDeceasedModal = create<useModalStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),

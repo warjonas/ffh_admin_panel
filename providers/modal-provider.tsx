@@ -24,6 +24,7 @@ import AddCrossModal from '@/components/modals/add-cross';
 import AddExpCategoryModal from '@/components/modals/add-exp-category';
 import AddSubCategoryModal from '@/components/modals/add-sub-category-modal';
 import { SubCategoryListModal } from '@/components/modals/sub-category-list-modal';
+import AddVehicleModal from '@/components/modals/add-vehicle-modal';
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -59,6 +60,7 @@ export const ModalProvider = () => {
       <ViewPaymentsModal />
       <DeathRegistration />
       <OutstandingPaymentsModal />
+      <AddVehicleModal />
     </>
   );
 };

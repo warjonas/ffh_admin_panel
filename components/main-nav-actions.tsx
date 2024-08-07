@@ -43,11 +43,8 @@ type Props = {};
 
 const MainNavActions = (props: Props) => {
   const pathname = usePathname();
-  const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [role, setRole] = useState('');
-
   const deceasedModal = useDeceasedModal();
   const arrangementModal = useArrangementModal();
   const removalModal = useRemovalModal();
