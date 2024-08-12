@@ -60,6 +60,7 @@ export async function PATCH(
       idNumber,
       dateOfBirth,
       removalFrom,
+      removalTime,
       ffhMemberNo,
       deathCertificateRecipient,
       updatedBy,
@@ -95,6 +96,12 @@ export async function PATCH(
         status: 400,
       });
     }
+
+    if (!removalTime) {
+      return new NextResponse('Removal Time is required', {
+        status: 400,
+      });
+    }
     if (!removalDate) {
       return new NextResponse('Removal Date is required', {
         status: 400,
@@ -111,6 +118,7 @@ export async function PATCH(
         idNumber,
         dateOfBirth: new Date(dateOfBirth),
         removalFrom,
+        removalTime,
         ffhMemberNo,
         deathCertificateRecipient,
         dateOfDeath: new Date(dateOfDeath),

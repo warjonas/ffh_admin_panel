@@ -1,7 +1,6 @@
 'use client';
 
 import AddArrangmentModal from '@/components/modals/add-arrangement-modal';
-import AddDeceasedModal from '@/components/modals/add-deceased-modal';
 import AddRemovalModal from '@/components/modals/add-removal-modal';
 import { InfoModal as DeceasedInfoModal } from '@/components/modals/deceased-info-modal';
 import { InfoModal as ProgramInfoModal } from '@/components/modals/program-info-modal';
@@ -39,7 +38,6 @@ export const ModalProvider = () => {
 
   return (
     <>
-      <AddDeceasedModal />
       <AddArrangmentModal />
       <AddRemovalModal />
       <DeceasedInfoModal />

@@ -82,8 +82,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const onUpdate = async () => {
-    router.push(pathname + '?' + createQueryString('deceasedId', data.id));
-    deceasedModal.onOpen();
+    router.push(`/deceased/${data.id}`);
   };
 
   const onView = async () => {

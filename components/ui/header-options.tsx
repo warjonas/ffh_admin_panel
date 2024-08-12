@@ -23,7 +23,7 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
   const onSubmit = () => {
     switch (link) {
       case 'deceased':
-        deceasedModal.onOpen();
+        router.push('/deceased/new');
         break;
       case 'arrangement':
         arrangementModal.onOpen();

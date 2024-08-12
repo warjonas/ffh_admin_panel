@@ -45,7 +45,6 @@ const MainNavActions = (props: Props) => {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const deceasedModal = useDeceasedModal();
   const arrangementModal = useArrangementModal();
   const removalModal = useRemovalModal();
   const upcomingModal = useUpcomingRemovalsModal();
@@ -78,10 +77,10 @@ const MainNavActions = (props: Props) => {
       items: [
         {
           title: 'Add Deceased Details',
-          link: '',
+          link: '/deceased/new',
           break: false,
-          type: 'Function',
-          func: deceasedModal.onOpen,
+          type: 'Link',
+          func: () => {},
         },
         {
           title: 'Deceased Details',
