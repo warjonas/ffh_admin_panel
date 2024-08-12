@@ -25,11 +25,6 @@ const page = async ({ params }: Props) => {
         subtitle="Viewing detailed breakdown of expenses"
       />
 
-      <Link href={'/admin/stats'} className="flex flex-row">
-        {' '}
-        <ChevronLeft /> Back
-      </Link>
-
       <section className="flex flex-row h-full mt-5 mb-5">
         <div className="w-3/4  h-full">
           <Client data={subCatExpenses} categoryId={params.categoryId} />

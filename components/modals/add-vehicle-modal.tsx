@@ -18,6 +18,8 @@ import { Button } from '../ui/button';
 import { Vehicle } from '@/types';
 
 const formSchema = z.object({
+  model: z.string().min(1),
+  odometer: z.coerce.number(),
   registration: z.string().min(1),
   colour: z.string().min(1),
 });
@@ -46,6 +48,8 @@ const AddVehicleModal = () => {
     defaultValues: {
       registration: '',
       colour: '',
+      odometer: 0,
+      model: '',
     },
   });
 
@@ -80,6 +84,8 @@ const AddVehicleModal = () => {
         await axios.post(`/api/vehicle`, data);
       }
 
+      form.reset();
+
       addVehicle.onClose();
 
       toast.success(toastMessage);
@@ -113,6 +119,8 @@ const AddVehicleModal = () => {
     if (data) {
       setValue('registration', data.registration);
       setValue('colour', data.colour);
+      setValue('model', data.model);
+      setValue('odometer', data.odometer);
     }
   }, [vehicleId]);
 
@@ -153,6 +161,20 @@ const AddVehicleModal = () => {
         >
           <FormField
             control={form.control}
+            name="model"
+            render={({ field }) => (
+              <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                <FormLabel className="font-semibold">
+                  Vehicle Registration
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g. Toyota" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="registration"
             render={({ field }) => (
               <FormItem className=" w-full md:w-1/2 xl:w-1/2">
@@ -160,7 +182,7 @@ const AddVehicleModal = () => {
                   Vehicle Registration
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Presidential" {...field} />
+                  <Input placeholder="e.g. HWR 778 EC" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -172,7 +194,19 @@ const AddVehicleModal = () => {
               <FormItem className=" w-full md:w-1/2 xl:w-1/2">
                 <FormLabel className="font-semibold">Vehicle Colour</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Presidential" {...field} />
+                  <Input placeholder="e.g. Blue" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="odometer"
+            render={({ field }) => (
+              <FormItem className=" w-full md:w-1/2 xl:w-1/2">
+                <FormLabel className="font-semibold">Odometer</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g. 110576" {...field} type="number" />
                 </FormControl>
               </FormItem>
             )}

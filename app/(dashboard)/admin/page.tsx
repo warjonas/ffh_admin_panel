@@ -13,7 +13,7 @@ const Admin = async (props: Props) => {
   return (
     <section className="p-5 w-full h-full flex flex-col">
       <Suspense fallback={<Loading />}>
-        <Heading title="Settings" subtitle="Manage User access and more " />
+        <Heading title="Manage" subtitle="Manage User access and more " />
 
         <section className="flex flex-row w-full gap-x-20">
           <Sidebar />

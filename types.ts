@@ -233,6 +233,8 @@ export interface Vehicle {
   colour: string;
   addedOn: Date;
   available: Boolean;
+  model: string;
+  odometer: number;
 
   logs: VehicleLog[];
 }

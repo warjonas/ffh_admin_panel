@@ -205,14 +205,14 @@ const MainNavActions = (props: Props) => {
         },
 
         {
-          title: 'Manage Fortuin Website',
+          title: 'Website',
           link: '/admin/site',
           break: true,
           type: 'Link',
           func: () => setOpen(true),
         },
         {
-          title: 'Settings',
+          title: 'Manage',
           link: '/admin#coffins',
           break: false,
           type: 'Link',
@@ -224,7 +224,7 @@ const MainNavActions = (props: Props) => {
 
   return (
     <>
-      <ul className="flex gap-x-2">
+      <ul className="flex gap-x-2 transition-all duration-200">
         {actions.map((action) =>
           roleStore.userRole == 'Administrator' &&
           (action.permision == 'Administrator' ||

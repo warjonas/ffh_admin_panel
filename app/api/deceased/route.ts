@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       ffhMemberNo,
       createdBy,
       deathCertificateRecipient,
+      removalTime,
     } = body;
 
     if (!dateOfBirth) {
@@ -89,6 +90,12 @@ export async function POST(req: Request) {
       });
     }
 
+    if (!removalTime) {
+      return new NextResponse('Removal Time is required', {
+        status: 400,
+      });
+    }
+
     const deceased = await prismadb.deceased.create({
       data: {
         lastName,
@@ -101,6 +108,7 @@ export async function POST(req: Request) {
         dateOfDeath: new Date(dateOfDeath),
         removalDate: new Date(removalDate),
         createdBy,
+        removalTime,
       },
     });
 

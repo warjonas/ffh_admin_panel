@@ -94,11 +94,17 @@ const Vehicles = (props: Props) => {
           <div className="flex flex-col gap-5">
             {data?.map((vehicle) => (
               <div
-                className=" grid grid-cols-3 flex-row w-full justify-between  border-b pb-2 "
+                className=" grid grid-cols-4 flex-row w-full justify-between p-2 transition-all duration-200  border-b pb-2 hover:cursor-pointer hover:bg-slate-50"
                 key={vehicle.id}
+                onClick={() => router.push(`/admin/vehicles/${vehicle.id}`)}
               >
-                <h2 className="font-medium col-start-1">
+                <h2 className="font-medium col-start-1">{vehicle.model}</h2>
+                <h2 className="font-medium col-start-2">
                   {vehicle.registration}
+                </h2>
+                <h2 className="font-medium col-start-3">{vehicle.colour}</h2>
+                <h2 className="font-medium col-start-4">
+                  {vehicle.odometer} KM
                 </h2>
               </div>
             ))}

@@ -22,6 +22,9 @@ export const getExpenses = async (query?: Query) => {
       category: true,
       subCategory: true,
     },
+    orderBy: {
+      createdOn: 'desc',
+    },
   });
 
   return expenses;

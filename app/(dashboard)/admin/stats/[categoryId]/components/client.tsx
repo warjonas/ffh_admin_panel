@@ -6,6 +6,9 @@ import { DataTable } from '@/components/ui/data-table';
 import { Label } from '@/components/ui/label';
 import { Columns, columns } from './columns';
 import { TableData } from '@/types';
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface ClientProps {
   data: TableData[];
@@ -14,6 +17,7 @@ interface ClientProps {
 }
 
 export const Client: React.FC<ClientProps> = ({ data, categoryId }) => {
+  const router = useRouter();
   const formattedData: Columns[] = data.map((item, i) => ({
     id: item.id,
     category: item.category,
@@ -33,7 +37,14 @@ export const Client: React.FC<ClientProps> = ({ data, categoryId }) => {
   }));
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col gap-y-2">
+      <h2
+        onClick={() => router.back()}
+        className="flex flex-row hover:cursor-pointer"
+      >
+        {' '}
+        <ChevronLeft /> Back
+      </h2>
       <DataTable
         columns={columns}
         data={formattedData}

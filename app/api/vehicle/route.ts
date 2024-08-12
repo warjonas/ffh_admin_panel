@@ -27,20 +27,21 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const { addedOn, colour, registration, available } = body;
+  const { model, odometer, colour, registration } = body;
 
   try {
     const vehicle = await prismadb.vehicle.create({
       data: {
-        addedOn,
         colour,
         registration,
+        model,
+        odometer,
       },
     });
 
     return NextResponse.json(vehicle);
   } catch (error) {
-    console.log('VEHICLE_POST');
+    console.log('VEHICLE_POST', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

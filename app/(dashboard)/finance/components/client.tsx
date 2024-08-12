@@ -32,7 +32,8 @@ export const ExpenseClient: React.FC<ExpenseClientProps> = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const id = searchParams.get('categoryId');
+  const catId = searchParams.get('categoryId');
+  const subCatId = searchParams.get('subCatId');
 
   const createQueryString = useCallback(
     (name: string, value: string) => {

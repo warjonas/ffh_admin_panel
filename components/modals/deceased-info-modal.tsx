@@ -76,6 +76,13 @@ export const InfoModal = () => {
     infoModal.onClose();
   };
 
+  const onClose = () => {
+    if (id) {
+      router.back();
+    }
+    infoModal.onClose();
+  };
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: `Deceased Details - ${data?.firstNames} ${data?.lastName}`,
@@ -91,7 +98,7 @@ export const InfoModal = () => {
         title={`Error Occurred`}
         description=""
         isOpen={infoModal.isOpen}
-        onClose={infoModal.onClose}
+        onClose={onClose}
       >
         An error occurred while fetching the data.
       </Modal>
@@ -103,7 +110,7 @@ export const InfoModal = () => {
         title={`Loading`}
         description=""
         isOpen={infoModal.isOpen}
-        onClose={infoModal.onClose}
+        onClose={onClose}
       >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -121,7 +128,7 @@ export const InfoModal = () => {
       title={`Viewing Funeral Arrangement for: ${data?.firstNames} ${data?.lastName}`}
       description="A preview of the funeral arrangement"
       isOpen={infoModal.isOpen}
-      onClose={infoModal.onClose}
+      onClose={onClose}
     >
       {isLoading && <p>Loading</p>}
       {data && (

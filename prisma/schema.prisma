@@ -247,8 +247,10 @@ model SubExpCategory{
 model Vehicle{
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   registration          String
-  colour                 String
-  addedOn               DateTime
+  colour                String
+  odometer              Int
+  model                 String
+  addedOn               DateTime @default(now())
   available             Boolean @default(true)
 
   logs                  VehicleLog[]

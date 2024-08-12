@@ -137,7 +137,7 @@ const AddDeceasedModal = () => {
         message = result.statusText;
       }
 
-      if (result.status != 500) {
+      if (result.status != 200) {
         toast.error(message);
       }
 
