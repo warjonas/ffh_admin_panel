@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
-import AddDeceasedModal from './modals/add-deceased-modal';
 import { Deceased } from '@prisma/client';
 import {
   useDeceasedModal,
@@ -131,10 +130,7 @@ const MainNavActions = (props: Props) => {
           break: false,
           type: 'Function',
           func: () => {
-            router.push('/removals');
-            setTimeout(() => {
-              removalModal.onOpen();
-            }, 500);
+            router.push('/removals/new');
           },
         },
         {

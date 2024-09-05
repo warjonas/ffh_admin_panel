@@ -16,8 +16,7 @@ type Props = {
 
 const HeaderOptions = ({ title, onClick, link }: Props) => {
   const arrangementModal = useArrangementModal();
-  const deceasedModal = useDeceasedModal();
-  const removalModal = useRemovalModal();
+
   const router = useRouter();
 
   const onSubmit = () => {
@@ -29,7 +28,8 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
         arrangementModal.onOpen();
         break;
       case 'removal':
-        removalModal.onOpen();
+        router.push('/removals/new');
+        break;
       case 'expense':
         router.push('/finance/new');
         break;

@@ -82,30 +82,32 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
 
   const form = useForm<DeceasedFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      ...deceasedDetails,
-      removalTime: deceasedDetails?.removalTime
-        ? deceasedDetails?.removalTime
-        : '',
-      updatedBy: deceasedDetails?.updatedBy ? deceasedDetails?.updatedBy : '',
-    } || {
-      dateOfDeath: new Date(),
-      dateOfBirth: new Date(),
+    defaultValues: deceasedDetails
+      ? {
+          ...deceasedDetails,
+          removalTime: deceasedDetails.removalTime
+            ? deceasedDetails?.removalTime
+            : '',
+          updatedBy: deceasedDetails.updatedBy ? deceasedDetails.updatedBy : '',
+        }
+      : {
+          dateOfDeath: new Date(),
+          dateOfBirth: new Date(),
 
-      ffhMemberNo: '',
-      lastName: '',
-      firstNames: '',
-      idNumber: '',
-      removalDate: new Date(),
-      removalFrom: {
-        street: '',
-        city: '',
-      },
-      removalTime: '',
-      deathCertificateRecipient: '',
-      createdBy: 'email',
-      updatedBy: '',
-    },
+          ffhMemberNo: '',
+          lastName: '',
+          firstNames: '',
+          idNumber: '',
+          removalDate: new Date(),
+          removalFrom: {
+            street: '',
+            city: '',
+          },
+          removalTime: '',
+          deathCertificateRecipient: '',
+          createdBy: 'email',
+          updatedBy: '',
+        },
   });
 
   const onSubmit = async (data: DeceasedFormValues) => {
