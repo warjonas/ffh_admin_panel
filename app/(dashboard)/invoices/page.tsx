@@ -10,6 +10,7 @@ import { InvoiceClient } from './components/client';
 import { formatter } from '@/lib/utils';
 import OverviewBox from './components/overview-box';
 import Loading from '../Loading';
+import HeaderOptions from '@/components/ui/header-options';
 
 type Props = {};
 
@@ -46,6 +47,12 @@ const Invoice = async (props: Props) => {
     },
   });
 
+  const invoices = await prismadb.invoice.findMany({
+    orderBy: {
+      date: 'desc',
+    },
+  });
+
   const receipts = await prismadb.receipt.findMany({});
 
   const formattedRemovals: InvoiceColumn[] = removals.map((item) => ({
@@ -78,8 +85,26 @@ const Invoice = async (props: Props) => {
     created: item.created,
   }));
 
-  const formattedItems: InvoiceColumn[] =
-    formattedArrangements.concat(formattedRemovals);
+  const formattedInvoices: InvoiceColumn[] = invoices.map((item) => ({
+    id: item.id,
+    type: 'Custom',
+    deceasedId: item.id,
+    receiptNo: item.invoiceNo,
+    memberNo: 'N/A',
+    name: item.customerDetails.firstName + ' ' + item.customerDetails.lastName,
+    dateOfDeath: 'N/A',
+    paidUp: item.paidUp,
+    idNumber: 'N/A',
+    outstanding: item.total,
+    amountDue: item.total,
+    created: item.date,
+  }));
+
+  const formattedItems: InvoiceColumn[] = formattedArrangements.concat(
+    formattedInvoices,
+
+    formattedRemovals
+  );
 
   const totalPayments = receipts.reduce((total, order) => {
     return total + order.receivedAmount;
@@ -97,10 +122,15 @@ const Invoice = async (props: Props) => {
     <section className="p-5 w-full h-full ">
       <Suspense fallback={<Loading />}>
         <Heading title="Invoices" subtitle="Review of all invoices" />
+        <section>
+          <div className="flex justify-between">
+            <HeaderOptions title="New Invoice" link="invoice" />
+          </div>
+        </section>
 
         <section className="flex flex-row justify-between gap-5 h-full mt-5 mb-5">
           <div className="w-2/3 h-full">
-            <InvoiceClient data={formattedArrangements} />
+            <InvoiceClient data={formattedItems} />
           </div>
 
           <div className="w-1/4 px-5 flex flex-col gap-8 h-fit border  rounded-md shadow-md p-4 mt-5 mr-10">

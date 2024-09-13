@@ -74,7 +74,6 @@ type DeceasedFormValues = z.infer<typeof formSchema>;
 
 const DeceasedForm = ({ deceasedDetails }: Props) => {
   const deceasedModal = useDeceasedModal();
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const { user, isLoading: userLoading, error } = useUser();
@@ -114,7 +113,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
     let message;
     let result;
 
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       if (deceasedDetails) {
@@ -148,7 +147,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
     } catch (error: any) {
       toast.error(error.response.data);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -203,7 +202,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            disabled={loading}
+                            disabled={isLoading}
                             placeholder="Last Names"
                             {...field}
                           />
@@ -226,7 +225,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            disabled={loading}
+                            disabled={isLoading}
                             placeholder="First Names"
                             {...field}
                           />
@@ -270,7 +269,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            disabled={loading}
+                            disabled={isLoading}
                             placeholder="ID Number"
                             {...field}
                             minLength={13}
@@ -372,7 +371,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          disabled={loading}
+                          disabled={isLoading}
                           placeholder="Livingstone Hospital"
                           {...field}
                         />
@@ -393,7 +392,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                       <FormLabel className="font-semibold">City</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={loading}
+                          disabled={isLoading}
                           placeholder="City"
                           {...field}
                         />
@@ -416,7 +415,7 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          disabled={loading}
+                          disabled={isLoading}
                           placeholder="11am"
                           {...field}
                         />
@@ -439,7 +438,11 @@ const DeceasedForm = ({ deceasedDetails }: Props) => {
                       Death Certificate Recipient
                     </FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="John" {...field} />
+                      <Input
+                        disabled={isLoading}
+                        placeholder="John"
+                        {...field}
+                      />
                     </FormControl>
                   </FormItem>
                 )}

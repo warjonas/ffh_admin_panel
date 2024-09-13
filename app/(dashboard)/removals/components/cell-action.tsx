@@ -88,10 +88,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
       { name: 'removalId', value: data.id },
     ];
 
-    router.push('/removals');
-
-    router.push(pathname + '?' + createQueryString(query));
-    removalModal.onOpen();
+    router.push(`/removals/${data.id}`);
   };
 
   const onPreview = () => {

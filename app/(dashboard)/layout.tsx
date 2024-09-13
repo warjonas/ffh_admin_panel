@@ -9,6 +9,7 @@ import Navbar from '@/components/navbar';
 import Image from 'next/image';
 import { ModalProvider } from '@/providers/modal-provider';
 import Loading from './Loading';
+import axios from 'axios';
 
 interface Props {
   children: React.ReactNode;
@@ -20,8 +21,6 @@ export default async function DashboardLayout({ children }: Props) {
   if (!session) {
     redirect('/api/auth/login');
   }
-
-  // console.log('session', session);
 
   return (
     <main className="flex flex-col h-[80%] xl:h-full w-full overflow-auto relative">

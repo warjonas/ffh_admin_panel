@@ -34,6 +34,8 @@ model Deceased{
   funeralProgram              FuneralProgram?
   removal                     Removal?
 
+  @@unique([idNumber])
+
 }
 
 model Arrangement{
@@ -163,7 +165,46 @@ model Receipt{
   invoiceId           String @db.ObjectId
   removal             Removal? @relation(fields: [invoiceId],references: [id])
   arrangement         Arrangement? @relation(fields: [invoiceId],references: [id])
+  invoice             Invoice? @relation(fields: [invoiceId],references: [id])
 
+
+
+
+}
+
+
+model Invoice{
+  id                  String @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNo           String
+  date                DateTime @default(now())
+  dueDate             DateTime
+  paymentReference    String
+  customerDetails     Customer
+  invoiceItems        InvoiceItem[]
+  total               Int
+  discount            Int
+  paidUp                Boolean @default(false)
+  createdBy           String
+
+  receipts            Receipt[]
+
+  @@unique([invoiceNo])
+
+}
+
+type InvoiceItem{
+  description     String
+  qty             Int
+  unitPrice       Int
+  totalPrice      Int
+}
+
+type Customer{
+  firstName   String
+  lastName    String
+  phoneNo     String
+  email       String
+  address     Address
 
 
 }

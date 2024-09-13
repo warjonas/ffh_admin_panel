@@ -23,6 +23,7 @@ import {
 import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
+import { InvoiceModal } from './invoice-modal';
 
 interface CellActionProps {
   data: InvoiceColumn;
@@ -36,13 +37,13 @@ interface QueryProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [open, setOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const arrangementModal = useArrangementModal();
 
   const createQueryString = useCallback(
     (queries: QueryProps[]) => {
@@ -71,15 +72,21 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   };
 
   const onUpdate = async () => {
-    const query: QueryProps[] = [
-      { name: 'deceasedId', value: deceasedId },
-      { name: 'arrangementId', value: data.id },
-    ];
+    switch (data.type) {
+      case 'Arrangement':
+        router.push(`/arrangments/${data.id}`);
 
-    router.push('/arrangements');
+        break;
+      case 'Custom':
+        router.push(`/invoices/${data.receiptNo}`);
+        break;
+      case 'Removal':
+        router.push(`/removals/${data.id}`);
 
-    router.push(pathname + '?' + createQueryString(query));
-    arrangementModal.onOpen();
+        break;
+      default:
+        break;
+    }
   };
 
   const onConfirm = async () => {
@@ -93,6 +100,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
 
   return (
     <>
+      <InvoiceModal
+        isOpen={invoiceOpen}
+        onClose={() => setInvoiceOpen(false)}
+        onConfirm={onConfirm}
+        loading={loading}
+        id={deceasedId}
+      />
+
       <InfoModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -116,7 +131,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            onClick={() =>
+              data.type == 'Custom' ? setInvoiceOpen(true) : setOpen(true)
+            }
+          >
             <View className="mr-2 h-4 w-4" />
             View
           </DropdownMenuItem>

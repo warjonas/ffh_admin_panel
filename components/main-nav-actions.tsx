@@ -100,8 +100,8 @@ const MainNavActions = (props: Props) => {
           title: 'Create new Arrangement',
           link: '/arrangements/new',
           break: true,
-          type: 'Function',
-          func: arrangementModal.onOpen,
+          type: 'Link',
+          func: () => router.push('/arrangements/new'),
         },
         {
           title: 'Funeral Programs',

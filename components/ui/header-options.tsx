@@ -11,7 +11,7 @@ import React from 'react';
 type Props = {
   title: string;
   onClick?: () => void;
-  link: 'deceased' | 'arrangement' | 'removal' | 'expense';
+  link: 'deceased' | 'arrangement' | 'removal' | 'expense' | 'invoice';
 };
 
 const HeaderOptions = ({ title, onClick, link }: Props) => {
@@ -32,6 +32,9 @@ const HeaderOptions = ({ title, onClick, link }: Props) => {
         break;
       case 'expense':
         router.push('/finance/new');
+        break;
+      case 'invoice':
+        router.push('/invoices/new');
         break;
     }
   };

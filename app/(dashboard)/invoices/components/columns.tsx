@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Decimal } from '@prisma/client/runtime/library';
+import { formatter } from '@/lib/utils';
 // import { CellAction } from './cell-action';
 
 export type InvoiceColumn = {
@@ -12,8 +13,8 @@ export type InvoiceColumn = {
   type: string;
   name: string;
   idNumber: string;
-  memberNo: string;
-  dateOfDeath: string;
+  memberNo?: string;
+  dateOfDeath?: string;
   outstanding: number;
   amountDue: number;
   paidUp: boolean;
@@ -40,8 +41,9 @@ export const columns: ColumnDef<InvoiceColumn>[] = [
   },
 
   {
-    accessorKey: 'dateOfDeath',
-    header: 'Passed on',
+    accessorKey: 'amountDue',
+    header: 'Amount Due',
+    cell: ({ row }) => <div>{formatter.format(row.original.amountDue)}</div>,
   },
 
   {

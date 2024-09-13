@@ -33,6 +33,7 @@ import {
   CommandList,
   CommandSeparator,
 } from './ui/command';
+import { Arrangement } from '@prisma/client';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -66,7 +67,8 @@ const DeceasedList = ({
   );
 
   const filteredItems = items.filter(
-    (item: Deceased) => item.arrangement == null && item.removal == null
+    (item: Deceased & Arrangement) =>
+      item.arrangement == null && item.removal == null
   );
 
   const formattedItems = filteredItems.map((item: Deceased) => ({

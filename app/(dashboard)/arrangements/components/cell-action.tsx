@@ -96,10 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   };
 
   const onUpdate = async () => {
-    const query = setQueryParams();
-
-    router.push(pathname + '?' + createQueryString(query));
-    arrangementModal.onOpen();
+    router.push(`/arrangements/${data.id}`);
   };
 
   const onConfirm = async () => {
