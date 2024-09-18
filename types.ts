@@ -107,9 +107,41 @@ export interface Receipt {
   outstandingBalance: number;
   receivedFrom: string;
 
-  invoiceId: Removal | Arrangement;
+  invoiceId: string;
   removal?: Removal;
   arrangement?: Arrangement;
+  invoice?: Invoice;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNo: string;
+  created: Date;
+  dueDate: Date;
+  paymentReference: string;
+  customerDetails: Customer;
+  invoiceItems: InvoiceItem[];
+  total: number;
+  discount: number;
+  paidUp: Boolean;
+  createdBy: string;
+
+  receipts: Receipt[];
+}
+
+interface Customer {
+  firstName: string;
+  lastName: string;
+  phoneNo: string;
+  email: string;
+  address: Address;
+}
+
+interface InvoiceItem {
+  description: string;
+  qty: number;
+  unitPrice: number;
+  totalPrice: number;
 }
 
 export interface Arrangement {

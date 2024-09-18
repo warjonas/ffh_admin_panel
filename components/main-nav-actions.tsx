@@ -151,6 +151,13 @@ const MainNavActions = (props: Props) => {
         {
           title: 'Invoices',
           link: '/invoices',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'New Invoice',
+          link: '/invoices/new',
           break: true,
           type: 'Link',
           func: () => setOpen(true),

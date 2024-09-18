@@ -22,6 +22,7 @@ export async function GET(req: Request) {
             deceased: true,
           },
         },
+        invoice: true,
       },
     });
 

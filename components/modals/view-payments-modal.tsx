@@ -17,6 +17,8 @@ interface paymentColumns {
   payer: string;
   date: Date;
   deceased: string;
+  invoiceId: string;
+  type: string;
 }
 
 const columns: ColumnDef<paymentColumns>[] = [
@@ -26,7 +28,7 @@ const columns: ColumnDef<paymentColumns>[] = [
   },
   {
     accessorKey: 'deceased',
-    header: 'For Deceased',
+    header: 'For Invoice',
   },
   {
     accessorKey: 'payer',
@@ -74,12 +76,25 @@ const ViewPaymentsModal = (props: Props) => {
       let formattedReceipts: paymentColumns[] = data.map((item) => ({
         amount: item.receivedAmount,
         id: item.receiptNo,
-        deceased:
-          item.arrangement?.deceased.firstNames +
-          ' ' +
-          item?.arrangement?.deceased.lastName,
+        deceased: item.arrangement
+          ? item.arrangement?.deceased.firstNames +
+            ' ' +
+            item?.arrangement?.deceased.lastName
+          : item.removal
+          ? item.removal?.deceased.firstNames +
+            ' ' +
+            item?.removal.deceased.lastName
+          : item.invoice?.customerDetails.firstName +
+            ' ' +
+            item.invoice?.customerDetails.lastName,
         date: item.date,
         payer: item.receivedFrom,
+        invoiceId: item.invoiceId,
+        type: item.arrangement
+          ? 'arrangement'
+          : item.removal
+          ? 'removal'
+          : 'custom',
       }));
 
       setReceipts(formattedReceipts);

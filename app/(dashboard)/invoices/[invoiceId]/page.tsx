@@ -27,7 +27,7 @@ const page = async ({ params }: Props) => {
         subtitle="Complete all required information"
       />
       <Link
-        href={'/removals'}
+        href={'/invoices'}
         className="flex flex-row w-fit hover:cursor-pointer"
       >
         {' '}
