@@ -193,10 +193,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => registerPayment()}>
-            <DollarSign className="mr-2 h-4 w-4" />
-            Register Payment
-          </DropdownMenuItem>
+
+          {!data.paidUp && (
+            <DropdownMenuItem onClick={() => registerPayment()}>
+              <DollarSign className="mr-2 h-4 w-4" />
+              Register Payment
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>
             <Trash className="mr-2 h-4 w-4" />
