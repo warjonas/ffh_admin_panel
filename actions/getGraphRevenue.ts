@@ -60,6 +60,12 @@ export const getGraphRevenue = async () => {
     },
   });
 
+  const invoices = await prismadb.invoice.findMany({
+    orderBy: {
+      created: 'desc',
+    },
+  });
+
   const formattedRemovals: InvoiceColumn[] = removals.map((item) => ({
     id: item.id,
     type: 'Removal',
@@ -90,8 +96,25 @@ export const getGraphRevenue = async () => {
     created: item.created,
   }));
 
-  const formattedItems: InvoiceColumn[] =
-    formattedArrangements.concat(formattedRemovals);
+  const formattedInvoices: InvoiceColumn[] = invoices.map((item) => ({
+    id: item.id,
+    type: 'Custom',
+    deceasedId: item.id,
+    receiptNo: item.invoiceNo,
+    memberNo: 'N/A',
+    name: item.customerDetails.firstName + ' ' + item.customerDetails.lastName,
+    dateOfDeath: 'N/A',
+    paidUp: item.paidUp,
+    idNumber: 'N/A',
+    outstanding: item.total,
+    amountDue: item.total,
+    created: item.created,
+  }));
+
+  const formattedItems: InvoiceColumn[] = formattedArrangements.concat(
+    formattedRemovals,
+    formattedInvoices
+  );
 
   const monthlyRevenue: { [key: number]: number } = {};
 

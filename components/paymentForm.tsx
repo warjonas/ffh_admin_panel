@@ -9,6 +9,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useSearchParams } from 'next/navigation';
 import useSWR, { SWRConfiguration } from 'swr';
+import { Invoice } from '@prisma/client';
 
 interface PaymentFormProps {
   onSubmit: (data: PaymentFormValues) => void;
@@ -34,6 +35,7 @@ const PaymentForm = ({ onSubmit, loading }: PaymentFormProps) => {
   const searchParams = useSearchParams();
   const removalId = searchParams.get('removalId');
   const arrangementId = searchParams.get('arrangementId');
+  const invoiceId = searchParams.get('invoiceId');
   const type = searchParams.get('type');
 
   const config: SWRConfiguration = {
@@ -76,22 +78,42 @@ const PaymentForm = ({ onSubmit, loading }: PaymentFormProps) => {
     config
   );
 
+  const {
+    data: individualInvoiceData,
+    error: individualInvoiceError,
+    isLoading: individualInvoiceisLoading,
+  }: { data: Invoice; error: any; isLoading: any } = useSWR(
+    invoiceId ? `/api/invoice/${invoiceId}` : null,
+    fetcher,
+    config
+  );
+
   useEffect(() => {
-    if (type === 'removal') {
-      if (!individualRemovalisLoading && removalId) {
-        setOutstandingBalance(individualRemovalData.outstandingBalance);
-      }
-    } else {
-      if (!individualArrangementisLoading && arrangementId) {
-        setOutstandingBalance(individualArrangementData.outstandingBalance);
-      }
+    switch (type) {
+      case 'removal':
+        if (!individualRemovalisLoading && removalId) {
+          setOutstandingBalance(individualRemovalData.outstandingBalance);
+        }
+        break;
+      case 'arrangement':
+        if (!individualArrangementisLoading && arrangementId) {
+          setOutstandingBalance(individualArrangementData.outstandingBalance);
+        }
+        break;
+      case 'custom':
+        if (!individualInvoiceisLoading && invoiceId) {
+          setOutstandingBalance(individualInvoiceData.total);
+        }
+        break;
     }
   }, [
     arrangementId,
     removalId,
+    invoiceId,
     type,
     individualRemovalisLoading,
     individualArrangementisLoading,
+    individualInvoiceisLoading,
   ]);
 
   return (

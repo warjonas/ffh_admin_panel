@@ -176,7 +176,7 @@ model Receipt{
 model Invoice{
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   invoiceNo           String
-  date                DateTime @default(now())
+  created                DateTime @default(now())
   dueDate             DateTime
   paymentReference    String
   customerDetails     Customer

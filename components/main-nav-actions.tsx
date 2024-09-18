@@ -187,28 +187,35 @@ const MainNavActions = (props: Props) => {
         {
           title: 'Statistics',
           link: '/admin/stats',
-          break: false,
-          type: 'Link',
-          func: () => setOpen(true),
-        },
-        {
-          title: 'Expenses',
-          link: '/finance',
-          break: false,
-          type: 'Link',
-          func: () => setOpen(true),
-        },
-
-        {
-          title: 'Website',
-          link: '/admin/site',
           break: true,
           type: 'Link',
           func: () => setOpen(true),
         },
         {
+          title: 'View Expenses',
+          link: '/finance',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'New Expense',
+          link: '/finance/new',
+          break: true,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+
+        {
           title: 'Manage',
           link: '/admin#coffins',
+          break: false,
+          type: 'Link',
+          func: () => setOpen(true),
+        },
+        {
+          title: 'Website',
+          link: '/admin/site',
           break: false,
           type: 'Link',
           func: () => setOpen(true),

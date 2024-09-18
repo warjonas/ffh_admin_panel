@@ -35,6 +35,12 @@ export const getTotalRevenue = async () => {
     },
   });
 
+  const invoices = await prismadb.invoice.findMany({
+    orderBy: {
+      created: 'desc',
+    },
+  });
+
   const formattedRemovals: InvoiceColumn[] = removals.map((item) => ({
     id: item.id,
     type: 'Removal',
@@ -65,13 +71,30 @@ export const getTotalRevenue = async () => {
     created: item.created,
   }));
 
-  const formattedItems: InvoiceColumn[] =
-    formattedArrangements.concat(formattedRemovals);
+  const formattedInvoices: InvoiceColumn[] = invoices.map((item) => ({
+    id: item.id,
+    type: 'Custom',
+    deceasedId: item.id,
+    receiptNo: item.invoiceNo,
+    memberNo: 'N/A',
+    name: item.customerDetails.firstName + ' ' + item.customerDetails.lastName,
+    dateOfDeath: 'N/A',
+    paidUp: item.paidUp,
+    idNumber: 'N/A',
+    outstanding: item.total,
+    amountDue: item.total,
+    created: item.created,
+  }));
 
-  const totalPayments = formattedItems.reduce((total, order) => {
+  const formattedItems: InvoiceColumn[] = formattedArrangements.concat(
+    formattedRemovals,
+    formattedInvoices
+  );
+
+  const totalPayments: any = formattedItems.reduce((total, order) => {
     if (
       order.paidUp &&
-      new Date(order.dateOfDeath).getFullYear() == new Date().getFullYear()
+      new Date(order.created).getFullYear() == new Date().getFullYear()
     ) {
       return total + order.amountDue;
     } else {

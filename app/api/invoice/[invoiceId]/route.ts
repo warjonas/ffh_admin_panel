@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: { invoiceId: string } }
 ) {
   try {
-    const invoices = await prismadb.invoice.findMany({
+    const invoices = await prismadb.invoice.findFirst({
       where: {
         invoiceNo: params.invoiceId,
       },

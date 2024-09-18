@@ -4,6 +4,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Decimal } from '@prisma/client/runtime/library';
 import { formatter } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { format } from 'date-fns';
 // import { CellAction } from './cell-action';
 
 export type InvoiceColumn = {
@@ -44,6 +47,25 @@ export const columns: ColumnDef<InvoiceColumn>[] = [
     accessorKey: 'amountDue',
     header: 'Amount Due',
     cell: ({ row }) => <div>{formatter.format(row.original.amountDue)}</div>,
+  },
+  {
+    accessorKey: 'created',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Created On
+        {column.getIsSorted() === 'asc' ? (
+          <ArrowUp className="ml-2 h-4 w-4" />
+        ) : (
+          <ArrowDown className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div>{format(new Date(row.original.created), 'dd/MM/yyyy')}</div>
+    ),
   },
 
   {

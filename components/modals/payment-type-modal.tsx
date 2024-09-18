@@ -58,6 +58,9 @@ export const PaymentTypeModal = () => {
         >
           Funeral Arrangement
         </Button>
+        <Button variant={'default'} onClick={() => paymentModalOpen('custom')}>
+          Custom Invoice
+        </Button>
       </div>
     </Modal>
   );

@@ -189,13 +189,15 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
               <div className="grid grid-cols-4">
                 <div className="col-start-1 col-span-2">
                   <p className="font-semibold">Invoice Date:</p>
-                  {format(new Date(data.date), 'dd/MM/yyyy')}
+                  {format(new Date(data.created), 'dd/MM/yyyy')}
                 </div>
 
                 <div className="col-start-3">
                   <p className="font-semibold">Due Date:</p>{' '}
                   {format(
-                    new Date(data.date).setDate(data.date.getDate() + 7),
+                    new Date(data.created).setDate(
+                      new Date(data.created).getDate() + 7
+                    ),
                     'dd/MM/yyyy'
                   )}
                 </div>

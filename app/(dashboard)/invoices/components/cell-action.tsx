@@ -1,7 +1,15 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Copy, Edit, MoreHorizontal, ScanEye, Trash, View } from 'lucide-react';
+import {
+  Copy,
+  DollarSign,
+  Edit,
+  MoreHorizontal,
+  ScanEye,
+  Trash,
+  View,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   useParams,
@@ -24,6 +32,8 @@ import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import { InvoiceModal } from './invoice-modal';
+import { useRemovalReceiptModal } from '@/hooks/use-removal-modal';
+import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
 
 interface CellActionProps {
   data: InvoiceColumn;
@@ -39,11 +49,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [open, setOpen] = useState(false);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const receiptModal = useRemovalReceiptModal();
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const processPaymentModal = useProcessPaymentModal();
 
   const createQueryString = useCallback(
     (queries: QueryProps[]) => {
@@ -91,11 +103,49 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
 
   const onConfirm = async () => {
     setLoading(true);
-    router.push('/arrangements');
+
+    switch (data.type) {
+      case 'Arrangement':
+        router.push(`/arrangement/${data.id}`);
+        break;
+      case 'Custom':
+        router.push(`/invoice/${data.receiptNo}`);
+        break;
+      case 'Removal':
+        router.push(`/removal/${data.id}`);
+
+        break;
+
+      default:
+        break;
+    }
+
     router.push(`/arrangements/${data.id}`);
 
     setLoading(false);
     setOpen(false);
+  };
+
+  const registerPayment = async () => {
+    setLoading(true);
+
+    switch (data.type) {
+      case 'Arrangement':
+        router.push(`/invoices/?type=arrangement&arrangementId=${data.id}`);
+        break;
+      case 'Custom':
+        router.push(`/invoices/?type=custom&invoiceId=${data.receiptNo}`);
+        break;
+      case 'Removal':
+        router.push(`/invoices/?type=removal&removalId=${data.id}`);
+
+        break;
+
+      default:
+        break;
+    }
+
+    processPaymentModal.onOpen();
   };
 
   return (
@@ -105,7 +155,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
         onClose={() => setInvoiceOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
-        id={deceasedId}
+        id={data.receiptNo}
       />
 
       <InfoModal
@@ -142,6 +192,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuItem onClick={() => onUpdate()}>
             <Edit className="mr-2 h-4 w-4" />
             Update
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => registerPayment()}>
+            <DollarSign className="mr-2 h-4 w-4" />
+            Register Payment
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setAlertOpen(true)}>

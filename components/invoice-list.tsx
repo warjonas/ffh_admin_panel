@@ -9,7 +9,7 @@ import {
 } from 'next/navigation';
 import { Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
 
-import { Deceased } from '@prisma/client';
+import { Deceased, Invoice } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -28,27 +28,23 @@ import {
   CommandList,
   CommandSeparator,
 } from './ui/command';
-import { Arrangement, Removal } from '@/types';
+import { Removal } from '@/types';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
-interface BodyRemovalListProps extends PopoverTriggerProps {
-  items: Arrangement[];
+interface InvoiceListProps extends PopoverTriggerProps {
+  items: Invoice[];
   disabled: boolean;
 }
 
-const ArrangementList = ({
-  className,
-  items = [],
-  disabled,
-}: BodyRemovalListProps) => {
+const InvoiceList = ({ className, items = [], disabled }: InvoiceListProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const id = searchParams.get('arrangementId');
+  const id = searchParams.get('invoiceId');
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -60,24 +56,20 @@ const ArrangementList = ({
     [searchParams]
   );
 
-  const filteredItems = items.filter(
-    (item: Arrangement) => item.outstandingBalance !== 0
-  );
+  const filteredItems = items.filter((item: Invoice) => item.paidUp !== true);
 
-  const formattedItems = filteredItems.map((item: Arrangement) => ({
-    label: item.deceased.firstNames + ' ' + item.deceased.lastName,
-    value: item.id,
-    invoiceNo: item.invoiceNo,
+  const formattedItems = filteredItems.map((item: Invoice) => ({
+    label: item.customerDetails.firstName + ' ' + item.customerDetails.lastName,
+    value: item.invoiceNo,
+    receiptNo: item.invoiceNo,
   }));
 
-  const arrangementDetails = formattedItems.find(
-    (item: any) => item.value === id
-  );
+  const invoiceDetails = formattedItems.find((item: any) => item.value === id);
 
   const [open, setOpen] = useState(false);
 
-  const onDeceasedSelect = (id: string) => {
-    router.push(pathname + '?' + createQueryString('arrangementId', id));
+  const onInvoiceSelect = (id: string) => {
+    router.push(pathname + '?' + createQueryString('invoiceId', id));
   };
 
   return (
@@ -88,32 +80,29 @@ const ArrangementList = ({
           size={'sm'}
           role="combobox"
           aria-expanded={open}
-          aria-label="Select removal"
-          className={cn(
-            'min-w-[%50] w-fit  p-2 justify-between text-lg',
-            className
-          )}
+          aria-label="Select Invoice"
+          className={cn('w-1/2 p-2 justify-between text-lg', className)}
         >
-          {arrangementDetails?.label} - {arrangementDetails?.invoiceNo}
+          {invoiceDetails?.label} - {invoiceDetails?.receiptNo}
           <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0">
         <Command>
           <CommandList>
-            <CommandInput placeholder="Search Funeral Arrangements..." />
-            <CommandEmpty>No Arrangement found</CommandEmpty>
-            <CommandGroup heading="Arrangments">
+            <CommandInput placeholder="Search Invoice..." />
+            <CommandEmpty>No Invoice found</CommandEmpty>
+            <CommandGroup heading="Deceased">
               {formattedItems.map((item: any) => (
                 <CommandItem
                   key={item.value}
                   onSelect={() => {
-                    onDeceasedSelect(item.value);
+                    onInvoiceSelect(item.value);
                     setOpen(!open);
                   }}
                   className="text-sm"
                 >
-                  {item.label} - {item.invoiceNo}
+                  {item.label} - {item.receiptNo}
                   <Check
                     className={cn(
                       'ml-2 h-4 w-4',
@@ -131,4 +120,4 @@ const ArrangementList = ({
   );
 };
 
-export default ArrangementList;
+export default InvoiceList;

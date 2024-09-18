@@ -19,6 +19,8 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import ArrangementList from '../arrangment-list';
 import PaymentForm from '../paymentForm';
+import { Invoice } from '@prisma/client';
+import InvoiceList from '../invoice-list';
 
 const formSchema = z.object({
   methodOfPayment: z.string().min(1),
@@ -43,6 +45,8 @@ const ProcessPaymentModal = () => {
 
   const router = useRouter();
   const removalId = searchParams.get('removalId');
+  const invoiceId = searchParams.get('invoiceId');
+
   const arrangementId = searchParams.get('arrangementId');
   const deceasedId = searchParams.get('deceasedId');
   const type = searchParams.get('type');
@@ -85,11 +89,33 @@ const ProcessPaymentModal = () => {
   );
 
   const {
+    data: invoiceData,
+    error: invoiceRError,
+    isLoading: invoiceIsLoading,
+  }: { data: Invoice[]; error: any; isLoading: any } = useSWR(
+    `/api/invoice`,
+    fetcher,
+    {
+      refreshInterval: 800,
+    }
+  );
+
+  const {
     data: individualRemovalData,
     error: individualRemovalError,
     isLoading: individualRemovalisLoading,
   }: { data: Removal; error: any; isLoading: any } = useSWR(
     removalId ? `/api/removal/${removalId}` : null,
+    fetcher,
+    config
+  );
+
+  const {
+    data: individualInvoiceData,
+    error: individualInvoiceError,
+    isLoading: individualInvoiceisLoading,
+  }: { data: Invoice; error: any; isLoading: any } = useSWR(
+    invoiceId ? `/api/invoice/${invoiceId}` : null,
     fetcher,
     config
   );
@@ -131,6 +157,15 @@ const ProcessPaymentModal = () => {
           data.paidUp = true;
         }
         await axios.post(`/api/receipt/arrangement/${arrangementId}`, data);
+      } else if (type === 'custom') {
+        if (data.receivedAmount === individualInvoiceData.total) {
+          data.paidUp = true;
+        }
+
+        await axios.post(
+          `/api/receipt/invoice/${individualInvoiceData.id}`,
+          data
+        );
       }
 
       paymentReceiptModal.onClose();
@@ -147,12 +182,16 @@ const ProcessPaymentModal = () => {
   const heading =
     type === 'removal'
       ? 'For the removal of:'
-      : 'For the funeral arrangement of:';
+      : type === 'arrangment'
+      ? 'For the funeral arrangement of:'
+      : 'For Custom Invoice';
 
   const subtitle =
     type === 'removal'
       ? 'Record payment made for the removal of the deceased:'
-      : 'Record payment made for the arrangement of the deceased';
+      : type === 'arrangement'
+      ? 'Record payment made for the arrangement of the deceased'
+      : 'Record payment made for the invoice';
 
   useEffect(() => {
     setIsMounted(true);
@@ -174,8 +213,10 @@ const ProcessPaymentModal = () => {
 
         {type === 'removal' ? (
           <BodyRemovalList items={removalData} disabled={false} />
-        ) : (
+        ) : type === 'arrangement' ? (
           <ArrangementList items={funeralData} disabled={false} />
+        ) : (
+          <InvoiceList items={invoiceData} disabled={false} />
         )}
       </div>
 

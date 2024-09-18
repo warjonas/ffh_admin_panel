@@ -49,7 +49,7 @@ const Invoice = async (props: Props) => {
 
   const invoices = await prismadb.invoice.findMany({
     orderBy: {
-      date: 'desc',
+      created: 'desc',
     },
   });
 
@@ -97,7 +97,7 @@ const Invoice = async (props: Props) => {
     idNumber: 'N/A',
     outstanding: item.total,
     amountDue: item.total,
-    created: item.date,
+    created: item.created,
   }));
 
   const formattedItems: InvoiceColumn[] = formattedArrangements.concat(
