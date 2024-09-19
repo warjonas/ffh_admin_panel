@@ -13,6 +13,7 @@ export const getVehicle = async ({ id }: Props) => {
     },
     include: {
       logs: true,
+      expenses: true,
     },
   });
 

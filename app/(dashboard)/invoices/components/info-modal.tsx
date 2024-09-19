@@ -14,6 +14,7 @@ import { useReactToPrint } from 'react-to-print';
 
 import { formatter } from '@/lib/utils';
 import Image from 'next/image';
+import { useArrangeInvoice } from '@/hooks/use-invoice-modal';
 // import { Arrangement } from '@/types';
 
 interface InfoModalProps {
@@ -43,14 +44,9 @@ const calculate_days = (date1: Date, date2: Date) => {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export const InfoModal: React.FC<InfoModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  loading,
-  id,
-}) => {
+export const InfoModal = ({}) => {
   const [isMounted, setIsMounted] = useState(false);
+  const useArrangeInfoModal = useArrangeInvoice();
 
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
@@ -60,8 +56,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     data,
     error,
     isLoading,
-  }: { data: Deceased; error: any; isLoading: any } = useSWR(
-    `/api/deceased/${id}`,
+  }: {
+    data: Deceased & { arrangements: Arrangement };
+    error: any;
+    isLoading: any;
+  } = useSWR(
+    useArrangeInfoModal.id ? `/api/deceased/${useArrangeInfoModal.id}` : '',
     fetcher,
     config
   );
@@ -92,8 +92,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
       <Modal
         title={`Error Occurred`}
         description=""
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={useArrangeInfoModal.isOpen}
+        onClose={useArrangeInfoModal.onClose}
       >
         An error occurred whilte fetching the data.
       </Modal>
@@ -101,7 +101,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
 
   if (isLoading)
     return (
-      <Modal title={`Loading`} description="" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        title={`Loading`}
+        description=""
+        isOpen={useArrangeInfoModal.isOpen}
+        onClose={useArrangeInfoModal.onClose}
+      >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -117,8 +122,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
     <Modal
       title={`Viewing Invoice for Funeral Arrangement: ${data?.firstNames} ${data?.lastName}`}
       description="A preview of the funeral arrangement"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={useArrangeInfoModal.isOpen}
+      onClose={useArrangeInfoModal.onClose}
     >
       {isLoading && <p>Loading</p>}
       {data && (
@@ -434,10 +439,33 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                 </div>
               </div>
             </section>
+
+            <section className="w-full mt-5">
+              <div className="grid grid-cols-4">
+                <div className="col-start-3 col-span-2">
+                  {data?.arrangements?.receipts && (
+                    <h2 className="underline underline-offset-1 font-bold mb-2">
+                      Payments:
+                    </h2>
+                  )}
+
+                  {data?.arrangements?.receipts.map((item) => (
+                    <div key={item.id} className="flex justify-end">
+                      {item.receiptNo} - {formatter.format(item.receivedAmount)}{' '}
+                      ({format(new Date(item.date), 'dd/MM/yyyy')})
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
           </section>
 
           <div className="flex w-full justify-end gap-x-2 mt-5">
-            <Button disabled={loading} variant={'outline'} onClick={onClose}>
+            <Button
+              disabled={isLoading}
+              variant={'outline'}
+              onClick={useArrangeInfoModal.onClose}
+            >
               Close
             </Button>
           </div>

@@ -5,6 +5,8 @@ import React from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { getVehicle } from '@/actions/getVehicle';
+import { formatter } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface Props {
   params: { id: string };
@@ -61,7 +63,7 @@ const page = async ({ params }: Props) => {
           </div>
 
           <div className=" h-full flex flex-col gap-y-2 border  border-gray-300 p-5">
-            <h1 className="text-lg">Vehicle Logs</h1>
+            <h1 className="text-lg font-medium">Vehicle Logs</h1>
             <hr className="w-full" />
             {vehicle?.logs ? (
               <h2>List of logs</h2>
@@ -72,9 +74,19 @@ const page = async ({ params }: Props) => {
         </section>
 
         <section className="w-1/4 flex flex-col h-full border border-gray-200 p-5 gap-y-2">
-          <h1 className="text-lg">Expense History</h1>
+          <h1 className="text-lg font-medium">Expense History</h1>
           <hr className="w-full" />
-          <h2> No Records available</h2>
+          {vehicle?.expenses ? (
+            vehicle?.expenses.map((item) => (
+              <div className="w-full flex justify-between" key={item.id}>
+                <h2>{item.description}</h2>
+                <h2>{formatter.format(item.cost)}</h2>
+                <h2>{format(item.createdOn, 'dd/MM/yyyy')}</h2>
+              </div>
+            ))
+          ) : (
+            <h2> No Records available</h2>
+          )}
         </section>
       </section>
     </section>

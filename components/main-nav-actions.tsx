@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import {
   BarChart,
@@ -75,19 +74,20 @@ const MainNavActions = (props: Props) => {
       permision: 'General',
       items: [
         {
-          title: 'Add Deceased Details',
-          link: '/deceased/new',
-          break: false,
-          type: 'Link',
-          func: () => {},
-        },
-        {
-          title: 'Deceased Details',
+          title: 'View Deceased Details',
           link: '/deceased',
-          break: true,
+          break: false,
           type: 'Link',
           func: () => setOpen(true),
         },
+        {
+          title: 'New Deceased',
+          link: '/deceased/new',
+          break: true,
+          type: 'Link',
+          func: () => {},
+        },
+
         {
           title: 'View Funeral Arrangements',
           link: '/arrangements',
@@ -97,7 +97,7 @@ const MainNavActions = (props: Props) => {
         },
 
         {
-          title: 'Create new Arrangement',
+          title: 'New Funeral Arrangement',
           link: '/arrangements/new',
           break: true,
           type: 'Link',
@@ -125,7 +125,7 @@ const MainNavActions = (props: Props) => {
           func: () => {},
         },
         {
-          title: 'Schedule body removal',
+          title: 'New Body Removal',
           link: '/removals/new',
           break: false,
           type: 'Function',

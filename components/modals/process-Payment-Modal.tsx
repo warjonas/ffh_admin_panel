@@ -182,7 +182,7 @@ const ProcessPaymentModal = () => {
   const heading =
     type === 'removal'
       ? 'For the removal of:'
-      : type === 'arrangment'
+      : type === 'arrangement'
       ? 'For the funeral arrangement of:'
       : 'For Custom Invoice';
 
@@ -208,7 +208,7 @@ const ProcessPaymentModal = () => {
       isOpen={paymentReceiptModal.isOpen}
       onClose={onClose}
     >
-      <div className="flex flex-col gap-y-2 mb-5">
+      <div className="flex flex-col gap-y-2 mb-5 w-full">
         <h2>{heading}</h2>
 
         {type === 'removal' ? (

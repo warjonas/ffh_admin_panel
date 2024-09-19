@@ -3,6 +3,7 @@
 import AddArrangmentModal from '@/components/modals/add-arrangement-modal';
 import AddRemovalModal from '@/components/modals/add-removal-modal';
 import { InfoModal as DeceasedInfoModal } from '@/components/modals/deceased-info-modal';
+import { InfoModal as ArrangeInfoModal } from '@/app/(dashboard)/invoices/components/info-modal';
 import { InfoModal as ProgramInfoModal } from '@/components/modals/program-info-modal';
 import { PaymentTypeModal } from '@/components/modals/payment-type-modal';
 import { RemovalInfoModal } from '@/components/modals/removal-info-modal';
@@ -24,6 +25,7 @@ import AddExpCategoryModal from '@/components/modals/add-exp-category';
 import AddSubCategoryModal from '@/components/modals/add-sub-category-modal';
 import { SubCategoryListModal } from '@/components/modals/sub-category-list-modal';
 import AddVehicleModal from '@/components/modals/add-vehicle-modal';
+import { InvoiceModal } from '@/app/(dashboard)/invoices/components/invoice-modal';
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -59,6 +61,8 @@ export const ModalProvider = () => {
       <DeathRegistration />
       <OutstandingPaymentsModal />
       <AddVehicleModal />
+      <InvoiceModal />
+      <ArrangeInfoModal />
     </>
   );
 };

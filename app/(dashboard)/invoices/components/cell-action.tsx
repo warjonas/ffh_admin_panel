@@ -34,6 +34,7 @@ import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import { InvoiceModal } from './invoice-modal';
 import { useRemovalReceiptModal } from '@/hooks/use-removal-modal';
 import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
+import { useArrangeInvoice, useInvoice } from '@/hooks/use-invoice-modal';
 
 interface CellActionProps {
   data: InvoiceColumn;
@@ -50,6 +51,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const receiptModal = useRemovalReceiptModal();
+  const useArrangeInvoiceModal = useArrangeInvoice();
+  const useInvoiceModal = useInvoice();
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
@@ -137,7 +140,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
         router.push(`/invoices/?type=custom&invoiceId=${data.receiptNo}`);
         break;
       case 'Removal':
-        router.push(`/invoices/?type=removal&removalId=${data.id}`);
+        router.push(`/removals/?type=removal&removalId=${data.id}`);
 
         break;
 
@@ -150,21 +153,21 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
 
   return (
     <>
-      <InvoiceModal
+      {/* <InvoiceModal
         isOpen={invoiceOpen}
         onClose={() => setInvoiceOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
         id={data.receiptNo}
-      />
+      /> */}
 
-      <InfoModal
+      {/* <InfoModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
         id={deceasedId}
-      />
+      /> */}
       <AlertModal
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
@@ -183,7 +186,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() =>
-              data.type == 'Custom' ? setInvoiceOpen(true) : setOpen(true)
+              data.type == 'Custom'
+                ? useInvoiceModal.onOpen(data.receiptNo)
+                : useArrangeInvoiceModal.onOpen(data.deceasedId)
             }
           >
             <View className="mr-2 h-4 w-4" />

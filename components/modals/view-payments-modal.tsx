@@ -8,6 +8,9 @@ import { DataTable } from '../ui/data-table';
 import { format } from 'date-fns';
 import { Modal } from '../ui/modal';
 import { useViewPaymentsModal } from '@/hooks/use-deceased-modal';
+import { useArrangeInvoice, useInvoice } from '@/hooks/use-invoice-modal';
+import { useRouter } from 'next/navigation';
+import { Info } from 'lucide-react';
 
 type Props = {};
 
@@ -17,42 +20,69 @@ interface paymentColumns {
   payer: string;
   date: Date;
   deceased: string;
+  deceasedId: string;
   invoiceId: string;
   type: string;
 }
-
-const columns: ColumnDef<paymentColumns>[] = [
-  {
-    accessorKey: 'id',
-    header: 'Receipt No',
-  },
-  {
-    accessorKey: 'deceased',
-    header: 'For Invoice',
-  },
-  {
-    accessorKey: 'payer',
-    header: 'Payer',
-  },
-  {
-    accessorKey: 'amount',
-    header: 'Amount',
-  },
-  {
-    accessorKey: 'date',
-    header: 'Date',
-    cell: ({ row }) => (
-      <div>{format(new Date(row.original.date), 'dd/MM/yyyy')}</div>
-    ),
-  },
-];
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const ViewPaymentsModal = (props: Props) => {
   const modal = useViewPaymentsModal();
+  const useInvoiceModal = useInvoice();
+  const useArrangeInvoiceModal = useArrangeInvoice();
+
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [receipts, setReceipts] = useState<paymentColumns[]>([]);
+
+  const columns: ColumnDef<paymentColumns>[] = [
+    {
+      accessorKey: 'id',
+      header: 'Receipt No',
+    },
+    {
+      accessorKey: 'deceased',
+      header: 'For Invoice',
+      cell: ({ row }) => (
+        <div
+          className="hover:cursor-pointer flex gap-x-2 align-middle"
+          onClick={() => {
+            switch (row.original.type) {
+              case 'arrangement':
+                useArrangeInvoiceModal.onOpen(row.original.deceasedId);
+                break;
+              case 'custom':
+                useInvoiceModal.onOpen(row.original.invoiceId);
+                break;
+              case 'removal':
+                break;
+
+              default:
+                break;
+            }
+          }}
+        >
+          {row.original.deceased} <Info className="text-slate-00 h-4 w-4" />
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'payer',
+      header: 'Payer',
+    },
+    {
+      accessorKey: 'amount',
+      header: 'Amount',
+    },
+    {
+      accessorKey: 'date',
+      header: 'Date',
+      cell: ({ row }) => (
+        <div>{format(new Date(row.original.date), 'dd/MM/yyyy')}</div>
+      ),
+    },
+  ];
 
   const config: SWRConfiguration = {
     revalidateOnMount: true,
@@ -89,12 +119,13 @@ const ViewPaymentsModal = (props: Props) => {
             item.invoice?.customerDetails.lastName,
         date: item.date,
         payer: item.receivedFrom,
-        invoiceId: item.invoiceId,
+        invoiceId: item.invoice ? item.invoice.invoiceNo : item.invoiceId,
         type: item.arrangement
           ? 'arrangement'
           : item.removal
           ? 'removal'
           : 'custom',
+        deceasedId: item.arrangement ? item.arrangement.deceased.id : ' ',
       }));
 
       setReceipts(formattedReceipts);

@@ -14,44 +14,23 @@ import { useReactToPrint } from 'react-to-print';
 
 import { formatter } from '@/lib/utils';
 import Image from 'next/image';
-import { Invoice } from '@prisma/client';
+import { Invoice, Receipt } from '@prisma/client';
+import { useInvoice } from '@/hooks/use-invoice-modal';
 // import { Arrangement } from '@/types';
 
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+
   loading: boolean;
   id: string;
 }
 
-const calculate_days = (date1: Date, date2: Date) => {
-  let timeDifference = date2.getTime() - date1.getTime();
-
-  let days = Math.round(timeDifference / (1000 * 3600 * 24));
-
-  console.log(days);
-  if (days == 0) {
-    return days + 1;
-  }
-
-  if (days == 1) {
-    return days + 2;
-  }
-
-  return days;
-};
-
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export const InvoiceModal: React.FC<InfoModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  loading,
-  id,
-}) => {
+export const InvoiceModal = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const invoiceModal = useInvoice();
 
   const config: SWRConfiguration = {
     revalidateOnFocus: true,
@@ -61,11 +40,12 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
     data,
     error,
     isLoading,
-  }: { data: Invoice; error: any; isLoading: any } = useSWR(
-    `/api/invoice/${id}`,
-    fetcher,
-    config
-  );
+  }: { data: Invoice & { receipts: Receipt[] }; error: any; isLoading: any } =
+    useSWR(
+      invoiceModal.id ? `/api/invoice/${invoiceModal.id}` : '',
+      fetcher,
+      config
+    );
 
   const getPageMargins = () => {
     return `@page { margin: 3rem 2rem 3rem 2rem !important; }`;
@@ -91,8 +71,8 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
       <Modal
         title={`Error Occurred`}
         description=""
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={invoiceModal.isOpen}
+        onClose={invoiceModal.onClose}
       >
         An error occurred whilte fetching the data.
       </Modal>
@@ -100,7 +80,12 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
 
   if (isLoading)
     return (
-      <Modal title={`Loading`} description="" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        title={`Loading`}
+        description=""
+        isOpen={invoiceModal.isOpen}
+        onClose={invoiceModal.onClose}
+      >
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -116,8 +101,8 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
     <Modal
       title={`Viewing Invoice for: ${data?.customerDetails.firstName} ${data?.customerDetails.lastName}`}
       description="A preview of the funeral arrangement"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={invoiceModal.isOpen}
+      onClose={invoiceModal.onClose}
     >
       {isLoading && <p>Loading</p>}
       {data && (
@@ -128,7 +113,7 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
           </Button>
 
           <section
-            className="pt-2 space-x-2 flex items-center justify-end w-full flex-col h-fit"
+            className="pt-2 pr-2 space-x-2 flex items-center justify-end w-full flex-col h-fit"
             id="print-ref"
             ref={componentRef}
           >
@@ -255,10 +240,36 @@ export const InvoiceModal: React.FC<InfoModalProps> = ({
                 </div>
               </div>
             </section>
+            <section className="w-full mt-5">
+              <div className="grid grid-cols-4">
+                <div className="col-start-3 col-span-2">
+                  {data?.receipts && (
+                    <h2 className="underline underline-offset-1 font-bold mb-2">
+                      Payments:
+                    </h2>
+                  )}
+
+                  {data?.receipts.map((item) => (
+                    <div key={item.id} className="flex">
+                      {item.receiptNo} - {formatter.format(item.receivedAmount)}{' '}
+                      ({format(new Date(item.date), 'dd/MM/yyyy')})
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+            <hr className="w-full my-4 border-t-2" />
+            <section className="w-full text-center self-baseline">
+              <h1>Thank you for your business</h1>
+            </section>
           </section>
 
           <div className="flex w-full justify-end gap-x-2 mt-5">
-            <Button disabled={loading} variant={'outline'} onClick={onClose}>
+            <Button
+              disabled={isLoading}
+              variant={'outline'}
+              onClick={invoiceModal.onClose}
+            >
               Close
             </Button>
           </div>

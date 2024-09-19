@@ -130,7 +130,13 @@ const Invoice = async (props: Props) => {
 
         <section className="flex flex-row justify-between gap-5 h-full mt-5 mb-5">
           <div className="w-2/3 h-full">
-            <InvoiceClient data={formattedItems} />
+            <InvoiceClient
+              data={formattedItems.sort(
+                (a, b) =>
+                  Date.parse(b.created.toDateString()) -
+                  Date.parse(a.created.toDateString())
+              )}
+            />
           </div>
 
           <div className="w-1/4 px-5 flex flex-col gap-8 h-fit border  rounded-md shadow-md p-4 mt-5 mr-10">

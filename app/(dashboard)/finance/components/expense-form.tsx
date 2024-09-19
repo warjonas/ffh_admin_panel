@@ -20,25 +20,28 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ExpCategory, SubExpCategory } from '@prisma/client';
+import { ExpCategory, SubExpCategory, Vehicle } from '@prisma/client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
+import Vehicles from '../../admin/components/vehicles';
 
 interface ExpenseFormProps {
   categories: ExpCategory[];
   subCategories: SubExpCategory[];
+  vehicles: Vehicle[];
 }
 
 const formSchema = z.object({
   description: z.string().min(1),
   category: z.string().min(1),
   subCat: z.string().min(1),
-  cost: z.coerce.number(),
+  cost: z.coerce.number().min(1),
   receiptUrl: z.string(),
+  vehicleId: z.string(),
 });
 
 type ExpenseFormValues = z.infer<typeof formSchema>;
@@ -46,6 +49,7 @@ type ExpenseFormValues = z.infer<typeof formSchema>;
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   categories,
   subCategories,
+  vehicles,
 }) => {
   const filteredSubCatsRef = useRef<SubExpCategory[]>([]);
 
@@ -64,6 +68,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   const onSubmit = async (data: ExpenseFormValues) => {
     setIsLoading(true);
+
+    const cat = categories.find((item) => item.name == 'Vehicle Fleet');
+
+    if (data.category !== cat?.id) {
+      form.setError('vehicleId', { message: 'Vehicle ID is required' });
+
+      throw new Error();
+    }
 
     const response = await axios.post('/api/expense', data);
 
@@ -194,6 +206,43 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             </FormItem>
           )}
         />
+
+        {form.getValues().category && (
+          <FormField
+            control={form.control}
+            name="vehicleId"
+            disabled={form.getValues().category == null || isLoading}
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Vehicle</FormLabel>
+                <FormControl>
+                  <Select
+                    disabled={form.getValues().category == null || isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select Vehicle"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {vehicles.map((item: Vehicle) => (
+                        <SelectItem value={item.id} key={item.id}>
+                          {item.model} - {item.registration}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
