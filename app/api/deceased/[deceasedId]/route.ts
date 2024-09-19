@@ -26,6 +26,7 @@ export async function GET(
             tombstone: true,
             coffin: true,
             grave: true,
+            receipts: true,
           },
         },
         funeralProgram: true,

@@ -8,6 +8,7 @@ export async function GET(req: Request) {
     const vehicles = await prismadb.vehicle.findMany({
       include: {
         logs: true,
+        expenses: true,
       },
     });
 

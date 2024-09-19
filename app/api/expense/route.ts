@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const { description, cost, subCat, category } = body;
+  const { description, cost, subCat, category, vehicleId, receiptUrl } = body;
 
   if (!description) {
     return new NextResponse('Expense description is required', {
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       data: {
         description,
         cost,
+        receiptUrl,
         category: {
           connect: {
             id: category,
@@ -62,6 +63,11 @@ export async function POST(req: Request) {
         subCategory: {
           connect: {
             id: subCat,
+          },
+        },
+        vehicle: {
+          connect: {
+            id: vehicleId,
           },
         },
       },

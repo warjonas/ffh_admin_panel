@@ -69,3 +69,32 @@ export async function PATCH(
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { invoiceId: string } }
+) {
+  const body = await req.json();
+
+  try {
+    const session = await getSession();
+
+    if (!session) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const invoice = await prismadb.invoice.update({
+      where: {
+        invoiceNo: params.invoiceId,
+      },
+      data: {
+        flagDelete: true,
+      },
+    });
+
+    return NextResponse.json(invoice);
+  } catch (error) {
+    console.log('INVOICE_DELETE', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
