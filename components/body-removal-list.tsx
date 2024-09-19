@@ -88,7 +88,10 @@ const BodyRemovalList = ({
           role="combobox"
           aria-expanded={open}
           aria-label="Select removal"
-          className={cn('w-1/2 p-2 justify-between text-lg', className)}
+          className={cn(
+            'min-w-[50%] w-fit p-2 justify-between text-lg',
+            className
+          )}
         >
           {removalDetails?.label} - {removalDetails?.receiptNo}
           <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />

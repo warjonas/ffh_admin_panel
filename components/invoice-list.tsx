@@ -81,7 +81,10 @@ const InvoiceList = ({ className, items = [], disabled }: InvoiceListProps) => {
           role="combobox"
           aria-expanded={open}
           aria-label="Select Invoice"
-          className={cn('w-1/2 p-2 justify-between text-lg', className)}
+          className={cn(
+            'min-w-[50%] w-fit p-2 justify-between text-lg',
+            className
+          )}
         >
           {invoiceDetails?.label} - {invoiceDetails?.receiptNo}
           <ChevronsUpDown className="ml-2  shrink-0 opacity-50" />

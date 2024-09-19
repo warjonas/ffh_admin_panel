@@ -90,7 +90,7 @@ const ArrangementList = ({
           aria-expanded={open}
           aria-label="Select removal"
           className={cn(
-            'min-w-[%50] w-fit  p-2 justify-between text-lg',
+            'min-w-[50%] w-fit  p-2 justify-between text-lg',
             className
           )}
         >
