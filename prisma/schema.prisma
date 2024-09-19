@@ -185,6 +185,7 @@ model Invoice{
   discount            Int
   paidUp                Boolean @default(false)
   createdBy           String
+  flagDelete          Boolean
 
   receipts            Receipt[]
 
@@ -257,11 +258,16 @@ model Expense{
     flagged             Boolean @default(false)
     receiptUrl          String?
 
+    vehicleId           String? @db.ObjectId
+    vehicle             Vehicle? @relation(fields: [vehicleId], references: [id])
+
     subCatId            String @db.ObjectId
     subCategory         SubExpCategory @relation(fields: [subCatId], references: [id])
 
     categoryId          String @db.ObjectId
     category            ExpCategory @relation(fields: [categoryId], references: [id])
+
+
 
 
 }
@@ -295,6 +301,7 @@ model Vehicle{
   available             Boolean @default(true)
 
   logs                  VehicleLog[]
+  expenses              Expense[]
   
 }
 
