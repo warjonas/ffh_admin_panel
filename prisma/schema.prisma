@@ -195,7 +195,9 @@ model Invoice{
 
 type InvoiceItem{
   description     String
-  
+  qty             Int
+  unitPrice       Int 
+  totalPrice      Int
 }
 
 type Customer{
