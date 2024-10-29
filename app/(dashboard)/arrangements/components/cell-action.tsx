@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import {
+  CircleDollarSign,
   Copy,
   Edit,
   MoreHorizontal,
@@ -32,6 +33,7 @@ import { InfoModal } from './info-modal';
 import { AlertModal } from '@/components/modals/alert-modal';
 import { useArrangementModal } from '@/hooks/use-arrangement-modal';
 import { useProcessPaymentModal } from '@/hooks/use-payment-modal';
+import { useArrangeInvoice } from '@/hooks/use-invoice-modal';
 
 interface CellActionProps {
   data: ArrangementColumn;
@@ -53,6 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
   const pathname = usePathname();
   const arrangementModal = useArrangementModal();
   const processPaymentModal = useProcessPaymentModal();
+  const useArrangeInvoiceModal = useArrangeInvoice();
 
   const createQueryString = useCallback(
     (queries: QueryProps[]) => {
@@ -135,6 +138,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
     router.push(pathname + '?' + createQueryString(query));
   };
 
+  const viewInvoice = () => {
+    const query: QueryProps[] = [
+      { name: 'arrangementId', value: data.id },
+      { name: 'deceasedId', value: deceasedId },
+
+      { name: 'preview', value: 'arrangement' },
+    ];
+  };
+
   return (
     <>
       <InfoModal
@@ -171,6 +183,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data, deceasedId }) => {
           <DropdownMenuItem onClick={onPreview}>
             <ScanEye className="mr-2 h-4 w-4" />
             Preview
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => useArrangeInvoiceModal.onOpen(data.deceasedId)}
+          >
+            <CircleDollarSign className="mr-2 h-4 w-4" />
+            View Invoice
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={onPayment}>

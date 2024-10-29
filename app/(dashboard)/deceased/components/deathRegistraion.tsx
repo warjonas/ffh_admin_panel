@@ -38,6 +38,7 @@ const DeathRegistration = () => {
   const pathname = usePathname();
   const id = searchParams.get('deceasedId');
   const registrationModal = useRegisterDeathModal();
+  const today = new Date();
 
   const config: SWRConfiguration = {
     revalidateOnMount: true,
@@ -148,14 +149,17 @@ const DeathRegistration = () => {
                 <div className="grid grid-cols-2 col-span-2 justify-end">
                   <div className="flex flex-row col-start-2 text-right items-baseline">
                     <h2 className="mr-2">Date: </h2>
-                    <p>__________________________</p>
+                    <p className="font-bold">{format(today, 'dd MMMM yyyy')}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 col-span-2 justify-end mt-5">
                   <div className="flex flex-col col-start-1 text-left items-baseline font-medium">
                     <b>
-                      <h2 className="mr-2">To: The Manager of Home affairs </h2>
+                      <h2 className="mr-2">
+                        To:{' '}
+                        <input className="w-64 p-1 border-b border-b-black" />
+                      </h2>
                     </b>
                     <b>
                       <h2 className="mr-2">Re: Registration of Death </h2>
@@ -167,12 +171,14 @@ const DeathRegistration = () => {
 
                 <div className="col-span-2 justify-end mt-8">
                   <p className="w-full">
-                    I the undersigned __________________________, ID number
-                    ________________________ hereby authorize a representative
-                    of Fortuin Funeral Home (who now present this letter to you)
-                    to register the death of{' '}
-                    <b>{data.firstNames + ' ' + data.lastName} </b> who died on{' '}
-                    <b>{format(new Date(data.dateOfDeath), 'dd/MM/yyyy')}</b>
+                    I the undersigned{' '}
+                    <input className="w-48 font-bold p-1 border-b border-b-black" />
+                    , ID number{' '}
+                    <input className="w-36 font-bold p-1 border-b border-b-black" />{' '}
+                    hereby authorize a representative of Fortuin Funeral Home
+                    (who now present this letter to you) to register the death
+                    of <b>{data.firstNames + ' ' + data.lastName} </b> who died
+                    on <b>{format(new Date(data.dateOfDeath), 'dd/MM/yyyy')}</b>
                   </p>
                 </div>
 
@@ -258,7 +264,7 @@ const DeathRegistration = () => {
                     Cause of Death
                   </p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
                 </div>
 
@@ -339,20 +345,17 @@ const DeathRegistration = () => {
                   <p className="col-start-1 uppercase font-bold">
                     Undertaker Name
                   </p>
-                  <p className="col-start-2">
-                    ____________________________________
-                  </p>
+                  <p className="col-start-2">Fortuin Funeral Home</p>
 
                   <p className="col-start-1 uppercase font-bold">
                     Telephone Number
                   </p>
-                  <p className="col-start-2">
-                    ____________________________________
-                  </p>
+                  <p className="col-start-2">072 481 1414</p>
 
                   <p className="col-start-1 uppercase font-bold">Address</p>
                   <p className="col-start-2">
-                    ____________________________________
+                    88 Laurence Erasmus Drive <br /> Bloemendal <br /> Port
+                    Elizabeth
                   </p>
                 </div>
 
@@ -361,7 +364,7 @@ const DeathRegistration = () => {
                     <h1>Fortuin Funeral Home</h1>
                     <p>
                       88 Laurence Erasmus Drive <br /> Bloemendal <br /> Port
-                      Elizabeth <br /> 6061 <br /> TEL: 041 481 1414 <br />{' '}
+                      Elizabeth <br /> 6061 <br /> TEL: 072 481 1414 <br />{' '}
                       EMAIL: admin@fortuinfuneralhome.co.za
                     </p>
                   </div>
