@@ -43,6 +43,9 @@ const formSchema = z.object({
   invoiceItems: z
     .object({
       description: z.string().min(1),
+      qty: z.coerce.number(),
+      unitPrice: z.coerce.number(),
+      totalPrice: z.coerce.number(),
     })
     .array(),
   total: z.coerce.number(),
@@ -66,7 +69,7 @@ const InvoiceForm = ({ initialData, params }: Props) => {
           ...initialData,
           invoiceItems: initialData.invoiceItems
             ? initialData.invoiceItems
-            : [{ description: '' }],
+            : [{ description: '', qty: 0, totalPrice: 0, unitPrice: 0 }],
           customerDetails: initialData.customerDetails
             ? initialData.customerDetails
             : {
@@ -95,6 +98,9 @@ const InvoiceForm = ({ initialData, params }: Props) => {
           invoiceItems: [
             {
               description: '',
+              qty: 0,
+              totalPrice: 0,
+              unitPrice: 0,
             },
           ],
           paymentReference: '',
@@ -116,19 +122,23 @@ const InvoiceForm = ({ initialData, params }: Props) => {
   const discount = getValues().discount;
   const watchDiscount = watch(['discount']);
   //Calculates the total for items on the invoice
-  // useEffect(() => {
-  //   const itemsAmount = fields.reduce((total, item) => {
-  //     return total + Number(item.qty * item.unitPrice);
-  //   }, 0);
+  useEffect(() => {
+    const itemsAmount = fields.reduce((total, item) => {
+      return total + Number(item.qty * item.unitPrice);
+    }, 0);
 
-  //   setTotal(itemsAmount - discount);
-  // }, [watchDiscount, discount, items, fields]);
+    setTotal(itemsAmount - discount);
+  }, [watchDiscount, discount, items, fields]);
 
   const onSubmit = async (data: InvoiceFormValues) => {
     if (user?.email) {
       data.createdBy = user.email;
     }
     data.total = total;
+
+    data.invoiceItems.map((item) => {
+      item.totalPrice = item.qty * item.unitPrice;
+    });
 
     try {
       setLoading(true);
@@ -297,23 +307,28 @@ const InvoiceForm = ({ initialData, params }: Props) => {
           </section>
 
           <section className="flex flex-col w-full xl:w-1/2 mt-10">
-            <div className="w-full flex  mb-2 py-2 border-b border-t">
-              <h1 className="text-left w-full">Description</h1>
-
+            <div className="w-full grid grid-cols-6 mb-2 py-3 border-b border-t">
+              <h1 className="col-start-1 col-span-2">Description</h1>
+              <h1 className="col-start-3">Unit Price</h1>
+              <h1 className="col-start-4">Qty</h1>
+              <h1 className="col-start-5">Total</h1>
               <Plus
-                className="justify-self-end col-start-5  h-6 w-6"
+                className="justify-self-end col-start-6  h-6 w-6"
                 onClick={() =>
                   append({
                     description: '',
+                    qty: 0,
+                    unitPrice: 0,
+                    totalPrice: 0,
                   })
                 }
               />
             </div>
 
-            <div className="w-full flex  flex-col  gap-y-4">
+            <div className="w-full grid grid-cols-6 gap-x-3 gap-y-2">
               {fields.map((field, index) => (
-                <div className="w-full flex gap-x-2" key={index}>
-                  <FormItem className={cn(' w-full  ')}>
+                <>
+                  <FormItem className={cn(' w-full  col-start-1 col-span-2')}>
                     <FormControl>
                       <Input
                         key={field.id} // important to include key with field's id
@@ -322,22 +337,48 @@ const InvoiceForm = ({ initialData, params }: Props) => {
                       />
                     </FormControl>
                   </FormItem>
-
+                  <FormItem className={cn('w-full  col-start-3')}>
+                    <FormControl>
+                      <Input
+                        key={field.id} // important to include key with field's id
+                        {...register(`invoiceItems.${index}.unitPrice`)}
+                        placeholder="Unit Price"
+                      />
+                    </FormControl>
+                  </FormItem>
+                  <FormItem className={cn('w-full  col-start-4')}>
+                    <FormControl>
+                      <Input
+                        key={field.id} // important to include key with field's id
+                        {...register(`invoiceItems.${index}.qty`)}
+                        placeholder="qty"
+                      />
+                    </FormControl>
+                  </FormItem>
+                  <FormItem className={cn('w-full  col-start-5')}>
+                    <FormControl>
+                      <Input
+                        key={field.id} // important to include key with field's id
+                        {...register(`invoiceItems.${index}.totalPrice`)}
+                        placeholder="total"
+                        disabled
+                        value={field.qty * field.unitPrice}
+                      />
+                    </FormControl>
+                  </FormItem>
                   <X
                     className="h-6 w-6 col-start-6 justify-self-end self-center text-background rounded-full shadow-sm col-auto bg-red-800"
                     onClick={() => remove(index)}
                   />
-                </div>
+                </>
               ))}
             </div>
           </section>
           <hr className="w-1/2 my-5" />
           <section className="flex flex-col w-full xl:w-1/2">
-            <div className="w-1/3 grid grid-cols-3 justify-end self-end text-lg font-bold gap-y-3">
-              <h1 className="row-start-1 col-start-1 text-right self-center w-fit">
-                Discount:{' '}
-              </h1>
-              <div className="flex col-start-2  col-span-2 row-start-1 pl-5 gap-x-2 items-center">
+            <div className="w-1/4 grid grid-cols-2 justify-end self-end text-lg font-bold gap-y-3">
+              <h1 className="col-start-1 text-right self-center">Discount: </h1>
+              <div className="flex col-start-2 row-start-1 pl-5 gap-x-2 items-center">
                 <h1>R</h1>
                 <FormField
                   control={form.control}
@@ -358,31 +399,11 @@ const InvoiceForm = ({ initialData, params }: Props) => {
               </div>
 
               <h1 className="row-start-2 col-start-1 text-right">VAT: </h1>
-              <h1 className="row-start-2 col-start-2 col-span-2 text-right">
-                R 0.00{' '}
+              <h1 className="row-start-2 col-start-2 text-right">R 0.00 </h1>
+              <h1 className="row-start-3 col-start-1 text-right">Total: </h1>
+              <h1 className="row-start-3 col-start-2 text-right">
+                {formatter.format(total)}{' '}
               </h1>
-              <h1 className="row-start-3 col-start-1 text-right self-center">
-                Total:{' '}
-              </h1>
-              <div className="flex row-start-3 col-start-2 col-span-2 pl-5 gap-x-2 items-center ">
-                <h1>R</h1>
-                <FormField
-                  control={form.control}
-                  name="total"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="0"
-                          {...field}
-                          className="p-2 text-lg"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
             </div>
           </section>
           <hr className="w-full xl:w-1/2 my-4" />
