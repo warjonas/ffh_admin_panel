@@ -276,24 +276,24 @@ const DeathRegistration = () => {
                     Full names and Surname
                   </p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">Address</p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">ID Number</p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">
                     Cellphone Number
                   </p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">Signature</p>
@@ -312,24 +312,24 @@ const DeathRegistration = () => {
                     Full names and Surname
                   </p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">Address</p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">ID Number</p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">
                     Cellphone Number
                   </p>
                   <p className="col-start-2">
-                    ____________________________________
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                   </p>
 
                   <p className="col-start-1 uppercase font-bold">Signature</p>
