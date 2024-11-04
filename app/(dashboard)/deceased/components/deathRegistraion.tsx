@@ -242,7 +242,10 @@ const DeathRegistration = () => {
                   <p className="col-start-1 uppercase font-bold">
                     Burial Order number
                   </p>
-                  <p className="col-start-2">{25036}</p>
+                  <p className="col-start-2">
+                    {' '}
+                    <input className="w-[75%] font-bold p-1 border-b border-b-black" />
+                  </p>
 
                   <p className="col-start-1 uppercase font-bold">
                     Cemetry Name
@@ -252,7 +255,7 @@ const DeathRegistration = () => {
                       data?.arrangement?.grave.graveName
                     ) : (
                       <p className="col-start-2">
-                        ____________________________________
+                        <input className="w-[75%] font-bold p-1 border-b border-b-black" />
                       </p>
                     )}
                   </p>
