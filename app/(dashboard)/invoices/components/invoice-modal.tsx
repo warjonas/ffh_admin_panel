@@ -202,16 +202,16 @@ export const InvoiceModal = () => {
                 {data.invoiceItems.map((item) => (
                   <tr key={item.description}>
                     <td className="text-left border-solid border-2 p-1">
-                      {item.description}
+                      {item?.description}
                     </td>
                     <td className="text-center border-solid border-2 p-1">
-                      {item.qty}
+                      {item?.qty}
                     </td>
                     <td className="border-solid border-2 p-1">
-                      {formatter.format(item.unitPrice)}
+                      {formatter.format(item?.unitPrice)}
                     </td>
                     <td className="border-solid border-2 p-1">
-                      {formatter.format(item.totalPrice)}
+                      {formatter.format(item?.totalPrice)}
                     </td>
                   </tr>
                 ))}
@@ -226,13 +226,13 @@ export const InvoiceModal = () => {
                       <tr>
                         <td className="border-2 p-1">Discount</td>
                         <td className="text-right border-2 p-1">
-                          {formatter.format(data.discount)}
+                          {formatter.format(data?.discount)}
                         </td>
                       </tr>
                       <tr>
                         <td className="border-2 p-1">Amount Due</td>
                         <td className="text-right border-2 p-1">
-                          {formatter.format(data.total)}
+                          {formatter.format(data?.total)}
                         </td>
                       </tr>
                     </tbody>

@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { cn, formatter } from '@/lib/utils';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Plus, RefreshCcw, Trash, X } from 'lucide-react';
+import { CalendarIcon, Info, Plus, RefreshCcw, Trash, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -59,6 +59,11 @@ import {
   Deceased,
   ArrangementAddOnItem,
 } from '@prisma/client';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 interface Props {
   initialData: (Arrangement & { deceased: Deceased }) | null;
@@ -1583,10 +1588,33 @@ const AddArrangementForm = ({
                       />
                     </FormControl>
                   </FormItem>
+                  <div className="col-start-3 flex gap-3 items-center">
+                    <FormLabel>
+                      @ {formatter.format(field.price)}/each
+                    </FormLabel>
 
-                  <FormLabel className="col-start-3">
-                    @ {formatter.format(field.price)}/each
-                  </FormLabel>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Button variant="link">
+                          <Info className=" h-4 w-4" />
+                        </Button>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div className="flex justify-between space-x-4">
+                          <Info className="h-10 w-10" />
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-semibold">
+                              Dynamic Price
+                            </h4>
+                            <p className="text-sm">
+                              Prices to be updated by Administrator via price
+                              management panel if needed.
+                            </p>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </div>
                 </div>
               ))}
             </div>

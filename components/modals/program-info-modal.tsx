@@ -129,14 +129,11 @@ export const InfoModal = () => {
               </div>
               <hr className="w-full my-2 border-secondary-foreground " />
 
+              <p className="font-semibold">
+                Language of Program:{' '}
+                <span className="font-normal"> {data?.languageOfProgram}</span>
+              </p>
               <div className="flex flex-col gap-y-2">
-                <p className="font-semibold">
-                  Language of Program:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.languageOfProgram}
-                  </span>
-                </p>
                 <p className="font-semibold">
                   Name/s of Deceased:{' '}
                   <span className="font-normal">
@@ -178,196 +175,192 @@ export const InfoModal = () => {
                 </p>
               </div>
               <hr className="w-full my-5 border-secondary-foreground " />
-              <div className="flex flex-col">
-                <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Service at Home
-                </h1>
-                <p className="font-semibold">
-                  Officiating Minister:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atHome?.officiatingMinister}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  Start Time:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atHome?.startTime
-                      ? data?.atHome?.startTime
-                      : 'Not Provided.'}
-                  </span>
-                </p>
-              </div>
-              <hr className="w-full my-5 border-secondary-foreground " />
-              <div className="flex flex-col gap-y-2">
-                <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Service at Church
-                </h1>
-                <p className="font-semibold">
-                  Officiating Minister:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.officiatingMinister}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  Orbituary:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.orbituary}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  Vote of Thanks:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.voteOfThanks}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  Other Speakers/Items: <br />
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.otherItems}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  Start Time:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.startTime
-                      ? data?.atChurch?.startTime
-                      : 'Not Provided'}
-                  </span>
-                </p>
-                <p className="font-semibold">
-                  End Time:{' '}
-                  <span className="font-normal">
-                    {' '}
-                    {data?.atChurch?.endTime
-                      ? data?.atChurch?.endTime
-                      : 'Not Provided'}
-                  </span>
-                </p>
-              </div>
-              <hr className="w-full my-5 border-secondary-foreground " />
-              <div>
-                <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Hymns
-                </h1>
-                <p className="font-semibold">
-                  Name of Hymn Book:
-                  <span className="font-normal">
-                    {' '}
-                    {data?.hymn?.nameOfHymnBook
-                      ? data?.hymn?.nameOfHymnBook
-                      : 'Not Provided'}
-                  </span>
-                </p>
-                <div className="grid grid-cols-3 w-full">
-                  <p className="col-start-2 font-semibold underline">
-                    Hymn Number
+              {data.languageOfProgram == 'Xhosa' ? (
+                <div className="w-full h-fit">
+                  <p className="font-semibold mb-2">Orbituary</p>
+                  <p className="w-full">
+                    {data.orbituaryText
+                      ? data.orbituaryText
+                      : ' No orbituary uploaded'}
                   </p>
-                  <p className="col-start-3 font-semibold underline">
-                    Brief details of Hymn
-                  </p>
-                  {data?.hymn?.hymns.map((hymn, i) => (
-                    <>
-                      <p className="col-start-2">{hymn?.hymnNumber}</p>
-                      <p className="col-start-3">{hymn?.detailsOfHymn}</p>
-                    </>
-                  ))}
                 </div>
-              </div>
-              <hr className="w-full my-5 border-secondary-foreground" />
-              <div className="flex flex-col">
-                <h1 className="font-semibold text-center text-lg underline bg-blue-200">
-                  Any other information
-                </h1>
-                <p className="py-2 text-center">
-                  {data?.otherInformation
-                    ? data?.otherInformation
-                    : 'Not provided'}
-                </p>
-              </div>
-              <hr className="w-full my-5 border-secondary-foreground" />
-
-              <div className="flex flex-col">
-                <h1 className="font-semibold text-center text-lg underline mb-2 bg-blue-200">
-                  Pallbearers
-                </h1>
-                <div className=" flex flex-row w-full">
-                  <div className="w-1/2">
-                    <h2 className="text-center font-semibold underline">
-                      Into House
-                    </h2>
-                    {data?.pallbearersInHouse
-                      ? data?.pallbearersInHouse.map((house, index) => (
-                          <p key={index + house.lastName}>
-                            {house.firstName} {house.lastName}
-                          </p>
-                        ))
-                      : 'Not Provided'}
+              ) : (
+                <>
+                  <div className="flex flex-col">
+                    <h1 className="font-semibold text-center text-lg underline bg-blue-200">
+                      Service at Home
+                    </h1>
+                    <p className="font-semibold">
+                      Officiating Minister:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atHome?.officiatingMinister}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Start Time:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atHome?.startTime
+                          ? data?.atHome?.startTime
+                          : 'Not Provided.'}
+                      </span>
+                    </p>
                   </div>
-                  <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
-                    <h2 className="text-center font-semibold underline">
-                      Out of House
-                    </h2>
-                    {data?.pallbearersOutHouse
-                      ? data?.pallbearersOutHouse.map((house, index) => (
-                          <p key={index + house.lastName}>
-                            {house.firstName} {house.lastName}
-                          </p>
-                        ))
-                      : 'Not Provided'}
+                  <hr className="w-full my-5 border-secondary-foreground " />
+                  <div className="flex flex-col gap-y-2">
+                    <h1 className="font-semibold text-center text-lg underline bg-blue-200">
+                      Service at Church
+                    </h1>
+                    <p className="font-semibold">
+                      Officiating Minister:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.officiatingMinister}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Orbituary:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.orbituary}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Vote of Thanks:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.voteOfThanks}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Other Speakers/Items: <br />
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.otherItems}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      Start Time:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.startTime
+                          ? data?.atChurch?.startTime
+                          : 'Not Provided'}
+                      </span>
+                    </p>
+                    <p className="font-semibold">
+                      End Time:{' '}
+                      <span className="font-normal">
+                        {' '}
+                        {data?.atChurch?.endTime
+                          ? data?.atChurch?.endTime
+                          : 'Not Provided'}
+                      </span>
+                    </p>
                   </div>
-                </div>
-                <hr className="w-1/2 self-center my-5 border-secondary-foreground" />
-
-                <div className=" flex flex-row w-full">
-                  <div className="w-1/2">
-                    <h2 className="text-center font-semibold underline">
-                      Into Church
-                    </h2>
-                    {data?.pallbearersInChurch.length
-                      ? data?.pallbearersInChurch.map((church, index) => (
-                          <p key={index + church.lastName}>
-                            {church.firstName} {church.lastName}
-                          </p>
-                        ))
-                      : 'Not Provided'}
-                  </div>
-                  <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
-                    <h2 className="text-center font-semibold underline">
-                      Out of Church
-                    </h2>
-                    {data?.pallbearersOutChurch
-                      ? data?.pallbearersOutChurch.map((church, index) => (
-                          <p key={index + church.lastName}>
-                            {church.firstName} {church.lastName}
-                          </p>
-                        ))
-                      : 'Not Provided'}
-                  </div>
-                </div>
-
-                <hr className="w-1/2 self-center my-5 border-secondary-foreground" />
-                <div className="w-1/2 ">
-                  <h2 className="text-center font-semibold underline">
-                    To the Grave
-                  </h2>
-                  {data?.pallbearersGrave.length ? (
-                    data?.pallbearersGrave.map((grave, index) => (
-                      <p key={index + grave.lastName}>
-                        {grave.firstName} {grave.lastName}
+                  <hr className="w-full my-5 border-secondary-foreground " />
+                  <div>
+                    <h1 className="font-semibold text-center text-lg underline bg-blue-200">
+                      Hymns
+                    </h1>
+                    <p className="font-semibold">
+                      Name of Hymn Book:
+                      <span className="font-normal">
+                        {' '}
+                        {data?.hymn?.nameOfHymnBook}
+                      </span>
+                    </p>
+                    <div className="grid grid-cols-3 w-full">
+                      <p className="col-start-2 font-semibold underline">
+                        Hymn Number
                       </p>
-                    ))
-                  ) : (
-                    <p className="text-black">Not Provided</p>
-                  )}
-                </div>
-              </div>
+                      <p className="col-start-3 font-semibold underline">
+                        3 Brief details of Hymn
+                      </p>
+                      {data?.hymn?.hymns.map((hymn, i) => (
+                        <>
+                          <p className=""> {i + 1}</p>
+                          <p className="col-start-2">{hymn?.hymnNumber}</p>
+                          <p className="col-start-3">{hymn?.detailsOfHymn}</p>
+                        </>
+                      ))}
+                    </div>
+                  </div>
+                  <hr className="w-full my-5 border-secondary-foreground" />
+                  <div className="flex flex-col">
+                    <h1 className="font-semibold text-center text-lg underline bg-blue-200">
+                      Any other information
+                    </h1>
+                    <p>{data?.otherInformation}</p>
+                  </div>
+                  <hr className="w-full my-5 border-secondary-foreground" />
+
+                  <div className="flex flex-col">
+                    <h1 className="font-semibold text-center text-lg underline mb-2 bg-blue-200">
+                      Pallbearers
+                    </h1>
+                    <div className=" flex flex-row w-full">
+                      <div className="w-1/2">
+                        <h2 className="text-center font-semibold underline">
+                          Into House
+                        </h2>
+                        {data?.pallbearersInHouse.map((house, index) => (
+                          <p key={index + house.lastName}>
+                            {house.firstName} {house.lastName}
+                          </p>
+                        ))}
+                      </div>
+                      <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
+                        <h2 className="text-center font-semibold underline">
+                          Out of House
+                        </h2>
+                        {data?.pallbearersOutHouse.map((house, index) => (
+                          <p key={index + house.lastName}>
+                            {house.firstName} {house.lastName}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                    <hr className="w-1/2 self-center my-5 border-secondary-foreground" />
+
+                    <div className=" flex flex-row w-full">
+                      <div className="w-1/2">
+                        <h2 className="text-center font-semibold underline">
+                          Into Church
+                        </h2>
+                        {data?.pallbearersInChurch.map((church, index) => (
+                          <p key={index + church.lastName}>
+                            {church.firstName} {church.lastName}
+                          </p>
+                        ))}
+                      </div>
+                      <div className="w-1/2 border-l-2 pl-2 border-secondary-foreground">
+                        <h2 className="text-center font-semibold underline">
+                          Out of Church
+                        </h2>
+                        {data?.pallbearersOutChurch.map((church, index) => (
+                          <p key={index + church.lastName}>
+                            {church.firstName} {church.lastName}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    <hr className="w-1/2 self-center my-5 border-secondary-foreground" />
+                    <div className="w-1/2 ">
+                      <h2 className="text-center font-semibold underline">
+                        To the Grave
+                      </h2>
+                      {data?.pallbearersGrave.map((grave, index) => (
+                        <p key={index + grave.lastName}>
+                          {grave.firstName} {grave.lastName}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </section>
           </section>
           <div className="flex w-full justify-end gap-x-2 mt-5">

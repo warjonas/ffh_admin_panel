@@ -183,9 +183,9 @@ model Invoice{
   invoiceItems        InvoiceItem[]
   total               Int
   discount            Int
-  paidUp                Boolean @default(false)
+  paidUp              Boolean @default(false)
   createdBy           String
-  flagDelete          Boolean
+  flagDelete          Boolean @default(false)
 
   receipts            Receipt[]
 
@@ -195,7 +195,9 @@ model Invoice{
 
 type InvoiceItem{
   description     String
-  
+  qty             Int
+  unitPrice       Int 
+  totalPrice      Int
 }
 
 type Customer{
