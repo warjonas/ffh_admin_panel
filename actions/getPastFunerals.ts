@@ -5,6 +5,7 @@ export const getPastFunerals = async () => {
     where: {
       dateOfFuneralService: {
         lt: new Date(),
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
       },
     },
     include: {

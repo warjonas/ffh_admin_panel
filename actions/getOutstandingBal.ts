@@ -13,6 +13,9 @@ export const getOutstandingBal = async () => {
       deceased: {
         flagDelete: false,
       },
+      created: {
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
+      },
     },
     include: {
       deceased: true,
@@ -28,6 +31,9 @@ export const getOutstandingBal = async () => {
     where: {
       deceased: {
         flagDelete: false,
+      },
+      created: {
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
       },
     },
     include: {

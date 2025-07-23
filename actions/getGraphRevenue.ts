@@ -33,6 +33,9 @@ export const getGraphRevenue = async () => {
       deceased: {
         flagDelete: false,
       },
+      created: {
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
+      },
     },
     include: {
       deceased: true,
@@ -49,6 +52,9 @@ export const getGraphRevenue = async () => {
       deceased: {
         flagDelete: false,
       },
+      created: {
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
+      },
     },
     include: {
       deceased: true,
@@ -61,6 +67,11 @@ export const getGraphRevenue = async () => {
   });
 
   const invoices = await prismadb.invoice.findMany({
+    where: {
+      created: {
+        gte: new Date(new Date(new Date().getFullYear(), 0, 1)),
+      },
+    },
     orderBy: {
       created: 'desc',
     },
