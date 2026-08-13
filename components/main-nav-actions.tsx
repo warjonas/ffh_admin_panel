@@ -226,16 +226,21 @@ const MainNavActions = (props: Props) => {
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>{action.name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
+              <DropdownMenuGroup className="w-full">
                 {action.items?.map((item) => (
                   <div key={item.title}>
                     {item.type === 'Function' ? (
-                      <DropdownMenuItem onClick={item.func}>
+                      <DropdownMenuItem
+                        onClick={item.func}
+                        className="w-full hover:cursor-pointer"
+                      >
                         {item.title}
                       </DropdownMenuItem>
                     ) : (
                       <DropdownMenuItem>
-                        <Link href={item.link}>{item.title}</Link>
+                        <Link href={item.link} className="w-full">
+                          {item.title}
+                        </Link>
                       </DropdownMenuItem>
                     )}
 

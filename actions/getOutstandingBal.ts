@@ -74,7 +74,10 @@ export const getOutstandingBal = async () => {
     formattedArrangements.concat(formattedRemovals);
 
   const outstanding = formattedItems.reduce((total, order) => {
-    if (!order.paidUp) {
+    if (
+      !order.paidUp &&
+      order.created.getFullYear() == new Date().getFullYear()
+    ) {
       return total + order.outstanding;
     } else {
       return total;

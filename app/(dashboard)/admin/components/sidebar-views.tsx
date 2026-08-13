@@ -10,7 +10,9 @@ import AddOns from './addOns';
 import Crosses from './crosses';
 import ExpenseCategories from './expenses';
 
-type Props = {};
+type Props = {
+  role: String;
+};
 
 const getHash = () =>
   typeof window !== 'undefined'
@@ -37,7 +39,7 @@ const SidebarViews = (props: Props) => {
     case 'users':
       return <Users />;
     case 'tombstones':
-      return <Tombstones />;
+      return <Tombstones role={props.role} />;
     case 'coffins':
       return <Coffins />;
     case 'graves':

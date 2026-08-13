@@ -13,7 +13,9 @@ import React, { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import useSWR, { SWRConfiguration } from 'swr';
 
-type Props = {};
+type Props = {
+  role: String;
+};
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 interface QueryProps {
@@ -39,7 +41,7 @@ const Tombstones = (props: Props) => {
 
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   const config: SWRConfiguration = {
@@ -55,7 +57,7 @@ const Tombstones = (props: Props) => {
   }: { data: Tombstone[]; error: any; isLoading: any } = useSWR(
     `/api/tombstone`,
     fetcher,
-    config
+    config,
   );
 
   const onEdit = (id: string) => {
@@ -106,20 +108,21 @@ const Tombstones = (props: Props) => {
                   {formatter.format(tombstone.price)}
                 </h2>
                 <div className="flex flex-row gap-x-2 col-start-4 justify-end ">
-                  {tombstone.type !== 'None' && (
-                    <>
-                      <Pencil
-                        className="h-6 w-6 p-1 bg-blue-900 text-background rounded-full  hover:cursor-pointer"
-                        onClick={() => onEdit(tombstone.id)}
-                      />
-                      <button
-                        onClick={() => onDelete(tombstone.id)}
-                        disabled={loading}
-                      >
-                        <X className="h-6 w-6 bg-red-900 text-background rounded-full col-start-7 justify-center hover:cursor-pointer" />
-                      </button>
-                    </>
-                  )}
+                  {tombstone.type !== 'None' ||
+                    (props.role !== 'General' && (
+                      <>
+                        <Pencil
+                          className="h-6 w-6 p-1 bg-blue-900 text-background rounded-full  hover:cursor-pointer"
+                          onClick={() => onEdit(tombstone.id)}
+                        />
+                        <button
+                          onClick={() => onDelete(tombstone.id)}
+                          disabled={loading}
+                        >
+                          <X className="h-6 w-6 bg-red-900 text-background rounded-full col-start-7 justify-center hover:cursor-pointer" />
+                        </button>
+                      </>
+                    ))}
                 </div>
               </div>
             ))}

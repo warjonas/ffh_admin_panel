@@ -16,19 +16,21 @@ const Details = (props: Props) => {
 
   if (error) return <div>{error.message}</div>;
 
-  // const {
-  //   data: role,
-  //   error: roleError,
-  //   isLoading: roleLoading,
-  // }: { data: string; error: any; isLoading: any } = useSWR(
-  //   !isLoading ? user?.email : null,
-  //   fetcher
-  // );
+  const {
+    data: role,
+    error: roleError,
+    isLoading: roleLoading,
+  }: { data: string; error: any; isLoading: any } = useSWR(
+    !isLoading ? user?.email : null,
+    fetcher,
+  );
 
   return (
     <div className=" hidden lg:flex items-center justify-center h-full">
       <h1 className="font-semibold  mr-2">Signed In as:</h1>
-      <h2>{user?.name}</h2>
+      <h2>
+        {user?.email} - {role}
+      </h2>
     </div>
   );
 };

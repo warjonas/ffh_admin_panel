@@ -5,10 +5,16 @@ import Heading from '@/components/ui/heading';
 import Sidebar from './components/sidebar';
 import SidebarViews from './components/sidebar-views';
 import Loading from '../Loading';
+import { getRole } from '@/actions/getRole';
+import { getSession } from '@auth0/nextjs-auth0';
 
 type Props = {};
 
-const Admin = (props: Props) => {
+const Admin = async (props: Props) => {
+  const session = await getSession();
+
+  const role = await getRole(session?.user?.email);
+
   return (
     <section className="p-5 w-full h-full flex flex-col">
       <Suspense fallback={<Loading />}>
@@ -16,7 +22,7 @@ const Admin = (props: Props) => {
 
         <section className="flex flex-row w-full gap-x-20">
           <Sidebar />
-          <SidebarViews />
+          <SidebarViews role={role} />
         </section>
       </Suspense>
     </section>
