@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Funeral Parlor Admin Panel
+Overview
+This project provides an admin panel designed to streamline and manage the daily operations of a funeral parlor. The system centralizes key functions, ensuring efficiency, accuracy, and respectful handling of sensitive information.
+Features
+- Deceased Tracking
+- Record and manage details of the deceased (name, date of birth, date of passing, burial/cremation details).
+- Maintain a searchable database for quick access.
+- Status updates (e.g., pending arrangements, scheduled service, completed).
+- Service Scheduling (optional expansion)
+- Manage funeral service dates, times, and venues.
+- Calendar integration for staff coordination.
+- Client & Family Management (optional expansion)
+- Store contact details of next of kin.
+- Track service requests and preferences.
+- Inventory & Resource Management (optional expansion)
+- Monitor caskets, urns, flowers, and other supplies.
+- Assign resources to specific services.
+- Staff & Task Management (optional expansion)
+- Assign responsibilities to staff members.
+- Track completion of tasks related to services.
+Technology Stack
+- Frontend/Backend: Next.js
+- Database: MongoDB with Prisma ORM
+- Authentication: Auth0
+- Deployment: Vercel (optimized for seamless Next.js integration)
