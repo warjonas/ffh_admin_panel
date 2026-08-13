@@ -12,10 +12,6 @@ const fetcher = (email: string) => getRole(email).then((res) => res);
 const Details = (props: Props) => {
   const { user, error, isLoading } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
-
-  if (error) return <div>{error.message}</div>;
-
   const {
     data: role,
     error: roleError,
@@ -24,6 +20,10 @@ const Details = (props: Props) => {
     !isLoading ? user?.email : null,
     fetcher,
   );
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (error) return <div>{error.message}</div>;
 
   return (
     <div className=" hidden lg:flex items-center justify-center h-full">
